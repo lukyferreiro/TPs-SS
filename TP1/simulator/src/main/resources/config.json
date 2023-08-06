@@ -1,0 +1,14 @@
+{
+  "staticFile": "src/main/resources/static.txt",
+  "dynamicFile": "src/main/resources/dynamic.txt",
+  "outNeighborsFile": "src/main/resources/neighbors.txt",
+  "outTimeFile": "src/main/resources/time.txt",
+  "isPeriodic": true,
+  "R": 2.0,
+  "M": 7,
+  "N": 300,
+  "L": 30,
+  "max-radius": 1.0,
+  "min-radius": 1.0,
+  "times": 1
+}
