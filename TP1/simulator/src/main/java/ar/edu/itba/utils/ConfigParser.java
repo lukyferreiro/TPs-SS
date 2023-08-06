@@ -9,13 +9,13 @@ public class ConfigParser {
     private final String outNeighborsFile;
     private final String outTimeFile;
     private final Boolean isPeriodic;
-    private final Double R;
-    private final Long M;
-    private final Long N;
-    private final Long L;
-    private final Double minR;
-    private final Double maxR;
-    private final Long times;
+    private final Double Rc;    //Radio de interaccion entre las particulas
+    private final Long M;   //Tendremos MxM celdas
+    private final Long N;   //Cantidad particulas
+    private final Long L;   //Longitud del tablero
+    private final Double minR;  //Radio minimo para las particulas
+    private final Double maxR;  //Radio maximo para las particulas
+    private final Long times;   //Cantidad de tiempos
 
     public ConfigParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
@@ -23,7 +23,7 @@ public class ConfigParser {
         this.outNeighborsFile = (String) json.get("outNeighborsFile");
         this.outTimeFile = (String) json.get("outTimeFile");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
-        this.R = (Double) json.get("R");
+        this.Rc = (Double) json.get("R");
         this.M = (Long) json.get("M");
         this.N = (Long) json.get("N");
         this.L = (Long) json.get("L");
@@ -47,8 +47,8 @@ public class ConfigParser {
     public Boolean getPeriodic() {
         return isPeriodic;
     }
-    public Double getR() {
-        return R;
+    public Double getRc() {
+        return Rc;
     }
     public Long getM() {
         return M;
