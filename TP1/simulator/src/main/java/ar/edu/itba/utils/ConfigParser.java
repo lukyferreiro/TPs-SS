@@ -12,7 +12,7 @@ public class ConfigParser {
     private final Double Rc;    //Radio de interaccion entre las particulas
     private final Long M;   //Tendremos MxM celdas
     private final Long N;   //Cantidad particulas
-    private final Long L;   //Longitud del tablero
+    private final Double L;   //Longitud del tablero
     private final Double minR;  //Radio minimo para las particulas
     private final Double maxR;  //Radio maximo para las particulas
     private final Long times;   //Cantidad de tiempos
@@ -23,10 +23,10 @@ public class ConfigParser {
         this.outNeighborsFile = (String) json.get("outNeighborsFile");
         this.outTimeFile = (String) json.get("outTimeFile");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
-        this.Rc = (Double) json.get("R");
+        this.Rc = (Double) json.get("Rc");
         this.M = (Long) json.get("M");
         this.N = (Long) json.get("N");
-        this.L = (Long) json.get("L");
+        this.L = (Double) json.get("L");
         this.minR = (Double) json.get("max-radius");
         this.maxR = (Double) json.get("min-radius");
         this.times = (Long) json.get("times");
@@ -56,7 +56,7 @@ public class ConfigParser {
     public Long getN() {
         return N;
     }
-    public Long getL() {
+    public Double getL() {
         return L;
     }
     public Double getMinR() {

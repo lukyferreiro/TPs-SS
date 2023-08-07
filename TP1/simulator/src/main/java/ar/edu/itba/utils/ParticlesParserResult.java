@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class ParticlesParserResult {
     private final int N;
-    private final int L;
+    private final double L;
     private final List<Map<Particle, Particle.Position>> particlesPerTime;
 
 
-    public ParticlesParserResult(int N, int L, List<Map<Particle, Particle.Position>> particlesPerTime) {
+    public ParticlesParserResult(int N, double L, List<Map<Particle, Particle.Position>> particlesPerTime) {
         this.N = N;
         this.L = L;
         this.particlesPerTime = particlesPerTime;
@@ -20,7 +20,7 @@ public class ParticlesParserResult {
     public int getN() {
         return N;
     }
-    public int getL() {
+    public double getL() {
         return L;
     }
     public List<Map<Particle, Particle.Position>> getParticlesPerTime() {

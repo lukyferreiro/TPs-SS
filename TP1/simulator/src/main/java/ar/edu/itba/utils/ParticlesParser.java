@@ -17,14 +17,17 @@ public class ParticlesParser {
         final Scanner dynamicScanner = new Scanner(dynamicFile);
 
         final int N = Integer.parseInt(staticScanner.nextLine().split(" ")[0]);
-        final int L = Integer.parseInt(staticScanner.nextLine().split(" ")[0]);
+        final double L = Double.parseDouble(staticScanner.nextLine().split(" ")[0]);
 
         final List<Particle> particles = new ArrayList<>();
 
         while (staticScanner.hasNextLine()) {
             final List<String> staticArray = Arrays.asList(staticScanner.nextLine().split(" "));
-            //En primera posicion tengo el radio
-            particles.add(new Particle(particles.size() + 1, Double.parseDouble(staticArray.get(0))));
+            particles.add(new Particle(
+                    particles.size() + 1,
+                    Double.parseDouble(staticArray.get(0)), //En primera posicion tengo el radio
+                    Double.parseDouble(staticArray.get(1))  //En segunda posicion tengo la propiedad
+            ));
         }
 
         staticScanner.close();

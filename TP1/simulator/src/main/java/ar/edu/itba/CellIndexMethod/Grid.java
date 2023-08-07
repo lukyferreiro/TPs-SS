@@ -11,7 +11,7 @@ public class Grid {
     private final Long M;
     private final boolean periodic;
 
-    public Grid(int L, Long M, Map<Particle, Position> particles, Boolean periodic) {
+    public Grid(double L, Long M, Map<Particle, Position> particles, Boolean periodic) {
         this.M = M;
         this.periodic = periodic;
         this.grid = new ArrayList<>();
@@ -24,7 +24,7 @@ public class Grid {
         return grid;
     }
 
-    private Cell getCellInGrid(int y, int x) {
+    public Cell getCellInGrid(int y, int x) {
         return this.grid.get(y).get(x);
     }
 

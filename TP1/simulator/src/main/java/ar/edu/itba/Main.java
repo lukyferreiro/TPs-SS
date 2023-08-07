@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Random;
 
-
 public class Main {
     public static void main(String[] args) throws IOException, ParseException {
 
@@ -35,6 +34,8 @@ public class Main {
                 pw.printf(Locale.US, "%f %f\n", minR + Math.random() * (maxR - minR), 1.0000);
             }
         }
+
+        //TODO habria que chequear colision de particulas y que no se me vayan afuera del area
 
         try (PrintWriter pw = new PrintWriter(dynamicFile)) {
             final Random random = new Random();

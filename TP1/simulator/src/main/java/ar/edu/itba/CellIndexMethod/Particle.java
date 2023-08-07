@@ -7,10 +7,12 @@ public class Particle {
 
     private final int id;
     private final double radius;
+    private final double property;
 
-    public Particle(int id, double radius) {
+    public Particle(int id, double radius, double property) {
         this.id = id;
         this.radius = radius;
+        this.property = property;
     }
 
     public int getId() {
@@ -19,7 +21,9 @@ public class Particle {
     public double getRadius() {
         return radius;
     }
-
+    public double getProperty() {
+        return property;
+    }
 
     @Override
     public boolean equals(Object o) {
