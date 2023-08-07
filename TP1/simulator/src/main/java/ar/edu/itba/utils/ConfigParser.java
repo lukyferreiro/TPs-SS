@@ -8,6 +8,7 @@ public class ConfigParser {
     private final String dynamicFile;
     private final String outNeighborsFile;
     private final String outTimeFile;
+    private final String method;
     private final Boolean isPeriodic;
     private final Double Rc;    //Radio de interaccion entre las particulas
     private final Long M;   //Tendremos MxM celdas
@@ -22,6 +23,7 @@ public class ConfigParser {
         this.dynamicFile = (String) json.get("dynamicFile");
         this.outNeighborsFile = (String) json.get("outNeighborsFile");
         this.outTimeFile = (String) json.get("outTimeFile");
+        this.method = (String) json.get("method");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
         this.Rc = (Double) json.get("Rc");
         this.M = (Long) json.get("M");
@@ -43,6 +45,9 @@ public class ConfigParser {
     }
     public String getOutTimeFile() {
         return outTimeFile;
+    }
+    public String getMethod() {
+        return method;
     }
     public Boolean getPeriodic() {
         return isPeriodic;

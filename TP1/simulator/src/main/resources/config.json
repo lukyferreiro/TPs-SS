@@ -3,12 +3,13 @@
   "dynamicFile": "src/main/resources/dynamic.txt",
   "outNeighborsFile": "src/main/resources/neighbors.txt",
   "outTimeFile": "src/main/resources/time.txt",
+  "method": "CIM",
   "isPeriodic": true,
-  "Rc": 2.0,
-  "M": 7,
-  "N": 300,
-  "L": 30.0,
+  "Rc": 15.0,
+  "M": 5,
+  "N": 50,
+  "L": 100.0,
   "max-radius": 1.0,
-  "min-radius": 1.0,
+  "min-radius": 2.0,
   "times": 1
 }
