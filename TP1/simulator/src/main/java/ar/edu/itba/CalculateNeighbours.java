@@ -20,6 +20,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CalculateNeighbours {
+    private final static String CIM = "CIM";
+    private final static String BRUTE = "BRUTE";
     public static void main(String[] args) throws IOException, ParseException {
 
         FileReader fr = new FileReader("src/main/resources/configMethod.json");
@@ -52,15 +54,14 @@ public class CalculateNeighbours {
         System.out.println("Start simulation\n");
         System.out.println("Calculating Neighbors ...\n");
 
-        //TODO hacer un ENUM para CIM y BRUTE
         MethodResult results;
-        if(Objects.equals(config.getMethod(), "CIM")){
+        if(Objects.equals(config.getMethod(), CIM)){
             results = CellIndexMethod.calculateNeighbors(
                     parser.getParticlesPerTime().get(0),
                     parser.getL(), config.getM(),
                     config.getRc(), config.getPeriodic()
             );
-        } else if (Objects.equals(config.getMethod(), "BRUTE")) {
+        } else if (Objects.equals(config.getMethod(), BRUTE)) {
             results = BruteForceMethod.calculateNeighbors(
                     parser.getParticlesPerTime().get(0),
                     parser.getL(), config.getM(),
