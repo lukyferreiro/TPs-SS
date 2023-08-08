@@ -21,8 +21,13 @@ class DataConfig:
       self.isPeriodic = data['isPeriodic']
       self.Rc = check_float(data['Rc'], "Rc")
       self.M = check_int(data['M'], "M")
-      self.N = check_int(data['N'], "N")
-      self.L = check_float(data['L'], "L")
-      self.max_radius = check_float(data['max-radius'], "max_radius")
-      self.min_radius = check_float(data['min-radius'], "min_radius")
-      self.times = check_int(data['times'], "times")
+
+      with open(f"../simulator/{self.staticFile}", 'r') as static:
+        self.N = int(static.readline().strip())
+        self.L = float(static.readline().strip())
+
+      #self.N = check_int(data['N'], "N")
+      #self.L = check_float(data['L'], "L")
+      #self.max_radius = check_float(data['max-radius'], "max_radius")
+      #self.min_radius = check_float(data['min-radius'], "min_radius")
+      #self.times = check_int(data['times'], "times")

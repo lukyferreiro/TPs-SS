@@ -5,9 +5,9 @@ from utils.plots import plotParticles
 
 def main(): 
     BASE = '../simulator/'
-    TO_CONFIG = BASE + 'src/main/resources/config.json'
+    TO_CONFIG_METHOD = BASE + 'src/main/resources/configMethod.json'
 
-    with open(TO_CONFIG, 'r') as f:
+    with open(TO_CONFIG_METHOD, 'r') as f:
         config = json.load(f)
 
     c = DataConfig(config)
