@@ -52,7 +52,7 @@ public class CalculateNeighbours {
         }
 
         System.out.println("Start simulation\n");
-        System.out.println("Calculating Neighbors ...\n");
+        System.out.println("Calculating Neighbours ...\n");
 
         MethodResult results;
         if(Objects.equals(config.getMethod(), CIM)){
