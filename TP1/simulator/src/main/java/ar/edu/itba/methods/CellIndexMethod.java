@@ -136,7 +136,7 @@ public class CellIndexMethod {
             final Position otherParticlePosition, final Map<Integer, Set<Particle>> neighbors, final double Rc
     ) {
         //Distancia Borde-borde = Distancia centros de masa - Ri -Rj.
-        final double distance = Position.calculateDistance(particlePosition, otherParticlePosition);
+        final double distance = Position.calculateDistance(particlePosition, otherParticlePosition,0,false);
         final double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
         if (borderDistance <= Rc) {
             neighbors.get(particle.getId()).add(otherParticle);
