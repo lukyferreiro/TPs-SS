@@ -1,4 +1,6 @@
-package ar.edu.itba.CellIndexMethod;
+package ar.edu.itba.methods;
+
+import ar.edu.itba.models.Particle;
 
 import java.time.LocalTime;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ar.edu.itba.CellIndexMethod;
+package ar.edu.itba.models;
 
 import java.util.ArrayList;
 import java.util.List;

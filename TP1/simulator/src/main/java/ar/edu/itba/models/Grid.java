@@ -1,10 +1,10 @@
-package ar.edu.itba.CellIndexMethod;
+package ar.edu.itba.models;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ar.edu.itba.CellIndexMethod.Particle.Position;
+import static ar.edu.itba.models.Particle.Position;
 
 public class Grid {
     private final List<List<Cell>> grid;

@@ -1,9 +1,9 @@
 package ar.edu.itba;
 
-import ar.edu.itba.CellIndexMethod.BruteForceMethod;
-import ar.edu.itba.CellIndexMethod.CellIndexMethod;
-import ar.edu.itba.CellIndexMethod.Particle;
-import ar.edu.itba.CellIndexMethod.MethodResult;
+import ar.edu.itba.methods.BruteForceMethod;
+import ar.edu.itba.methods.CellIndexMethod;
+import ar.edu.itba.models.Particle;
+import ar.edu.itba.methods.MethodResult;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;

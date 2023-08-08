@@ -1,6 +1,6 @@
 package ar.edu.itba.utils;
 
-import ar.edu.itba.CellIndexMethod.Particle;
+import ar.edu.itba.models.Particle;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.*;
 
 import java.lang.Double;
 import java.lang.Integer;
-import static ar.edu.itba.CellIndexMethod.Particle.Position;
+import static ar.edu.itba.models.Particle.Position;
 
 public class ParticlesParser {
 

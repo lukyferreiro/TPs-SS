@@ -42,7 +42,7 @@ def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method):
                 center_offset = np.array([i * L, j * L])
                 circle_orange = plt.Circle(selected_particle_position + center_offset,
                                            radius=Rc+selected_particle_radius, edgecolor='orange',
-                                           facecolor='none', fill=False, linewidth=2)
+                                           facecolor='none', fill=False, linewidth=1)
                 ax.add_patch(circle_orange)
     else: 
         circle_orange = plt.Circle(selected_particle_position, radius=Rc+selected_particle_radius,

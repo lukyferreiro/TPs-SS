@@ -1,10 +1,14 @@
-package ar.edu.itba.CellIndexMethod;
+package ar.edu.itba.methods;
+
+import ar.edu.itba.models.Cell;
+import ar.edu.itba.models.Grid;
+import ar.edu.itba.models.Particle;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static ar.edu.itba.CellIndexMethod.Particle.Position;
+import static ar.edu.itba.models.Particle.Position;
 
 public class CellIndexMethod {
 
