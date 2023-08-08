@@ -1,6 +1,6 @@
 package ar.edu.itba;
 
-import ar.edu.itba.utils.ConfigParser;
+import ar.edu.itba.utils.ConfigGeneratorParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -12,13 +12,13 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Random;
 
-public class Main {
+public class Generator {
+
     public static void main(String[] args) throws IOException, ParseException {
 
-
-        FileReader fr = new FileReader("src/main/resources/config.json");
+        FileReader fr = new FileReader("src/main/resources/configGenerator.json");
         JSONObject json = (JSONObject) new JSONParser().parse(fr);
-        ConfigParser config = new ConfigParser(json);
+        ConfigGeneratorParser config = new ConfigGeneratorParser(json);
 
         final File staticFile = new File(config.getStaticFile());
         final File dynamicFile = new File(config.getDynamicFile());
@@ -35,7 +35,7 @@ public class Main {
             }
         }
 
-        //TODO habria que chequear colision de particulas y que no se me vayan afuera del area
+        //TODO habria que chequear colision de particulas
 
         try (PrintWriter pw = new PrintWriter(dynamicFile)) {
             final Random random = new Random();
@@ -46,11 +46,9 @@ public class Main {
                     double y = random.nextDouble() * (config.getL());
                     pw.printf(Locale.US, "%f %f\n", x, y);
                 }
-
             }
         }
 
         System.out.println("Particles generated\n");
-
     }
 }
