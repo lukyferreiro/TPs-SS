@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -64,8 +64,8 @@ public class CalculateNeighbours {
         } else if (Objects.equals(config.getMethod(), BRUTE)) {
             results = BruteForceMethod.calculateNeighbors(
                     parser.getParticlesPerTime().get(0),
-                    parser.getL(), config.getM(),
-                    config.getRc(), config.getPeriodic()
+                    parser.getL(), config.getRc(),
+                    config.getPeriodic()
             );
         } else {
             return;
@@ -86,9 +86,12 @@ public class CalculateNeighbours {
         }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-            pw.append(String.format("%s - %s\n", "Total time",
-                    results.getTotalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS")))
-            );
+            Duration duration = results.getTotalTime();
+            long hours = duration.toHours();
+            long minutes = duration.toMinutesPart();
+            long seconds = duration.toSecondsPart();
+            long millis = duration.toMillisPart();
+            pw.append(String.format("%s - %02d:%02d:%02d.%03d\n", "Total time", hours, minutes, seconds, millis));
         }
 
     }

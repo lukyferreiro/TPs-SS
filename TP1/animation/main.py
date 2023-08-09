@@ -18,7 +18,7 @@ def main():
 
     particles_dict = parseParticles(TO_STATIC, TO_DYNAMIC)
     neighbours = parseNeighbors(TO_NEIGHBOUR)
-    plotParticles(particles_dict, neighbours, c.M, c.L, c.Rc, c.isPeriodic, c.method)
+    plotParticles(particles_dict, neighbours, c.M, c.L, c.Rc, c.isPeriodic, c.method, c.particleId)
 
 
 if __name__ == "__main__":

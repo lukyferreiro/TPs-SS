@@ -54,22 +54,19 @@ public class Particle {
             return y;
         }
 
-//        public static double calculateDistance(Position p1, Position p2) {
-//            return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
-//        }
-        public static double calculateDistance(Position p1, Position p2, double L, boolean periodic) {
+        public static double calculateDistance(Position p1, Position p2) {
+            return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
+        }
+        public static double calculateDistancePeriodic(Position p1, Position p2, double L) {
             double dx = Math.abs(p1.getX() - p2.getX());
             double dy = Math.abs(p1.getY() - p2.getY());
 
-            if (periodic) {
-                // Aplicar condiciones periódicas en ambas direcciones
-                dx = Math.min(dx, L - dx);
-                dy = Math.min(dy, L - dy);
-            }
+            // Aplicar condiciones periódicas en ambas direcciones
+            dx = Math.min(dx, L - dx);
+            dy = Math.min(dy, L - dy);
 
-            return Math.sqrt(dx * dx + dy * dy);
+            return Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
         }
-
 
     }
 }

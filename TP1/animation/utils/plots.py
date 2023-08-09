@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method):
+def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method, selectedParticleId):
     fig, ax = plt.subplots()
 
     # Dibujar todas las partículas con círculos azules
@@ -17,17 +17,22 @@ def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method):
         ax.text(text_x, text_y, str(particle_id), ha='left', va='center', color='black', fontsize=8)
 
     # Seleccionamos aleatoriamente una particula para remarcar sus vecinos
-    random_row = random.choice(neighbors_data)
+    #random_row = random.choice(neighbors_data)
+    #selected_particle_id = random_row[0]
+    #selected_particle_radius, selected_particle_position = particle_dict[selected_particle_id]
 
     # Dibujamos la partícula seleccionada en rojo
-    selected_particle_id = random_row[0]
-    selected_particle_radius, selected_particle_position = particle_dict[selected_particle_id]
+    selected_particle_radius, selected_particle_position = particle_dict[selectedParticleId]
     circle_selected = plt.Circle(selected_particle_position, radius=selected_particle_radius,
                                  edgecolor='red', facecolor='red', fill=True)
     ax.add_patch(circle_selected)
 
+    for row in neighbors_data:
+        if row[0] == selectedParticleId:
+            selectedNeighbours = row[1:]
+
     # Dibujamos los vecinos de la partícula seleccionada en verde
-    for neighbor_id in random_row[1:]:
+    for neighbor_id in selectedNeighbours:
         if neighbor_id in particle_dict:
             neighbor_radius, neighbor_position = particle_dict[neighbor_id]
             circle_neighbor = plt.Circle(neighbor_position, radius=neighbor_radius,
@@ -35,7 +40,7 @@ def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method):
             ax.add_patch(circle_neighbor)
 
     # Dibujamos el radio Rc con efecto de contornos periódicos
-    if(periodic and method == "CIM"):
+    if(periodic):
         num_repeats = int(np.ceil(L / Rc)) + 1
         for i in range(-num_repeats, num_repeats + 1):
             for j in range(-num_repeats, num_repeats + 1):

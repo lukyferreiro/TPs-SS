@@ -4,6 +4,7 @@ import ar.edu.itba.models.Cell;
 import ar.edu.itba.models.Grid;
 import ar.edu.itba.models.Particle;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -34,14 +35,14 @@ public class CellIndexMethod {
         }
 
         final LocalDateTime endTime = LocalDateTime.now();
-        final LocalTime totalTime = LocalTime.ofNanoOfDay(endTime.toLocalTime().toNanoOfDay() - startTime.toLocalTime().toNanoOfDay());
+        final Duration totalTime = Duration.between(startTime, endTime);
         return new MethodResult(neighbors, totalTime);
     }
 
     private static void checkNeighbors(
-            final Particle particle, final Map<Particle, Position> particles,
-            final Cell cell, final Map<Integer, Set<Particle>> neighbors,
-            final double Rc, final double L, final Long M, final boolean periodic
+            Particle particle, Map<Particle, Position> particles,
+            Cell cell, Map<Integer, Set<Particle>> neighbors,
+            double Rc, double L, Long M, boolean periodic
     ) {
         final Cell topCell = cell.getTopCell();
         final Cell rightCell = cell.getRightCell();
@@ -132,11 +133,11 @@ public class CellIndexMethod {
     }
 
     private static void addIfInRadius(
-            final Particle particle, final Position particlePosition, final Particle otherParticle,
-            final Position otherParticlePosition, final Map<Integer, Set<Particle>> neighbors, final double Rc
+            Particle particle, Position particlePosition, Particle otherParticle,
+            Position otherParticlePosition, Map<Integer, Set<Particle>> neighbors, double Rc
     ) {
         //Distancia Borde-borde = Distancia centros de masa - Ri -Rj.
-        final double distance = Position.calculateDistance(particlePosition, otherParticlePosition,0,false);
+        final double distance = Position.calculateDistance(particlePosition, otherParticlePosition);
         final double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
         if (borderDistance <= Rc) {
             neighbors.get(particle.getId()).add(otherParticle);

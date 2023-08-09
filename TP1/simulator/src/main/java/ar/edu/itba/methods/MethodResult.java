@@ -2,20 +2,20 @@ package ar.edu.itba.methods;
 
 import ar.edu.itba.models.Particle;
 
-import java.time.LocalTime;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 
 public class MethodResult {
-    private final LocalTime totalTime;
+    private final Duration totalTime;
     private final Map<Integer, Set<Particle>> neighbors;
 
-    public MethodResult(Map<Integer, Set<Particle>> neighbors, LocalTime totalTime) {
+    public MethodResult(Map<Integer, Set<Particle>> neighbors, Duration totalTime) {
         this.totalTime = totalTime;
         this.neighbors = neighbors;
     }
 
-    public LocalTime getTotalTime() {
+    public Duration getTotalTime() {
         return totalTime;
     }
     public Map<Integer, Set<Particle>> getNeighbors() {

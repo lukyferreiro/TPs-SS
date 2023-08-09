@@ -3,30 +3,34 @@ package ar.edu.itba.methods;
 import ar.edu.itba.models.Grid;
 import ar.edu.itba.models.Particle;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class BruteForceMethod {
 
     public static MethodResult calculateNeighbors(
-            Map<Particle, Particle.Position> particles, double L, Long M, double Rc, Boolean periodic
+            Map<Particle, Particle.Position> particles, double L, double Rc, Boolean periodic
     ) {
 
         final LocalDateTime startTime = LocalDateTime.now();
-        final Grid grid = new Grid(L, M, particles, periodic);
         final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
+
+        BiFunction<Particle.Position, Particle.Position, Double> computeDistance = periodic
+                ? (p1, p2) -> Particle.Position.calculateDistancePeriodic(p1,p2,L)
+                : (p1, p2) -> Particle.Position.calculateDistance(p1,p2);
 
         particles.keySet().forEach(particle -> neighbors.put(particle.getId(), new HashSet<>()));
 
-        // Iterar sobre todas las partículas
+        // Iterar sobre todas las partículas y comparamos todas con todas
         for (Particle particle : particles.keySet()) {
             final Particle.Position currentPosition = particles.get(particle);
             for (Particle otherParticle : particles.keySet()) {
                 if (!particle.equals(otherParticle)) {
                     final Particle.Position otherParticlePosition = particles.get(otherParticle);
-                    double distance = Particle.Position.calculateDistance(currentPosition, otherParticlePosition, L, periodic);
-
+                    double distance = computeDistance.apply(currentPosition, otherParticlePosition);
                     double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
                     if (borderDistance <= Rc) {
                         neighbors.get(particle.getId()).add(otherParticle);
@@ -37,7 +41,7 @@ public class BruteForceMethod {
         }
 
         final LocalDateTime endTime = LocalDateTime.now();
-        final LocalTime totalTime = LocalTime.ofNanoOfDay(endTime.toLocalTime().toNanoOfDay() - startTime.toLocalTime().toNanoOfDay());
+        final Duration totalTime = Duration.between(startTime, endTime);
         return new MethodResult(neighbors, totalTime);
     }
 }

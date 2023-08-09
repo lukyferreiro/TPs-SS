@@ -6,5 +6,6 @@
   "method": "CIM",
   "isPeriodic": true,
   "Rc": 15.0,
-  "M": 5
+  "M": 5,
+  "particleId": 16
 }

@@ -29,51 +29,39 @@ public class Cell {
     public boolean isEmpty() {
         return particles.isEmpty();
     }
-
     public List<Particle> getParticles() {
         return particles;
     }
-
     public void addParticle(final Particle particle) {
         particles.add(particle);
     }
-
     public double getLeftBoundary() {
         return leftBoundary;
     }
-
     public double getRightBoundary() {
         return rightBoundary;
     }
-
     public double getTopBoundary() {
         return topBoundary;
     }
-
     public double getBottomBoundary() {
         return bottomBoundary;
     }
-
     public int getCellX() {
         return cellX;
     }
-
     public int getCellY() {
         return cellY;
     }
-
     public Cell getTopCell() {
         return topCell;
     }
-
     public Cell getTopRightCell() {
         return topRightCell;
     }
-
     public Cell getRightCell() {
         return rightCell;
     }
-
     public Cell getBottomRightCell() {
         return bottomRightCell;
     }

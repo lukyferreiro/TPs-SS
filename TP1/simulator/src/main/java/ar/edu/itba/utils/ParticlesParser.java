@@ -12,7 +12,7 @@ import static ar.edu.itba.models.Particle.Position;
 
 public class ParticlesParser {
 
-    public static ParticlesParserResult parseParticlesList(final File staticFile, final File dynamicFile) throws IOException {
+    public static ParticlesParserResult parseParticlesList(File staticFile, File dynamicFile) throws IOException {
         final Scanner staticScanner = new Scanner(staticFile);
         final Scanner dynamicScanner = new Scanner(dynamicFile);
 

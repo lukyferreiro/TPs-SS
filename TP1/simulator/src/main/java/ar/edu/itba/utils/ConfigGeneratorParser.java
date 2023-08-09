@@ -19,7 +19,6 @@ public class ConfigGeneratorParser {
         this.minR = (Double) json.get("max-radius");
         this.maxR = (Double) json.get("min-radius");
         this.times = (Long) json.get("times");
-
     }
 
     public String getStaticFile() {
