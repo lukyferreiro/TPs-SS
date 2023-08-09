@@ -7,19 +7,8 @@ En este TP se implementa el algoritmo Cell Index Method con visualizacion de los
 Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json
 
 Tras esto se generaran dos archivos:
-- static.txt:
-    N         (Heading con el Nro. total de Partículas) 
-    L         (Longitud del lado del área de simulación)  
-    r1  pr1   (radio y propiedad de la partícula 1)
-    r2  pr2   (radio y propiedad de la partícula 2)
-    ....
-    rN  prN   (radio y propiedad de la partícula N)
-- dynamic.txt:
-    t0          (tiempo)
-    x1  y1      (partícula 1)
-    ....       
-    xN  yN      (partícula N)
-
+- static.txt: con el valor de N, L y el radio de cada particula y su propiedad.
+- dynamic.txt: con las posiciones X e Y de las N particulas en el tiempo 0
 
 ## Calcular los vecinos
 
@@ -27,13 +16,8 @@ Tras haber generado el archivo estatico y dinamico con la informacion de las par
 archivo CalculateNeighbours.java. Su ejecución tomará los datos de configMethod.json
 
 Tras esto se generaran dos archivos:
-- time.txt:
-    Total time - 00:00:00.006
-- neighbours
-    id1 v1 v2 ... vQ
-    id2 v1 v2 ... vM
-    ...
-    idN v1 v2 ... vS
+- time.txt: con el tiempo total que tardo el metodo en calcular los vecinos.
+- neighbours: con una lista de los vecinos para todas las particulas
 
 ## Configuración
 
