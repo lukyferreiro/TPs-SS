@@ -17,17 +17,17 @@ public class BruteForceMethod {
         final Grid grid = new Grid(L, M, particles, periodic);
         final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
 
-        particles.forEach((key, value) -> neighbors.put(key.getId(), new HashSet<>()));
+        particles.keySet().forEach(particle -> neighbors.put(particle.getId(), new HashSet<>()));
 
-        //TODO check si anda y que onda con periodic
-        //En Brute Force chequeamos todas las particulas contra todas la particulas
-        for(Particle particle : particles.keySet()){
+        // Iterar sobre todas las partículas
+        for (Particle particle : particles.keySet()) {
             final Particle.Position currentPosition = particles.get(particle);
-            for(Particle otherParticle : particles.keySet()){
-                if(!particle.equals(otherParticle)){
+            for (Particle otherParticle : particles.keySet()) {
+                if (!particle.equals(otherParticle)) {
                     final Particle.Position otherParticlePosition = particles.get(otherParticle);
-                    final double distance = Particle.Position.calculateDistance(currentPosition, otherParticlePosition);
-                    final double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
+                    double distance = Particle.Position.calculateDistance(currentPosition, otherParticlePosition, L, periodic);
+
+                    double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
                     if (borderDistance <= Rc) {
                         neighbors.get(particle.getId()).add(otherParticle);
                         neighbors.get(otherParticle.getId()).add(particle);
@@ -41,3 +41,4 @@ public class BruteForceMethod {
         return new MethodResult(neighbors, totalTime);
     }
 }
+
