@@ -21,12 +21,11 @@ public class Benchmark {
 
         final double Rc = 1.0;
         final double L = 20.0;
-        final int ITERATIONS = 100;
+        final int ITERATIONS = 1000;
         final int PARTICLES_ITERATIONS = 15;
         final int PARTICLES_MULTIPLIER = 10;
         long N;
         ParticlesParserResult parser;
-
 
         //-----Variando la cantidad de particulas con CIM con varios M ----
 
@@ -131,7 +130,12 @@ public class Benchmark {
             }
         }
 
-        return ParticlesParser.parseParticlesList(staticFile, dynamicFile);
+        ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
+
+        staticFile.delete();
+        dynamicFile.delete();
+
+        return parser;
 
     }
 

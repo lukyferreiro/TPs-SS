@@ -2,17 +2,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plotM_variation(data_dict):
+
+    L = 20.0
+
     sorted_data = sorted(data_dict.items())
     
     for n, values in sorted_data:
         cant_m = len(values)
         averages = []
         errors = []
+        #densities = []
         sorted_m = sorted(values.keys())
         smallest_m = sorted_m[0]  # Obtener el valor más pequeño
 
         # Calcular promedios y errores para el valor de N actual
         for m in range(smallest_m, cant_m+1):
+
+            #density_per_m = (n / (L*L)) / (m*m)
+            #densities.append(density_per_m)
+
             array_values = values[m]
             if array_values:
                 avg = np.mean(array_values)
@@ -21,12 +29,12 @@ def plotM_variation(data_dict):
                 errors.append(err)
 
         color_palette = plt.cm.get_cmap('tab20')
-        # Crear gráfico de barras para el valor de N actual
-        plt.bar(np.arange(smallest_m, cant_m+1), averages, yerr=errors, capsize=4, tick_label=range(smallest_m, cant_m+1), color=color_palette(range(cant_m)))
-        plt.xlabel('Valores de M')
+        bars = plt.bar(np.arange(smallest_m, cant_m+1), averages, yerr=errors, capsize=4, tick_label=range(smallest_m, cant_m+1), color=color_palette(range(cant_m)))
+        plt.xlabel('Cantidad de celdas (M)')
         plt.ylabel('Tiempo [ms]')
         plt.title(f'Tiempo promedio para N={n}')
         plt.tight_layout()
+        #plt.legend(bars, [f'Densidad={round(d, 5):.5f}' for d in densities], loc='center left', bbox_to_anchor=(1, 0.5))
         plt.show()
 
 def plotMethod_variation(data):
@@ -60,7 +68,7 @@ def plotMethod_variation(data):
     # Crear gráfico de barras para BRUTE
     plt.bar(np.arange(len(sorted_keys)) + 0.4, averages_brute, yerr=errors_brute, capsize=4, label='BRUTE', width=0.4)
 
-    plt.xlabel('Valores de N')
+    plt.xlabel('Cantidad de particulas (N)')
     plt.ylabel('Tiempo [ms]')
     plt.title('Tiempo promedio comparando los metodos utilizados')
     plt.xticks(np.arange(len(sorted_keys)) + 0.2, sorted_keys)
