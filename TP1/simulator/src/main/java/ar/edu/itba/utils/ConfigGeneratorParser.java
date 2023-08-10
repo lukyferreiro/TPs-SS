@@ -14,7 +14,7 @@ public class ConfigGeneratorParser {
     public ConfigGeneratorParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
         this.dynamicFile = (String) json.get("dynamicFile");
-        this.N = (Long) json.get("N");
+        this.N = (Long) json.get("N_variation");
         this.L = (Double) json.get("L");
         this.minR = (Double) json.get("max_radius");
         this.maxR = (Double) json.get("min_radius");
