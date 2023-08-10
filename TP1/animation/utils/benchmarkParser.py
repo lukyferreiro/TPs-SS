@@ -29,3 +29,33 @@ def parseM_variation(dir_path):
             data_dict[n_value] = file_data
 
     return data_dict
+
+def parseMethod_variation(dir_path):
+    data_dict = {}
+
+    for filename in os.listdir(dir_path):
+        if filename.endswith(".txt"):
+            filepath = os.path.join(dir_path, filename)
+            with open(filepath, "r") as file:
+                lines = file.readlines()
+
+            file_data = {}
+            current_method = None
+            values = []
+
+            for line in lines[1:]:
+                line = line.strip()
+                if line.startswith("CIM") or line.startswith("BRUTE"):
+                    if current_method is not None:
+                        file_data[current_method] = values
+                        values = []  # Reiniciar la lista de valores para el próximo valor
+                    current_method = line.split(" --")[0] 
+                    values.extend(map(float, line.split("--")[1].split()))  # Agregar los valores a la lista
+
+            if current_method is not None:
+                file_data[current_method] = values
+
+            n_value = int(filename.split("_")[1].split(".")[0])
+            data_dict[n_value] = file_data
+
+    return data_dict
