@@ -19,6 +19,11 @@ Tras esto se generaran dos archivos:
 - time.txt: con el tiempo total que tardo el metodo en calcular los vecinos.
 - neighbours: con una lista de los vecinos para todas las particulas
 
+## Benchmark
+
+Tambien se puede correr el archivo Benchmark.java, utilizado para crear varios archivos con informacion necesaria
+para realizar ciertos analisis variando M y comparando ambos metodos implementados.
+
 ## Configuración
 
 #### configGenerator.json 
