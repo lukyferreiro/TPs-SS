@@ -23,64 +23,78 @@ public class Benchmark {
         final double L = 20.0;
         final int ITERATIONS = 100;
         long N;
+        ParticlesParserResult parser;
+
 
         //-----Variando la cantidad de particulas con CIM con varios M ----
 
-        MethodResult results;
-        ParticlesParserResult parser;
+//        MethodResult results;
+//
+//        for (int i = 0; i < 10; i++) {
+//            N = (i + 1) * 100;
+//
+//            System.out.printf("Variando M con N=%d\n", N);
+//
+//            final String BENCHMARK_M = "src/main/resources/M_variation/N_" + N + ".txt";
+//            final File BENCHMARK_FILE_M = new File(BENCHMARK_M);
+//
+//            try (PrintWriter pwM = new PrintWriter(BENCHMARK_FILE_M)) {
+//                pwM.println("Variando el numero de celdas M");
+//                for (long m = 1; m <= 13; m++) {
+//                    List<Double> times = new ArrayList<>();
+//                    pwM.printf(Locale.US, "M:%d -- ", m);
+//
+//                    for (int k = 0; k < ITERATIONS; k++) {
+//                        parser = createStaticAndDynamicFiles(N, L);
+//                        results = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, m, Rc, true);
+//                        final double totalTime = (double) results.getTotalTime() / 1_000_000;
+//                        times.add(totalTime);
+//                    }
+//
+//                    times.forEach(time -> pwM.append(String.format(Locale.US, "%.4f ", time)));
+//                    pwM.println();
+//                }
+//            }
+//        }
+
+        //--------------Variando la cantidad de particulas y comparando CIM con BRUTE------------------
+
+        long M = 5;
+
+        MethodResult resultsCim;
+        MethodResult resultsBrute;
 
         for (int i = 0; i < 10; i++) {
             N = (i + 1) * 100;
 
-            System.out.printf("Variando M con N=%d\n", N);
+            System.out.printf("Comparando CIM y BRUTE con N=%d\n", N);
 
-            final String BENCHMARK_M = "src/main/resources/M_variation/N_" + N + ".txt";
-            final File BENCHMARK_FILE_M = new File(BENCHMARK_M);
+            final String BENCHMARK_N = "src/main/resources/method_variation/N_" + N + ".txt";
+            final File BENCHMARK_FILE_N = new File(BENCHMARK_N);
 
-            try (PrintWriter pwM = new PrintWriter(BENCHMARK_FILE_M)) {
-                pwM.println("Variando el numero de celdas M");
-                for (long m = 1; m <= 13; m++) {
-                    List<Double> times = new ArrayList<>();
-                    pwM.printf(Locale.US, "M:%d -- ", m);
+            List<Double> timesCIM = new ArrayList<>();
+            List<Double> timesBrute = new ArrayList<>();
 
-                    for (int k = 0; k < ITERATIONS; k++) {
-                        parser = createStaticAndDynamicFiles(N, L);
-                        results = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, m, Rc, true);
-                        final double totalTime = (double) results.getTotalTime() / 1_000_000;
-                        times.add(totalTime);
-                    }
+            try (PrintWriter pwN = new PrintWriter(BENCHMARK_FILE_N)) {
+                pwN.format("Variando el numero de particulas con M:%d\n", M);
 
-                    times.forEach(time -> pwM.append(String.format(Locale.US, "%.4f ", time)));
-                    pwM.println();
+                for (int k = 0; k < ITERATIONS; k++) {
+                    parser = createStaticAndDynamicFiles(N, L);
+                    resultsCim = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, M, Rc, true);
+                    resultsBrute = BruteForceMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, Rc, true);
+                    final double totalTimeCim = (double) resultsCim.getTotalTime() / 1_000_000;
+                    final double totalTimeBrute = (double) resultsBrute.getTotalTime() / 1_000_000;
+                    timesCIM.add(totalTimeCim);
+                    timesBrute.add(totalTimeBrute);
                 }
+                pwN.append("CIM -- ");
+                timesCIM.forEach(time -> pwN.append(String.format(Locale.US, "%.4f ", time)));
+                pwN.println();
+                pwN.append("BRUTE -- ");
+                timesBrute.forEach(time -> pwN.append(String.format(Locale.US, "%.4f ", time)));
+                pwN.println();
             }
         }
-
-        //--------------------------------
-
-//        long M = 5;
-//
-//        final String BENCHMARK_N = "src/main/resources/benchmarkN.txt";
-//        final File BENCHMARK_FILE_N = new File(BENCHMARK_N);
-//
-//        MethodResult resultsCim;
-//        MethodResult resultsBrute;
-
-
-//        try (PrintWriter pwN = new PrintWriter(BENCHMARK_FILE_N)) {
-//            pwN.format("Variando el numero de particulas con M:%d\n", M);
-//            pwN.println("N ---- CIM ---- BRUTE");
-//            for (int i = 0; i < 10; i++) {
-//                N = (i + 1) * 100;
-//                ParticlesParserResult parser = createStaticAndDynamicFiles(N, L);
-//                resultsCim = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, M, Rc, true);
-//                resultsBrute = BruteForceMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, Rc, true);
-//                final double totalTimeCim = (double) resultsCim.getTotalTime() / 1_000_000;
-//                final double totalTimeBrute = (double) resultsBrute.getTotalTime() / 1_000_000;
-//                pwN.printf(Locale.US, String.format("%d  %.3f%s  %.3f%s\n", N, totalTimeCim, "ms", totalTimeBrute, "ms"));
-//
-//            }
-//        }
 
     }
 

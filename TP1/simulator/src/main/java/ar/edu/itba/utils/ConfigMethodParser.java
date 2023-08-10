@@ -21,7 +21,7 @@ public class ConfigMethodParser {
         this.method = (String) json.get("method");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
         this.Rc = (Double) json.get("Rc");
-        this.M = (Long) json.get("M_variation");
+        this.M = (Long) json.get("M");
     }
 
     public String getStaticFile() {
