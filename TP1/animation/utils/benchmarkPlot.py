@@ -64,9 +64,9 @@ def plotMethod_variation(data):
             errors_brute.append(err_brute)
 
     # Crear gráfico de barras para CIM
-    plt.bar(np.arange(len(sorted_keys)), averages_cim, yerr=errors_cim, capsize=4, label='CIM', width=0.4)
+    plt.bar(np.arange(len(sorted_keys)), averages_cim, yerr=errors_cim, capsize=3, label='CIM', width=0.4)
     # Crear gráfico de barras para BRUTE
-    plt.bar(np.arange(len(sorted_keys)) + 0.4, averages_brute, yerr=errors_brute, capsize=4, label='BRUTE', width=0.4)
+    plt.bar(np.arange(len(sorted_keys)) + 0.4, averages_brute, yerr=errors_brute, capsize=3, label='BRUTE', width=0.4)
 
     plt.xlabel('Cantidad de particulas (N)')
     plt.ylabel('Tiempo [ms]')
