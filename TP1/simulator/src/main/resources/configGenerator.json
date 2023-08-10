@@ -3,7 +3,7 @@
   "dynamicFile": "src/main/resources/dynamic.txt",
   "N": 50,
   "L": 100.0,
-  "max_radius": 1.0,
-  "min_radius": 2.0,
+  "max_radius": 2.0,
+  "min_radius": 1.0,
   "times": 1
 }
