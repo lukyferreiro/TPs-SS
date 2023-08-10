@@ -2,13 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plotM_variation(data_dict):
-    for n, values in data_dict.items():
+    sorted_data = sorted(data_dict.items())
+    
+    for n, values in sorted_data:
         cant_m = len(values)
         averages = []
         errors = []
+        sorted_m = sorted(values.keys())
+        smallest_m = sorted_m[0]  # Obtener el valor más pequeño
 
         # Calcular promedios y errores para el valor de N actual
-        for m in range(1, cant_m+1):
+        for m in range(smallest_m, cant_m+1):
             array_values = values[m]
             if array_values:
                 avg = np.mean(array_values)
@@ -18,7 +22,7 @@ def plotM_variation(data_dict):
 
         color_palette = plt.cm.get_cmap('tab20')
         # Crear gráfico de barras para el valor de N actual
-        plt.bar(np.arange(1, cant_m+1), averages, yerr=errors, capsize=4, tick_label=range(1, cant_m+1), color=color_palette(range(cant_m)))
+        plt.bar(np.arange(smallest_m, cant_m+1), averages, yerr=errors, capsize=4, tick_label=range(smallest_m, cant_m+1), color=color_palette(range(cant_m)))
         plt.xlabel('Valores de M')
         plt.ylabel('Tiempo [ms]')
         plt.title(f'Tiempo promedio para N={n}')

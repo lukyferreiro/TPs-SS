@@ -5,7 +5,7 @@
   "outTimeFile": "src/main/resources/time.txt",
   "method": "CIM",
   "isPeriodic": true,
-  "Rc": 15.0,
-  "M": 5,
-  "particleId": 45
+  "Rc": 1.0,
+  "M": 13,
+  "particleId": 21
 }

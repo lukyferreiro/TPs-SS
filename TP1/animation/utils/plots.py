@@ -53,6 +53,8 @@ def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method, sel
     ax.set_xticks(np.linspace(0, L, M+1))
     ax.set_yticks(np.linspace(0, L, M+1))
 
+    ax.set_xticklabels([f'{round(val, 2):.2f}' for val in ax.get_xticks()], rotation=90)
+
     # Restringimos los límites del plot a L
     ax.set_xlim(0, L)
     ax.set_ylim(0, L)

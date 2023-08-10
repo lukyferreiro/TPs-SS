@@ -22,40 +22,42 @@ public class Benchmark {
         final double Rc = 1.0;
         final double L = 20.0;
         final int ITERATIONS = 100;
+        final int PARTICLES_ITERATIONS = 15;
+        final int PARTICLES_MULTIPLIER = 10;
         long N;
         ParticlesParserResult parser;
 
 
         //-----Variando la cantidad de particulas con CIM con varios M ----
 
-//        MethodResult results;
-//
-//        for (int i = 0; i < 10; i++) {
-//            N = (i + 1) * 100;
-//
-//            System.out.printf("Variando M con N=%d\n", N);
-//
-//            final String BENCHMARK_M = "src/main/resources/M_variation/N_" + N + ".txt";
-//            final File BENCHMARK_FILE_M = new File(BENCHMARK_M);
-//
-//            try (PrintWriter pwM = new PrintWriter(BENCHMARK_FILE_M)) {
-//                pwM.println("Variando el numero de celdas M");
-//                for (long m = 1; m <= 13; m++) {
-//                    List<Double> times = new ArrayList<>();
-//                    pwM.printf(Locale.US, "M:%d -- ", m);
-//
-//                    for (int k = 0; k < ITERATIONS; k++) {
-//                        parser = createStaticAndDynamicFiles(N, L);
-//                        results = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, m, Rc, true);
-//                        final double totalTime = (double) results.getTotalTime() / 1_000_000;
-//                        times.add(totalTime);
-//                    }
-//
-//                    times.forEach(time -> pwM.append(String.format(Locale.US, "%.4f ", time)));
-//                    pwM.println();
-//                }
-//            }
-//        }
+        MethodResult results;
+
+        for (int i = 0; i < PARTICLES_ITERATIONS; i++) {
+            N = (i + 1) * PARTICLES_MULTIPLIER;
+
+            System.out.printf("Variando M con N=%d\n", N);
+
+            final String BENCHMARK_M = "src/main/resources/M_variation/N_" + N + ".txt";
+            final File BENCHMARK_FILE_M = new File(BENCHMARK_M);
+
+            try (PrintWriter pwM = new PrintWriter(BENCHMARK_FILE_M)) {
+                pwM.println("Variando el numero de celdas M");
+                for (long m = 2; m <= 13; m++) {
+                    List<Double> times = new ArrayList<>();
+                    pwM.printf(Locale.US, "M:%d -- ", m);
+
+                    for (int k = 0; k < ITERATIONS; k++) {
+                        parser = createStaticAndDynamicFiles(N, L);
+                        results = CellIndexMethod.calculateNeighbors(parser.getParticlesPerTime().get(0), L, m, Rc, true);
+                        final double totalTime = (double) results.getTotalTime() / 1_000_000;
+                        times.add(totalTime);
+                    }
+
+                    times.forEach(time -> pwM.append(String.format(Locale.US, "%.4f ", time)));
+                    pwM.println();
+                }
+            }
+        }
 
         //--------------Variando la cantidad de particulas y comparando CIM con BRUTE------------------
 
@@ -64,8 +66,8 @@ public class Benchmark {
         MethodResult resultsCim;
         MethodResult resultsBrute;
 
-        for (int i = 0; i < 10; i++) {
-            N = (i + 1) * 100;
+        for (int i = 0; i < PARTICLES_ITERATIONS; i++) {
+            N = (i + 1) * PARTICLES_MULTIPLIER;
 
             System.out.printf("Comparando CIM y BRUTE con N=%d\n", N);
 
