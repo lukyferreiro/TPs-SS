@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 
 def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method, selectedParticleId):
     fig, ax = plt.subplots()
@@ -15,11 +14,6 @@ def plotParticles(particle_dict, neighbors_data, M, L, Rc, periodic, method, sel
         text_x = position[0] + radius + label_offset
         text_y = position[1]
         ax.text(text_x, text_y, str(particle_id), ha='left', va='center', color='black', fontsize=8)
-
-    # Seleccionamos aleatoriamente una particula para remarcar sus vecinos
-    #random_row = random.choice(neighbors_data)
-    #selected_particle_id = random_row[0]
-    #selected_particle_radius, selected_particle_position = particle_dict[selected_particle_id]
 
     # Dibujamos la partícula seleccionada en rojo
     selected_particle_radius, selected_particle_position = particle_dict[selectedParticleId]

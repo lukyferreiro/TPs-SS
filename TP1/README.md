@@ -1,4 +1,4 @@
-## TP1 - Cell Index Method
+# TP1 - Cell Index Method
 
 En este TP se implementa el algoritmo Cell Index Method con visualizacion de los vecinos.
 
@@ -10,7 +10,7 @@ Tras esto se generaran dos archivos:
 - static.txt: con el valor de N, L y el radio de cada particula y su propiedad.
 - dynamic.txt: con las posiciones X e Y de las N particulas en el tiempo 0
 
-## Calcular los vecinos
+## Calculo de los vecinos
 
 Tras haber generado el archivo estatico y dinamico con la informacion de las particulas, se debe ejecutar el main del
 archivo CalculateNeighbours.java. Su ejecución tomará los datos de configMethod.json

@@ -4,9 +4,6 @@ import ar.edu.itba.models.Cell;
 import ar.edu.itba.models.Grid;
 import ar.edu.itba.models.Particle;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 import static ar.edu.itba.models.Particle.Position;
@@ -17,7 +14,7 @@ public class CellIndexMethod {
             Map<Particle, Position> particles, double L, Long M, double Rc, Boolean periodic
     ) {
 
-        final LocalDateTime startTime = LocalDateTime.now();
+        final long startTime = System.nanoTime();
         final Grid grid = new Grid(L, M, particles, periodic);
         final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
 
@@ -34,8 +31,8 @@ public class CellIndexMethod {
             }
         }
 
-        final LocalDateTime endTime = LocalDateTime.now();
-        final Duration totalTime = Duration.between(startTime, endTime);
+        final long endTime = System.nanoTime();
+        final long totalTime = endTime - startTime;
         return new MethodResult(neighbors, totalTime);
     }
 

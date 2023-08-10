@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -86,12 +85,8 @@ public class CalculateNeighbours {
         }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-            Duration duration = results.getTotalTime();
-            long hours = duration.toHours();
-            long minutes = duration.toMinutesPart();
-            long seconds = duration.toSecondsPart();
-            long millis = duration.toMillisPart();
-            pw.append(String.format("%s - %02d:%02d:%02d.%03d\n", "Total time", hours, minutes, seconds, millis));
+            final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
+            pw.append(String.format("%s - %.3f%s\n", "Total time", totalTimeMillis, "ms"));
         }
 
     }

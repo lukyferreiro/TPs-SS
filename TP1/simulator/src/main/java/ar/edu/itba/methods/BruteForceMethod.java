@@ -1,11 +1,7 @@
 package ar.edu.itba.methods;
 
-import ar.edu.itba.models.Grid;
 import ar.edu.itba.models.Particle;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -15,7 +11,7 @@ public class BruteForceMethod {
             Map<Particle, Particle.Position> particles, double L, double Rc, Boolean periodic
     ) {
 
-        final LocalDateTime startTime = LocalDateTime.now();
+        final long startTime = System.nanoTime();
         final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
 
         BiFunction<Particle.Position, Particle.Position, Double> computeDistance = periodic
@@ -40,8 +36,8 @@ public class BruteForceMethod {
             }
         }
 
-        final LocalDateTime endTime = LocalDateTime.now();
-        final Duration totalTime = Duration.between(startTime, endTime);
+        final long endTime = System.nanoTime();
+        final long totalTime = endTime - startTime;
         return new MethodResult(neighbors, totalTime);
     }
 }
