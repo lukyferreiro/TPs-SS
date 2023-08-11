@@ -16,7 +16,7 @@ def plotM_variation(data_dict):
         smallest_m = sorted_m[0]  # Obtener el valor más pequeño
 
         # Calcular promedios y errores para el valor de N actual
-        for m in range(smallest_m, cant_m+1):
+        for m in range(smallest_m, cant_m+2):
 
             #density_per_m = (n / (L*L)) / (m*m)
             #densities.append(density_per_m)
@@ -29,7 +29,7 @@ def plotM_variation(data_dict):
                 errors.append(err)
 
         color_palette = plt.cm.get_cmap('tab20')
-        bars = plt.bar(np.arange(smallest_m, cant_m+1), averages, yerr=errors, capsize=4, tick_label=range(smallest_m, cant_m+1), color=color_palette(range(cant_m)))
+        bars = plt.bar(np.arange(smallest_m, cant_m+2), averages, yerr=errors, capsize=4, tick_label=range(smallest_m, cant_m+2), color=color_palette(range(cant_m)))
         plt.xlabel('Cantidad de celdas (M)')
         plt.ylabel('Tiempo [ms]')
         plt.title(f'Tiempo promedio para N={n}')
@@ -37,7 +37,7 @@ def plotM_variation(data_dict):
         #plt.legend(bars, [f'Densidad={round(d, 5):.5f}' for d in densities], loc='center left', bbox_to_anchor=(1, 0.5))
         plt.show()
 
-def plotMethod_variation(data):
+def plotMethod_variation(data, M):
     # Ordenar las claves del diccionario
     sorted_keys = sorted(data.keys())
 
@@ -70,8 +70,51 @@ def plotMethod_variation(data):
 
     plt.xlabel('Cantidad de particulas (N)')
     plt.ylabel('Tiempo [ms]')
-    plt.title('Tiempo promedio comparando los metodos utilizados')
+    plt.title(f'Tiempo promedio segun el metodo con M={M}')
     plt.xticks(np.arange(len(sorted_keys)) + 0.2, sorted_keys)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plotErrorbarMethod_variation(data, M):
+    # Ordenar las claves del diccionario
+    sorted_keys = sorted(data.keys())
+
+    averages_cim = []
+    errors_cim = []
+    averages_brute = []
+    errors_brute = []
+
+    for n in sorted_keys:
+        methods = data[n]
+        array_values_cim = methods['CIM']
+        array_values_brute = methods['BRUTE']
+        
+        if array_values_cim:
+            avg_cim = np.mean(array_values_cim)
+            err_cim = np.std(array_values_cim) / np.sqrt(len(array_values_cim))
+            averages_cim.append(avg_cim)
+            errors_cim.append(err_cim)
+        
+        if array_values_brute:
+            avg_brute = np.mean(array_values_brute)
+            err_brute = np.std(array_values_brute) / np.sqrt(len(array_values_brute))
+            averages_brute.append(avg_brute)
+            errors_brute.append(err_brute)
+
+    # Crear gráfico de errorbars para CIM
+    plt.errorbar(np.arange(len(sorted_keys)), averages_cim, yerr=errors_cim, fmt='o', color='blue', label='CIM', capsize=4,  ecolor="black")
+    # Crear gráfico de errorbars para BRUTE
+    plt.errorbar(np.arange(len(sorted_keys)), averages_brute, yerr=errors_brute, fmt='o', color='orange', label='BRUTE', capsize=4, ecolor="black")
+
+    # Agregar líneas entre los puntos
+    plt.plot(np.arange(len(sorted_keys)), averages_cim, color='blue', linestyle='-', linewidth=1, alpha=0.5)
+    plt.plot(np.arange(len(sorted_keys)), averages_brute, color='orange', linestyle='-', linewidth=1, alpha=0.5)
+
+    plt.xlabel('Cantidad de particulas (N)')
+    plt.ylabel('Tiempo [ms]')
+    plt.title(f'Tiempo promedio segun el metodo con M={M}')
+    plt.xticks(np.arange(len(sorted_keys)), sorted_keys)
     plt.legend()
     plt.tight_layout()
     plt.show()

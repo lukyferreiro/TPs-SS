@@ -1,7 +1,7 @@
 {
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
-  "N": 60,
+  "N": 100,
   "L": 20.0,
   "max_radius": 0.25,
   "min_radius": 0.25,

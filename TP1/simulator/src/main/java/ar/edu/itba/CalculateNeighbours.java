@@ -86,7 +86,7 @@ public class CalculateNeighbours {
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
-            pw.append(String.format("%s - %.3f%s\n", "Total time", totalTimeMillis, "ms"));
+            pw.append(String.format(Locale.US, "%s - %.3f%s\n", "Total time", totalTimeMillis, "ms"));
         }
 
     }

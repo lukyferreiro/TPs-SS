@@ -60,7 +60,7 @@ public class Benchmark {
 
         //--------------Variando la cantidad de particulas y comparando CIM con BRUTE------------------
 
-        long M = 5;
+        long M = 13;
 
         MethodResult resultsCim;
         MethodResult resultsBrute;
