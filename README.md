@@ -6,4 +6,8 @@
 
 ## TP1 - [Cell Index Method](https://github.com/lukyferreiro/TPs-SS/tree/main/TP1)
 
-En este TP se implementa el algoritmo Cell Index Method con visualizacion de los vecinos.
+En este TP se implementa el algoritmo Cell Index Method con visualización de los vecinos.
+
+## TP2 - [Autómata Off-Lattice: Bandadas de agentes autopropulsados](https://github.com/lukyferreiro/TPs-SS/tree/main/TP2)
+
+En este TP se implementa el algoritmo de bandadas de agentes propulsores usando un autómata Off-Lattice.
