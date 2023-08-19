@@ -67,6 +67,34 @@ public class Particle {
 
             return Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
         }
+    }
+
+    public static class State {
+        private final Position position;
+        private final double speed;
+        private final double angle; //In radians
+
+        public State(Position position, double speed, double angle) {
+            this.position = position;
+            this.speed = speed;
+            this.angle = angle;
+        }
+
+        public Position getPosition() {
+            return position;
+        }
+        public double getAngle() {
+            return angle;
+        }
+        public double getSpeed() {
+            return speed;
+        }
+        public double getXVelocity() {
+            return Math.cos(angle) * speed;
+        }
+        public double getYVelocity() {
+            return Math.sin(angle) * speed;
+        }
 
     }
 }
