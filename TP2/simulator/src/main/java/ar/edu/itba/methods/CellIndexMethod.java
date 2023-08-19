@@ -16,9 +16,9 @@ public class CellIndexMethod {
 
         final long startTime = System.nanoTime();
         final Grid grid = new Grid(L, M, particles, periodic);
-        final Map<Integer, Set<Particle>> neighbors = new HashMap<>();
+        final Map<Particle, Set<Particle>> neighbors = new HashMap<>();
 
-        particles.forEach((key, value) -> neighbors.put(key.getId(), new HashSet<>()));
+        particles.forEach((key, value) -> neighbors.put(key, new HashSet<>()));
 
         for (int y = 0; y < M; y++) {
             for (int x = 0; x < M; x++) {
@@ -38,7 +38,7 @@ public class CellIndexMethod {
 
     private static void checkNeighbors(
             Particle particle, Map<Particle, Position> particles,
-            Cell cell, Map<Integer, Set<Particle>> neighbors,
+            Cell cell, Map<Particle, Set<Particle>> neighbors,
             double Rc, double L, Long M, boolean periodic
     ) {
         final Cell topCell = cell.getTopCell();
@@ -131,14 +131,14 @@ public class CellIndexMethod {
 
     private static void addIfInRadius(
             Particle particle, Position particlePosition, Particle otherParticle,
-            Position otherParticlePosition, Map<Integer, Set<Particle>> neighbors, double Rc
+            Position otherParticlePosition, Map<Particle, Set<Particle>> neighbors, double Rc
     ) {
         //Distancia Borde-borde = Distancia centros de masa - Ri -Rj.
         final double distance = Position.calculateDistance(particlePosition, otherParticlePosition);
         final double borderDistance = distance - particle.getRadius() - otherParticle.getRadius();
         if (borderDistance <= Rc) {
-            neighbors.get(particle.getId()).add(otherParticle);
-            neighbors.get(otherParticle.getId()).add(particle);
+            neighbors.get(particle).add(otherParticle);
+            neighbors.get(otherParticle).add(particle);
         }
     }
 

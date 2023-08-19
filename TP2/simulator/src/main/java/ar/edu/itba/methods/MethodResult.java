@@ -6,19 +6,21 @@ import java.util.Map;
 import java.util.Set;
 
 public class MethodResult {
+    private final Map<Particle, Set<Particle>> neighbors;
     private final long totalTime;
-    private final Map<Integer, Set<Particle>> neighbors;
 
-    public MethodResult(Map<Integer, Set<Particle>> neighbors, long totalTime) {
-        this.totalTime = totalTime;
+    public MethodResult(Map<Particle, Set<Particle>> neighbors, long totalTime) {
         this.neighbors = neighbors;
+        this.totalTime = totalTime;
+
     }
 
+    public Map<Particle, Set<Particle>> getNeighbors() {
+        return neighbors;
+    }
     public long getTotalTime() {
         return totalTime;
     }
-    public Map<Integer, Set<Particle>> getNeighbors() {
-        return neighbors;
-    }
+
 
 }
