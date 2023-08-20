@@ -1,9 +1,7 @@
 package ar.edu.itba;
 
-import ar.edu.itba.methods.BruteForceMethod;
-import ar.edu.itba.methods.CellIndexMethod;
 import ar.edu.itba.models.Particle;
-import ar.edu.itba.methods.MethodResult;
+
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -16,11 +14,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
-import java.util.Objects;
 
-public class CalculateNeighbours {
-    private final static String CIM = "CIM";
-    private final static String BRUTE = "BRUTE";
+
+public class Simulation {
     public static void main(String[] args) throws IOException, ParseException {
 
         FileReader fr = new FileReader("src/main/resources/configMethod.json");
@@ -42,47 +38,24 @@ public class CalculateNeighbours {
                 .stream()
                 .map(Particle::getRadius)
                 .max(Double::compare)
-                .orElse(0.0);
+                .orElseThrow();
 
-        if (parser.getL() / (double) config.getM() <= config.getRc() + 2 * maxRadius) {
-            System.out.printf(Locale.US,"Invalid condition L/M>R (L=%f, M=%d, R=%f and maxR=%f)\n",
-                    parser.getL(), config.getM(), config.getRc(), maxRadius);
-            return;
+        final double gridCondition = parser.getL() / config.getRc() + 2 * maxRadius;
+
+        long optimalM = (int) Math.floor(gridCondition);
+        if (gridCondition == (int) gridCondition) {
+            optimalM = (int) gridCondition - 1;
         }
 
         System.out.println("Start simulation\n");
-        System.out.println("Calculating Neighbours ...\n");
 
-        MethodResult results;
-        if(Objects.equals(config.getMethod(), CIM)){
-            results = CellIndexMethod.calculateNeighbors(
-                    parser.getParticlesPerTime().get(0),
-                    parser.getL(), config.getM(),
-                    config.getRc(), config.getPeriodic()
-            );
-        } else if (Objects.equals(config.getMethod(), BRUTE)) {
-            results = BruteForceMethod.calculateNeighbors(
-                    parser.getParticlesPerTime().get(0),
-                    parser.getL(), config.getRc(),
-                    config.getPeriodic()
-            );
-        } else {
-            return;
-        }
+        //todo
 
         System.out.println("Simulation finished\n");
         System.out.println("Writing Results ...\n");
 
-        final File outNeighborsFile = new File(config.getOutNeighborsFile());
         final File outTimeFile = new File(config.getOutTimeFile());
 
-        try (PrintWriter pw = new PrintWriter(outNeighborsFile)) {
-            results.getNeighbors().forEach((key, value) -> {
-                pw.append(String.format("%d ", key));
-                value.forEach(particle -> pw.append(String.format("%d ", particle.getId())));
-                pw.println();
-            });
-        }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds

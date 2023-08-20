@@ -9,6 +9,7 @@ import java.util.*;
 import java.lang.Double;
 import java.lang.Integer;
 import static ar.edu.itba.models.Particle.Position;
+import static ar.edu.itba.models.Particle.State;
 
 public class ParticlesParser {
 
@@ -34,7 +35,7 @@ public class ParticlesParser {
 
         int particleIndex = 0;
         int timeIndex = -1;
-        final List<Map<Particle, Position>> particlesPerTime = new ArrayList<>();
+        final List<Map<Particle, State>> particlesPerTime = new ArrayList<>();
 
         while (dynamicScanner.hasNextLine()) {
             List<String> dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(" "));
@@ -47,15 +48,19 @@ public class ParticlesParser {
                 particlesPerTime.add(new HashMap<>());
             }
 
-            final Map<Particle, Position> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+            final Map<Particle, State> currentParticlesPerTime = particlesPerTime.get(timeIndex);
             final Particle currentParticle = particles.get(particleIndex);
 
-            final Position currentParticlePosition = new Position(
-                    Double.parseDouble(dynamicArray.get(0)),    //En primera posicion tengo X
-                    Double.parseDouble(dynamicArray.get(1))     //En segunda posicion tengo Y
+            final State currentParticleState = new State(
+                    new Position(
+                            Double.parseDouble(dynamicArray.get(0)),    //En primera posicion tengo X
+                            Double.parseDouble(dynamicArray.get(1))     //En segunda posicion tengo Y
+                    ),
+                    Double.parseDouble(dynamicArray.get(2)),    //En tercera posicion tengo la velocidad
+                    Double.parseDouble(dynamicArray.get(3))     //En cuarta posicion tengo el angulo
             );
 
-            currentParticlesPerTime.put(currentParticle, currentParticlePosition);
+            currentParticlesPerTime.put(currentParticle, currentParticleState);
             particleIndex++;
         }
 

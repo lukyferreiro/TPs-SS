@@ -10,6 +10,8 @@ public class ConfigGeneratorParser {
     private final Double minR;  //Radio minimo para las particulas
     private final Double maxR;  //Radio maximo para las particulas
     private final Long times;   //Cantidad de tiempos
+    private final Double property;  //Propiedad de las particulas
+    private final Double speed;     //Velocidad de las particulas
 
     public ConfigGeneratorParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
@@ -19,6 +21,8 @@ public class ConfigGeneratorParser {
         this.minR = (Double) json.get("max_radius");
         this.maxR = (Double) json.get("min_radius");
         this.times = (Long) json.get("times");
+        this.property = (Double) json.get("property");
+        this.speed = (Double) json.get("speed");
     }
 
     public String getStaticFile() {
@@ -42,5 +46,10 @@ public class ConfigGeneratorParser {
     public Long getTimes() {
         return times;
     }
-
+    public Double getProperty() {
+        return property;
+    }
+    public Double getSpeed() {
+        return speed;
+    }
 }

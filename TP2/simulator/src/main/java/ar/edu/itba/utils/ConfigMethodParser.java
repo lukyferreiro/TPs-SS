@@ -6,22 +6,23 @@ public class ConfigMethodParser {
 
     private final String staticFile;
     private final String dynamicFile;
-    private final String outNeighborsFile;
+    //TODO agregar out files
     private final String outTimeFile;
-    private final String method;
     private final Boolean isPeriodic;
     private final Double Rc;    //Radio de interaccion entre las particulas
-    private final Long M;   //Tendremos MxM celdas
+    private final Double dt;    //Paso temporal
+    private final Double eta;   //Amplitud de ruido
+    private final Long maxIterations;
 
     public ConfigMethodParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
         this.dynamicFile = (String) json.get("dynamicFile");
-        this.outNeighborsFile = (String) json.get("outNeighborsFile");
         this.outTimeFile = (String) json.get("outTimeFile");
-        this.method = (String) json.get("method");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
         this.Rc = (Double) json.get("Rc");
-        this.M = (Long) json.get("M");
+        this.dt = (Double) json.get("dt");
+        this.eta = (Double) json.get("eta");
+        this.maxIterations = (Long) json.get("maxIterations");
     }
 
     public String getStaticFile() {
@@ -30,14 +31,8 @@ public class ConfigMethodParser {
     public String getDynamicFile() {
         return dynamicFile;
     }
-    public String getOutNeighborsFile() {
-        return outNeighborsFile;
-    }
     public String getOutTimeFile() {
         return outTimeFile;
-    }
-    public String getMethod() {
-        return method;
     }
     public Boolean getPeriodic() {
         return isPeriodic;
@@ -45,8 +40,14 @@ public class ConfigMethodParser {
     public Double getRc() {
         return Rc;
     }
-    public Long getM() {
-        return M;
+    public Double getDt() {
+        return dt;
+    }
+    public Double getEta() {
+        return eta;
+    }
+    public Long getMaxIterations() {
+        return maxIterations;
     }
 }
 

@@ -14,6 +14,8 @@ import java.util.Random;
 
 public class Generator {
 
+    private static final Double MAX_ANGLE = 2 * Math.PI;
+
     public static void main(String[] args) throws IOException, ParseException {
 
         FileReader fr = new FileReader("src/main/resources/configGenerator.json");
@@ -31,11 +33,9 @@ public class Generator {
             pw.println(config.getN());
             pw.println(config.getL());
             for (int i = 0; i < config.getN(); i++) {
-                pw.printf(Locale.US, "%f %f\n", minR + Math.random() * (maxR - minR), 1.0000);
+                pw.printf(Locale.US, "%f %f\n", minR + Math.random() * (maxR - minR), config.getProperty());
             }
         }
-
-        //TODO habria que chequear colision de particulas
 
         try (PrintWriter pw = new PrintWriter(dynamicFile)) {
             final Random random = new Random();
@@ -44,7 +44,9 @@ public class Generator {
                 for (int j = 0; j < config.getN(); j++) {
                     double x = random.nextDouble() * (config.getL());
                     double y = random.nextDouble() * (config.getL());
-                    pw.printf(Locale.US, "%f %f\n", x, y);
+                    double speed = config.getSpeed();
+                    double angle = random.nextDouble() * (MAX_ANGLE);
+                    pw.printf(Locale.US, "%f %f %f %f\n", x, y, speed, angle);
                 }
             }
         }
