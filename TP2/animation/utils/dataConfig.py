@@ -22,7 +22,7 @@ class DataConfig:
       self.Rc = check_float(data['Rc'], "Rc")
       self.dt = check_float(data['dt'], "dt")
       self.eta = check_float(data['eta'], "eta")
-      self.maxIterations = check_int(data['maxIterations'], "maxIterations")
+      self.iterations = check_int(data['iterations'], "iterations")
 
       with open(f"../simulator/{self.staticFile}", 'r') as static:
         self.N = int(static.readline().strip())
