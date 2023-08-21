@@ -33,8 +33,6 @@ public class Simulation {
 
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
-        //Buscamos la particula con radio mas grande para contemplar el peor caso al momento de
-        //calcular la distancia entre las particulas y no romper con la condicion L/M > Rc
         final double maxRadius = parser.getParticlesPerTime()
                 .get(0)
                 .keySet()
@@ -50,7 +48,7 @@ public class Simulation {
             optimalM = (int) gridCondition - 1;
         }
 
-        System.out.println("Start simulation\n");
+        System.out.println("Start simulation ...\n");
 
         OffLatticeResult results = OffLattice.startSimulation(
                 parser.getParticlesPerTime().get(0),
@@ -63,7 +61,7 @@ public class Simulation {
                 config.getIterations()
         );
 
-        System.out.println("Simulation finished\n");
+        System.out.println("Simulation finished ...\n");
         System.out.println("Writing Results ...\n");
 
         final File outTimeFile = new File(config.getOutTimeFile());
@@ -75,7 +73,7 @@ public class Simulation {
                 pw.append(String.format("%d\n", i));
                 final Map<Particle, State> currentStates = results.getParticlesStates().get(i);
                 currentStates.forEach((particle, state) ->
-                        pw.printf(Locale.US, "%d %.5f %.5f %.5f %.5f\n",
+                        pw.printf(Locale.US, "%d %.5f %.5f %.3f %.5f\n",
                                 particle.getId(),
                                 state.getPosition().getX(),
                                 state.getPosition().getY(),
@@ -88,9 +86,9 @@ public class Simulation {
 
         try (PrintWriter pw = new PrintWriter(outOrderParametersVa)) {
             pw.printf(Locale.US, "%d ", parser.getN());
-            pw.printf(Locale.US,"%.5f", parser.getL());
-            pw.printf(Locale.US,"%.5f ", config.getRc());
-            pw.printf(Locale.US,"%.5f ", config.getEta());
+            pw.printf(Locale.US,"%.2f ", parser.getL());
+            pw.printf(Locale.US,"%.1f ", config.getRc());
+            pw.printf(Locale.US,"%.2f ", config.getEta());
             pw.printf(Locale.US,"%d\n", config.getIterations());
             results.getOrderParameter().forEach(pw::println);
         }
