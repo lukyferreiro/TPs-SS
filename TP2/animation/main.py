@@ -20,7 +20,7 @@ def main():
 
     particles_dict = parseOffLatticeFile(TO_OFF_LATTICE)
 
-    animation_times = len(list(particles_dict.keys()))
+    animation_times = list(particles_dict.keys())
 
     FuncAnimation(plt.gcf(), update, frames=animation_times, fargs=(particles_dict, c.L), interval=1, repeat=False).save("simulation.gif")
     plt.show()
