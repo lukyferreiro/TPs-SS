@@ -1,7 +1,8 @@
 package ar.edu.itba;
 
 import ar.edu.itba.models.Particle;
-
+import ar.edu.itba.off_lattice.OffLattice;
+import ar.edu.itba.off_lattice.OffLatticeResult;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -14,7 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.Map;
 
+import static ar.edu.itba.models.Particle.State;
 
 public class Simulation {
     public static void main(String[] args) throws IOException, ParseException {
@@ -38,7 +41,7 @@ public class Simulation {
                 .stream()
                 .map(Particle::getRadius)
                 .max(Double::compare)
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
 
         final double gridCondition = parser.getL() / config.getRc() + 2 * maxRadius;
 
@@ -49,13 +52,48 @@ public class Simulation {
 
         System.out.println("Start simulation\n");
 
-        //todo
+        OffLatticeResult results = OffLattice.startSimulation(
+                parser.getParticlesPerTime().get(0),
+                parser.getL(),
+                optimalM,
+                config.getRc(),
+                config.getDt(),
+                config.getEta(),
+                config.getPeriodic(),
+                config.getMaxIterations()
+        );
 
         System.out.println("Simulation finished\n");
         System.out.println("Writing Results ...\n");
 
         final File outTimeFile = new File(config.getOutTimeFile());
+        final File outOffLattice = new File(config.getOutOffLatticeFile());
+        final File outOrderParametersVa = new File(config.getOutOrderParametersVaFile());
 
+        try (PrintWriter pw = new PrintWriter(outOffLattice)) {
+            for (int i = 0; i < results.getParticlesStates().size(); i++) {
+                pw.append(String.format("%d\n", i));
+                final Map<Particle, State> currentStates = results.getParticlesStates().get(i);
+                currentStates.forEach((particle, state) ->
+                        pw.printf(Locale.US, "%d %f %f %f %f\n",
+                                particle.getId(),
+                                state.getPosition().getX(),
+                                state.getPosition().getY(),
+                                state.getSpeed(),
+                                state.getAngle()
+                        )
+                );
+            }
+        }
+
+        try (PrintWriter pw = new PrintWriter(outOrderParametersVa)) {
+            pw.printf(Locale.US, "%d ", parser.getN());
+            pw.printf(Locale.US,"%f ", parser.getL());
+            pw.printf(Locale.US,"%f ", config.getRc());
+            pw.printf(Locale.US,"%f ", config.getEta());
+            pw.printf(Locale.US,"%d\n", config.getMaxIterations());
+            results.getOrderParameter().forEach(pw::println);
+        }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds

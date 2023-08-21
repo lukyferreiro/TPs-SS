@@ -6,7 +6,8 @@ public class ConfigMethodParser {
 
     private final String staticFile;
     private final String dynamicFile;
-    //TODO agregar out files
+    private final String outOffLatticeFile;
+    private final String outOrderParametersVaFile;
     private final String outTimeFile;
     private final Boolean isPeriodic;
     private final Double Rc;    //Radio de interaccion entre las particulas
@@ -17,6 +18,8 @@ public class ConfigMethodParser {
     public ConfigMethodParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
         this.dynamicFile = (String) json.get("dynamicFile");
+        this.outOffLatticeFile = (String) json.get("outOffLatticeFile");
+        this.outOrderParametersVaFile = (String) json.get("outOrderParametersVaFile");
         this.outTimeFile = (String) json.get("outTimeFile");
         this.isPeriodic = (Boolean) json.get("isPeriodic");
         this.Rc = (Double) json.get("Rc");
@@ -30,6 +33,12 @@ public class ConfigMethodParser {
     }
     public String getDynamicFile() {
         return dynamicFile;
+    }
+    public String getOutOffLatticeFile() {
+        return outOffLatticeFile;
+    }
+    public String getOutOrderParametersVaFile() {
+        return outOrderParametersVaFile;
     }
     public String getOutTimeFile() {
         return outTimeFile;

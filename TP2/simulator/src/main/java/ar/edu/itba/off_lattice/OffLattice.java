@@ -32,7 +32,9 @@ public class OffLattice {
 
             //Update particles positions
             final Map<Particle, Position> currentParticlesPositions = currentParticlesStates
-                    .entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getPosition()));
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getPosition()));
 
             final Map<Particle, Set<Particle>> currentNeighbors = CellIndexMethod
                     .calculateNeighbors(currentParticlesPositions, L, M, R, periodic).getNeighbors();
@@ -53,8 +55,8 @@ public class OffLattice {
     }
 
     private static State getNextState(
-            Particle currentParticle, Set<Particle> neighbors, Map<Particle,
-            State> particlesState, double dt, double eta, double L
+            Particle currentParticle, Set<Particle> neighbors, Map<Particle, State> particlesState,
+            double dt, double eta, double L
     ) {
 
         final List<State> neighborsStates = neighbors.stream().map(particlesState::get).collect(Collectors.toList());

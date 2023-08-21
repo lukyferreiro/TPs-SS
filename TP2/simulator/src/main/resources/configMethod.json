@@ -1,6 +1,8 @@
 {
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
+  "outOffLatticeFile": "src/main/resources/off_lattice.txt",
+  "outOrderParametersVaFile": "src/main/resources/va.txt",
   "outTimeFile": "src/main/resources/time.txt",
   "isPeriodic": true,
   "Rc": 1.0,
