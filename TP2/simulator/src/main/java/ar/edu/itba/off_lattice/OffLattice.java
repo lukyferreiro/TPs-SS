@@ -26,7 +26,7 @@ public class OffLattice {
         while (iterations < maxIterations) {
             final Map<Particle, State> currentParticlesStates = particlesStates.get(particlesStates.size() - 1);
 
-            //Create order parameter
+            //Calculate order parameter
             currentOrderParameter = generateOrderParameterVa(currentParticlesStates.values());
             orderParameters.add(currentOrderParameter);
 
@@ -62,6 +62,7 @@ public class OffLattice {
         final List<State> neighborsStates = neighbors.stream().map(particlesState::get).collect(Collectors.toList());
         final State currentParticleState = particlesState.get(currentParticle);
 
+        // Calculate next position
         double nextX = (currentParticleState.getPosition().getX() + currentParticleState.getXVelocity() * dt) % L;
         if (nextX < 0) {
             nextX += L;
@@ -71,10 +72,11 @@ public class OffLattice {
             nextY += L;
         }
 
+        final Position nextPosition = new Position(nextX, nextY);
+
+        // Calculate next angle
         final List<State> surroundingParticlesStates = new ArrayList<>(neighborsStates);
         surroundingParticlesStates.add(currentParticleState);
-
-        final Position nextPosition = new Position(nextX, nextY);
 
         final double avgCos = surroundingParticlesStates.stream()
                 .mapToDouble(p -> Math.cos(p.getAngle())).average().orElseThrow(RuntimeException::new);
@@ -87,8 +89,7 @@ public class OffLattice {
     }
 
     private static double generateNoise(double eta) {
-        final Random random = new Random();
-        return -eta / 2 + eta * random.nextDouble();
+        return -eta / 2 + eta * new Random().nextDouble();
     }
 
     private static double generateOrderParameterVa(Collection<State> particlesStates) {
