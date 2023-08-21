@@ -62,9 +62,6 @@ public class OffLattice {
         final List<State> neighborsStates = neighbors.stream().map(particlesState::get).collect(Collectors.toList());
         final State currentParticleState = particlesState.get(currentParticle);
 
-        final List<State> surroundingParticlesStates = new ArrayList<>(neighborsStates);
-        surroundingParticlesStates.add(currentParticleState);
-
         double nextX = (currentParticleState.getPosition().getX() + currentParticleState.getXVelocity() * dt) % L;
         if (nextX < 0) {
             nextX += L;
@@ -73,6 +70,9 @@ public class OffLattice {
         if (nextY < 0) {
             nextY += L;
         }
+
+        final List<State> surroundingParticlesStates = new ArrayList<>(neighborsStates);
+        surroundingParticlesStates.add(currentParticleState);
 
         final Position nextPosition = new Position(nextX, nextY);
 

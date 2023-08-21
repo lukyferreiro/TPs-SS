@@ -60,7 +60,7 @@ public class Simulation {
                 config.getDt(),
                 config.getEta(),
                 config.getPeriodic(),
-                config.getMaxIterations()
+                config.getIterations()
         );
 
         System.out.println("Simulation finished\n");
@@ -75,7 +75,7 @@ public class Simulation {
                 pw.append(String.format("%d\n", i));
                 final Map<Particle, State> currentStates = results.getParticlesStates().get(i);
                 currentStates.forEach((particle, state) ->
-                        pw.printf(Locale.US, "%d %f %f %f %f\n",
+                        pw.printf(Locale.US, "%d %.5f %.5f %.5f %.5f\n",
                                 particle.getId(),
                                 state.getPosition().getX(),
                                 state.getPosition().getY(),
@@ -88,16 +88,16 @@ public class Simulation {
 
         try (PrintWriter pw = new PrintWriter(outOrderParametersVa)) {
             pw.printf(Locale.US, "%d ", parser.getN());
-            pw.printf(Locale.US,"%f ", parser.getL());
-            pw.printf(Locale.US,"%f ", config.getRc());
-            pw.printf(Locale.US,"%f ", config.getEta());
-            pw.printf(Locale.US,"%d\n", config.getMaxIterations());
+            pw.printf(Locale.US,"%.5f", parser.getL());
+            pw.printf(Locale.US,"%.5f ", config.getRc());
+            pw.printf(Locale.US,"%.5f ", config.getEta());
+            pw.printf(Locale.US,"%d\n", config.getIterations());
             results.getOrderParameter().forEach(pw::println);
         }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
-            pw.append(String.format(Locale.US, "%s - %.3f%s\n", "Total time", totalTimeMillis, "ms"));
+            pw.append(String.format(Locale.US, "Total time - %.5f ms\n", totalTimeMillis));
         }
 
     }

@@ -13,7 +13,7 @@ public class ConfigMethodParser {
     private final Double Rc;    //Radio de interaccion entre las particulas
     private final Double dt;    //Paso temporal
     private final Double eta;   //Amplitud de ruido
-    private final Long maxIterations;
+    private final Long iterations;
 
     public ConfigMethodParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
@@ -25,7 +25,7 @@ public class ConfigMethodParser {
         this.Rc = (Double) json.get("Rc");
         this.dt = (Double) json.get("dt");
         this.eta = (Double) json.get("eta");
-        this.maxIterations = (Long) json.get("maxIterations");
+        this.iterations = (Long) json.get("iterations");
     }
 
     public String getStaticFile() {
@@ -55,8 +55,8 @@ public class ConfigMethodParser {
     public Double getEta() {
         return eta;
     }
-    public Long getMaxIterations() {
-        return maxIterations;
+    public Long getIterations() {
+        return iterations;
     }
 }
 
