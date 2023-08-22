@@ -1,6 +1,5 @@
 package ar.edu.itba;
 
-import ar.edu.itba.models.Particle;
 import ar.edu.itba.off_lattice.OffLattice;
 import ar.edu.itba.off_lattice.OffLatticeResult;
 import ar.edu.itba.utils.ConfigGeneratorParser;
@@ -18,160 +17,162 @@ public class Benchmark {
 
         final double Rc = 1.0;
         final double DT = 1.0;
-        final int MAX_ITERATIONS = 3000;
-
-        final int ITERATIONS = 1000;
+        final int MAX_ITERATIONS = 2000;
 
         ParticlesParserResult parser;
         double gridCondition;
         long optimalM;
-        double maxRadius;
+        List<Integer> listN;
+        List<Double> listL;
 
-        double L = 100.0;
+        //-----Calculo va variando el valor de ruido (eta) y misma densidad ----
 
-        //-----Calculo de parametro de orden variando el valor de ruido (eta) ----
+        listN = List.of(40, 100, 400, 4000, 10000);
+        listL = List.of(Math.sqrt(10), 5.0, 10.0, Math.sqrt(1000), 50.0);
 
-        long N = 100;
+        for(int iter = 0; iter < listN.size(); iter++){
 
-        parser = createStaticAndDynamicFiles(N, L);
+            System.out.printf(Locale.US, "N=%d -- L=%.2f\n", listN.get(iter), listL.get(iter));
 
-        maxRadius = parser.getParticlesPerTime()
-                .get(0)
-                .keySet()
-                .stream()
-                .map(Particle::getRadius)
-                .max(Double::compare)
-                .orElseThrow(RuntimeException::new);
+            parser = createStaticAndDynamicFiles(listN.get(iter), listL.get(iter));
 
-        gridCondition = parser.getL() / Rc + 2 * maxRadius;
-        optimalM = (int) Math.floor(gridCondition);
-        if (gridCondition == (int) gridCondition) {
-            optimalM = (int) gridCondition - 1;
-        }
-
-        final double MAX_ETA = 5;
-        final double ETA_STEP = 0.5;
-
-        final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
-
-        for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
-            System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
-            orderParameters.put(eta, new ArrayList<>());
-            OffLatticeResult results = OffLattice.startSimulation(
-                    parser.getParticlesPerTime().get(0), parser.getL(),
-                    optimalM, Rc, DT, eta, true, MAX_ITERATIONS
-            );
-            orderParameters.get(eta).addAll(results.getOrderParameter());
-        }
-
-        final String BENCHMARK_ETA = "src/main/resources/benchmark/eta_variation.txt";
-        final File BENCHMARK_FILE_ETA = new File(BENCHMARK_ETA);
-
-        try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_ETA)) {
-            pw.printf("%d ", parser.getN());
-            pw.printf(Locale.US, "%f ", parser.getL());
-            pw.printf(Locale.US, "%f ", Rc);
-            pw.printf("%d\n", MAX_ITERATIONS);
-
-            orderParameters.forEach((eta, ops) -> {
-                pw.printf(Locale.US, "%.1f", eta);
-                ops.forEach(op -> pw.printf(Locale.US, " %f", op));
-                pw.printf("\n");
-            });
-        }
-
-        //-----Calculo de parametro de orden variando la cantidad de particulas  ----
-
-        double ETA = 1.0;
-        final int MAX_N = 1000;
-        final int N_STEP = 200;
-
-        final Map<Integer, List<Double>> orderParametersByN = new TreeMap<>(Integer::compare);
-
-        for (int n = 100; n <= MAX_N; n += N_STEP) {
-            System.out.printf(Locale.US, "Variando con N=%d\n", n);
-
-            orderParametersByN.put(n, new ArrayList<>());
-
-            parser = createStaticAndDynamicFiles(N, L);
-
-            maxRadius = parser.getParticlesPerTime().get(0).keySet().stream().map(Particle::getRadius).max(Double::compare).orElseThrow(RuntimeException::new);
-
-            gridCondition = parser.getL() / Rc + 2 * maxRadius;
+            gridCondition = listL.get(iter) / Rc;
             optimalM = (int) Math.floor(gridCondition);
             if (gridCondition == (int) gridCondition) {
                 optimalM = (int) gridCondition - 1;
             }
 
-            OffLatticeResult results = OffLattice.startSimulation(
-                    parser.getParticlesPerTime().get(0), parser.getL(),
-                    optimalM, Rc, DT, ETA, true, MAX_ITERATIONS
-            );
-            orderParametersByN.get(n).addAll(results.getOrderParameter());
+            final double MAX_ETA = 5;
+            final double ETA_STEP = 0.1;
 
+            final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
+
+            for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
+                System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
+                orderParameters.put(eta, new ArrayList<>());
+                OffLatticeResult results = OffLattice.startSimulation(
+                        parser.getParticlesPerTime().get(0), listL.get(iter),
+                        optimalM, Rc, DT, eta, true, MAX_ITERATIONS
+                );
+                orderParameters.get(eta).addAll(results.getOrderParameter());
+            }
+
+            final String BENCHMARK_ETA = "src/main/resources/benchmark/eta_variation_same_density/N_" + listN.get(iter) + ".txt";
+            final File BENCHMARK_FILE_ETA = new File(BENCHMARK_ETA);
+
+            try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_ETA)) {
+                pw.printf("%d ", listN.get(iter));
+                pw.printf(Locale.US, "%f ", listL.get(iter));
+                pw.printf(Locale.US, "%f ", Rc);
+                pw.printf("%d\n", MAX_ITERATIONS);
+
+                orderParameters.forEach((eta, ops) -> {
+                    pw.printf(Locale.US, "%.1f", eta);
+                    ops.forEach(op -> pw.printf(Locale.US, " %f", op));
+                    pw.printf("\n");
+                });
+            }
         }
 
-        final String BENCHMARK_N = "src/main/resources/benchmark/n_variation.txt";
-        final File BENCHMARK_FILE_N = new File(BENCHMARK_N);
+        //-----Calculo va variando el valor de ruido (eta) y distinta densidad (variando N) ----
 
-        try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_N)) {
-            pw.printf(Locale.US, "%f ", L);
-            pw.printf(Locale.US, "%f ", Rc);
-            pw.printf("%d\n", MAX_ITERATIONS);
+        double L = 10.0;
+        listN = List.of(50, 100, 250, 500, 750, 1000);
 
-            orderParametersByN.forEach((n, ops) -> {
-                pw.printf(Locale.US, "%d", n);
-                ops.forEach(op -> pw.printf(Locale.US, " %f", op));
-                pw.printf("\n");
-            });
-        }
+        for(int iter = 0; iter < listN.size(); iter++){
 
-        //-----Calculo de parametro de orden variando la longitud de la grilla  ----
+            System.out.printf(Locale.US, "N=%d -- L=%.2f\n", listN.get(iter), L);
 
-        ETA = 1.0;
-        N = 100;
-        final double MAX_L = 300.0;
-        final double L_STEP = 50.0;
+            parser = createStaticAndDynamicFiles(listN.get(iter), L);
 
-        final Map<Double, List<Double>> orderParametersByL = new TreeMap<>(Double::compare);
-
-        for (double l = 50; l <= MAX_L; l += L_STEP) {
-            System.out.printf(Locale.US, "Variando con L=%.0f\n", l);
-
-            orderParametersByL.put(l, new ArrayList<>());
-
-            parser = createStaticAndDynamicFiles(N, l);
-
-            maxRadius = parser.getParticlesPerTime().get(0).keySet().stream().map(Particle::getRadius).max(Double::compare).orElseThrow(RuntimeException::new);
-
-            gridCondition = parser.getL() / Rc + 2 * maxRadius;
+            gridCondition = L / Rc;
             optimalM = (int) Math.floor(gridCondition);
             if (gridCondition == (int) gridCondition) {
                 optimalM = (int) gridCondition - 1;
             }
 
-            OffLatticeResult results = OffLattice.startSimulation(
-                    parser.getParticlesPerTime().get(0), parser.getL(),
-                    optimalM, Rc, DT, ETA, true, MAX_ITERATIONS
-            );
-            orderParametersByL.get(l).addAll(results.getOrderParameter());
+            final double MAX_ETA = 5;
+            final double ETA_STEP = 0.1;
 
+            final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
+
+            for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
+                System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
+                orderParameters.put(eta, new ArrayList<>());
+                OffLatticeResult results = OffLattice.startSimulation(
+                        parser.getParticlesPerTime().get(0), L,
+                        optimalM, Rc, DT, eta, true, MAX_ITERATIONS
+                );
+                orderParameters.get(eta).addAll(results.getOrderParameter());
+            }
+
+            final String BENCHMARK_ETA_N = "src/main/resources/benchmark/eta_variation_variating_N/N_" + listN.get(iter) + ".txt";
+            final File BENCHMARK_FILE_ETA_N = new File(BENCHMARK_ETA_N);
+
+            try (PrintWriter pwEtaN = new PrintWriter(BENCHMARK_FILE_ETA_N)) {
+                pwEtaN.printf("%d ", listN.get(iter));
+                pwEtaN.printf(Locale.US, "%f ", L);
+                pwEtaN.printf(Locale.US, "%f ", Rc);
+                pwEtaN.printf("%d\n", MAX_ITERATIONS);
+
+                orderParameters.forEach((eta, ops) -> {
+                    pwEtaN.printf(Locale.US, "%.1f", eta);
+                    ops.forEach(op -> pwEtaN.printf(Locale.US, " %f", op));
+                    pwEtaN.printf("\n");
+                });
+            }
         }
 
-        final String BENCHMARK_L = "src/main/resources/benchmark/l_variation.txt";
-        final File BENCHMARK_FILE_L = new File(BENCHMARK_L);
 
-        try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_L)) {
-            pw.printf(Locale.US, "%d ", N);
-            pw.printf(Locale.US, "%f ", Rc);
-            pw.printf("%d\n", MAX_ITERATIONS);
+        //-----Calculo va variando el valor de ruido (eta) y distinta densidad (variando L) ----
 
-            orderParametersByL.forEach((l, ops) -> {
-                pw.printf(Locale.US, "%.0f", l);
-                ops.forEach(op -> pw.printf(Locale.US, " %f", op));
-                pw.printf("\n");
-            });
+        int N = 500;
+        listL = List.of(5.0, 10.0, 25.0, 50.0, 100.0, 250.0);
+
+        for(int iter = 0; iter < listL.size(); iter++){
+
+            System.out.printf(Locale.US, "N=%d -- L=%.2f\n", N, listL.get(iter));
+
+            parser = createStaticAndDynamicFiles(N, listL.get(iter));
+
+            gridCondition = listL.get(iter) / Rc;
+            optimalM = (int) Math.floor(gridCondition);
+            if (gridCondition == (int) gridCondition) {
+                optimalM = (int) gridCondition - 1;
+            }
+
+            final double MAX_ETA = 5;
+            final double ETA_STEP = 0.1;
+
+            final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
+
+            for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
+                System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
+                orderParameters.put(eta, new ArrayList<>());
+                OffLatticeResult results = OffLattice.startSimulation(
+                        parser.getParticlesPerTime().get(0), listL.get(iter),
+                        optimalM, Rc, DT, eta, true, MAX_ITERATIONS
+                );
+                orderParameters.get(eta).addAll(results.getOrderParameter());
+            }
+
+            final String BENCHMARK_ETA_L = "src/main/resources/benchmark/eta_variation_variating_L/" + listL.get(iter) + ".txt";
+            final File BENCHMARK_FILE_ETA_L = new File(BENCHMARK_ETA_L);
+
+            try (PrintWriter pwEtaL = new PrintWriter(BENCHMARK_FILE_ETA_L)) {
+                pwEtaL.printf("%d ", N);
+                pwEtaL.printf(Locale.US, "%f ", listL.get(iter));
+                pwEtaL.printf(Locale.US, "%f ", Rc);
+                pwEtaL.printf("%d\n", MAX_ITERATIONS);
+
+                orderParameters.forEach((eta, ops) -> {
+                    pwEtaL.printf(Locale.US, "%.1f", eta);
+                    ops.forEach(op -> pwEtaL.printf(Locale.US, " %f", op));
+                    pwEtaL.printf("\n");
+                });
+            }
         }
+
     }
 
     private static ParticlesParserResult createStaticAndDynamicFiles(long N, double L) throws IOException, ParseException {
