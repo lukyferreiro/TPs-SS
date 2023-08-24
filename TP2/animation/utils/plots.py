@@ -44,7 +44,7 @@ def plot_va_variating_eta(all_data):
         plt.errorbar(x_values, y_avg_values, yerr=y_std_values, fmt='o', capsize=4, ecolor="black", label=filename)
         legend_labels.append(f'N={int(N)}, L={round(L, 3)}, ρ={round(N/(L*L), 3)}')
     
-    plt.title(f'Parametro de orden va en funcion del ruido \n N={int(N)}, L={round(L,3)}, ρ={round(N/(L*L), 3)}, {int(iterations)} iteraciones')
+    plt.title(f'Parametro de orden va en funcion del ruido \n {int(iterations)} iteraciones')
     plt.xlabel('Amplitud de ruido (η)')
     plt.ylabel('Parametro de orden (va)')
     plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
