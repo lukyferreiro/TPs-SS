@@ -22,7 +22,8 @@ def main():
 
     animation_times = list(particles_dict.keys())
 
-    FuncAnimation(plt.gcf(), update, frames=animation_times, fargs=(particles_dict, c.L), interval=1, repeat=False).save("simulation.gif")
+    FuncAnimation(plt.gcf(), update, frames=animation_times, fargs=(particles_dict, c.L),
+                  interval=1, repeat=False).save(f"simulations/simulation_N{c.N}_L{round(c.L,1)}_eta{round(c.eta,2)}.gif")
     plt.show()
 
 if __name__ == "__main__":

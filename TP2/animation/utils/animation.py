@@ -18,7 +18,7 @@ def update(frame, data_dict, L):
 
     plt.clf()
 
-    plt.quiver(x_positions, y_positions, x_speed, y_speed, angles, cmap='winter')
+    plt.quiver(x_positions, y_positions, x_speed, y_speed, angles, cmap='autumn')
 
     plt.title(f'Tiempo: {frame}')
     plt.xlabel('Posición X')
