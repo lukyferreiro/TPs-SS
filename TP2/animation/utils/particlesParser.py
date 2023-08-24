@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def parseOffLatticeFile(offLatticeFile):
     data_dict = {}
@@ -36,7 +37,7 @@ def parseOrderParameterVaFile(orderParameterVaFile):
 
     return N, L, Rc, eta, iterations, order_parameters
 
-def parseOrderParameterVariatingEta(orderParameterVariatingEtaFile):
+def parse_prder_parameter_over_iteration(orderParameterVariatingEtaFile):
     with open(orderParameterVariatingEtaFile, 'r') as file:
         first_line = file.readline().strip().split()
         N, L, Rc, iterations = map(float, first_line)
@@ -48,3 +49,15 @@ def parseOrderParameterVariatingEta(orderParameterVariatingEtaFile):
             data_dict[key] = data
 
     return N, L, Rc, iterations, data_dict
+
+def parse_order_parameter_directory(dir_path):
+    all_data = {}
+
+    for filename in os.listdir(dir_path):
+        if filename.endswith('.txt'): 
+            filepath = os.path.join(dir_path, filename)
+            N, L, Rc, iterations, data_dict = parse_prder_parameter_over_iteration(filepath)
+            file_info = {'N': N, 'L': L, 'Rc': Rc, 'iterations': iterations, 'data_dict': data_dict}
+            all_data[filename] = file_info
+
+    return all_data

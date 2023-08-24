@@ -1,8 +1,8 @@
 {
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
-  "N": 100,
-  "L": 100.0,
+  "N": 500,
+  "L": 20.0,
   "max_radius": 0.0,
   "min_radius": 0.0,
   "times": 1,

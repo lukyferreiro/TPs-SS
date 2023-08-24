@@ -17,7 +17,7 @@ public class Benchmark {
 
         final double Rc = 1.0;
         final double DT = 1.0;
-        final int MAX_ITERATIONS = 2000;
+        final int MAX_ITERATIONS = 4000;
 
         ParticlesParserResult parser;
         double gridCondition;
