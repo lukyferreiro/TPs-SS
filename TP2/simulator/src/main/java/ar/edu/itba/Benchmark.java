@@ -27,52 +27,52 @@ public class Benchmark {
 
         //-----Calculo va variando el valor de ruido (eta) y misma densidad ----
 
-//        listN = List.of(40, 100, 400, 4000, 10000);
-//        listL = List.of(Math.sqrt(10), 5.0, 10.0, Math.sqrt(1000), 50.0);
-//
-//        for(int iter = 0; iter < listN.size(); iter++){
-//
-//            System.out.printf(Locale.US, "N=%d -- L=%.2f\n", listN.get(iter), listL.get(iter));
-//
-//            parser = createStaticAndDynamicFiles(listN.get(iter), listL.get(iter));
-//
-//            gridCondition = listL.get(iter) / Rc;
-//            optimalM = (int) Math.floor(gridCondition);
-//            if (gridCondition == (int) gridCondition) {
-//                optimalM = (int) gridCondition - 1;
-//            }
-//
-//            final double MAX_ETA = 5;
-//            final double ETA_STEP = 0.1;
-//
-//            final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
-//
-//            for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
-//                System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
-//                orderParameters.put(eta, new ArrayList<>());
-//                OffLatticeResult results = OffLattice.startSimulation(
-//                        parser.getParticlesPerTime().get(0), listL.get(iter),
-//                        optimalM, Rc, DT, eta, true, MAX_ITERATIONS
-//                );
-//                orderParameters.get(eta).addAll(results.getOrderParameter());
-//            }
-//
-//            final String BENCHMARK_ETA = "src/main/resources/benchmark/eta_variation_same_density/N_" + listN.get(iter) + ".txt";
-//            final File BENCHMARK_FILE_ETA = new File(BENCHMARK_ETA);
-//
-//            try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_ETA)) {
-//                pw.printf("%d ", listN.get(iter));
-//                pw.printf(Locale.US, "%f ", listL.get(iter));
-//                pw.printf(Locale.US, "%f ", Rc);
-//                pw.printf("%d\n", MAX_ITERATIONS);
-//
-//                orderParameters.forEach((eta, ops) -> {
-//                    pw.printf(Locale.US, "%.1f", eta);
-//                    ops.forEach(op -> pw.printf(Locale.US, " %f", op));
-//                    pw.printf("\n");
-//                });
-//            }
-//        }
+        listN = List.of(40, 100, 400, 4000, 10000);
+        listL = List.of(Math.sqrt(10), 5.0, 10.0, Math.sqrt(1000), 50.0);
+
+        for(int iter = 0; iter < listN.size(); iter++){
+
+            System.out.printf(Locale.US, "N=%d -- L=%.2f\n", listN.get(iter), listL.get(iter));
+
+            parser = createStaticAndDynamicFiles(listN.get(iter), listL.get(iter));
+
+            gridCondition = listL.get(iter) / Rc;
+            optimalM = (int) Math.floor(gridCondition);
+            if (gridCondition == (int) gridCondition) {
+                optimalM = (int) gridCondition - 1;
+            }
+
+            final double MAX_ETA = 5;
+            final double ETA_STEP = 0.1;
+
+            final Map<Double, List<Double>> orderParameters = new TreeMap<>(Double::compare);
+
+            for (double eta = 0.0; eta <= MAX_ETA; eta += ETA_STEP) {
+                System.out.printf(Locale.US, "Variando con eta=%.1f\n", eta);
+                orderParameters.put(eta, new ArrayList<>());
+                OffLatticeResult results = OffLattice.startSimulation(
+                        parser.getParticlesPerTime().get(0), listL.get(iter),
+                        optimalM, Rc, DT, eta, true, MAX_ITERATIONS
+                );
+                orderParameters.get(eta).addAll(results.getOrderParameter());
+            }
+
+            final String BENCHMARK_ETA = "src/main/resources/benchmark_5000/eta_variation_same_density/N_" + listN.get(iter) + ".txt";
+            final File BENCHMARK_FILE_ETA = new File(BENCHMARK_ETA);
+
+            try (PrintWriter pw = new PrintWriter(BENCHMARK_FILE_ETA)) {
+                pw.printf("%d ", listN.get(iter));
+                pw.printf(Locale.US, "%f ", listL.get(iter));
+                pw.printf(Locale.US, "%f ", Rc);
+                pw.printf("%d\n", MAX_ITERATIONS);
+
+                orderParameters.forEach((eta, ops) -> {
+                    pw.printf(Locale.US, "%.1f", eta);
+                    ops.forEach(op -> pw.printf(Locale.US, " %f", op));
+                    pw.printf("\n");
+                });
+            }
+        }
 
         //-----Calculo va variando el valor de ruido (eta) y distinta densidad (variando N) ----
 

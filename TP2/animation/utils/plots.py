@@ -38,10 +38,11 @@ def plot_va_variating_eta(all_data):
 
         for key, data in data_dict.items():
             x_values.append(key)
-            y_avg_values.append(np.mean(data[1900:]))
-            y_std_values.append(np.std(data[1900:]))
+            y_avg_values.append(np.mean(data))
+            y_std_values.append(np.std(data))
 
-        plt.errorbar(x_values, y_avg_values, yerr=y_std_values, fmt='o', capsize=4, ecolor="black", label=filename)
+        plt.errorbar(x_values, y_avg_values, fmt='o', capsize=4, ecolor="black", label=filename)
+        #plt.errorbar(x_values, y_avg_values, yerr=y_std_values, fmt='o', capsize=4, ecolor="black", label=filename)
         legend_labels.append(f'N={int(N)}, L={round(L, 3)}, ρ={round(N/(L*L), 3)}')
     
     plt.title(f'Parametro de orden va en funcion del ruido \n {int(iterations)} iteraciones')
