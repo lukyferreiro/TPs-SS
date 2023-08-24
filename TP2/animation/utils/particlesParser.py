@@ -37,7 +37,7 @@ def parseOrderParameterVaFile(orderParameterVaFile):
 
     return N, L, Rc, eta, iterations, order_parameters
 
-def parse_prder_parameter_over_iteration(orderParameterVariatingEtaFile):
+def parse_order_parameter_over_iteration(orderParameterVariatingEtaFile):
     with open(orderParameterVariatingEtaFile, 'r') as file:
         first_line = file.readline().strip().split()
         N, L, Rc, iterations = map(float, first_line)
@@ -56,7 +56,7 @@ def parse_order_parameter_directory(dir_path):
     for filename in os.listdir(dir_path):
         if filename.endswith('.txt'): 
             filepath = os.path.join(dir_path, filename)
-            N, L, Rc, iterations, data_dict = parse_prder_parameter_over_iteration(filepath)
+            N, L, Rc, iterations, data_dict = parse_order_parameter_over_iteration(filepath)
             file_info = {'N': N, 'L': L, 'Rc': Rc, 'iterations': iterations, 'data_dict': data_dict}
             all_data[filename] = file_info
 
