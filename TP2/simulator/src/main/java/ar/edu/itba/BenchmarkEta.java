@@ -12,10 +12,12 @@ import java.util.*;
 public class BenchmarkEta {
     public static void main(String[] args) throws IOException, ParseException {
 
+        final int SIMULATIONS = 5;
         final double Rc = 1.0;
         final double DT = 1.0;
         final int MAX_ITERATIONS = 2000;
-        final int SIMULATIONS = 5;
+        final double MAX_ETA = 5;
+        final double ETA_STEP = 0.25;
 
         ParticlesParserResult parser;
         double gridCondition;
@@ -24,9 +26,6 @@ public class BenchmarkEta {
         List<Double> listL;
         double L;
         int N;
-
-        final double MAX_ETA = 5;
-        final double ETA_STEP = 0.1;
 
         //-----Calculo va variando el valor de ruido (eta) y misma densidad = 4 ----
 
