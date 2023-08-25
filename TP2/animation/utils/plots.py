@@ -50,3 +50,35 @@ def plot_va_variating_eta(all_data):
     plt.ylabel('Parametro de orden (va)')
     plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
     plt.show()
+
+def plot_va_variating_density(all_data):
+    plt.figure()
+    legend_labels = []
+    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
+    file_num = 0
+
+    for filename, file_info in all_data.items():
+        ETA = file_info['eta']
+        L = file_info['L']
+        iterations = file_info['iterations']
+        data_dict = file_info['data_dict']
+
+        x_values = []
+        y_avg_values = []
+        y_std_values = []
+
+        for key, data in data_dict.items():
+            x_values.append(key)
+            y_avg_values.append(np.mean(data))
+            y_std_values.append(np.std(data))
+
+        plt.errorbar(x_values, y_avg_values, yerr=y_std_values, fmt='o', capsize=4, ecolor="black", color=colors[file_num], label=filename)
+        legend_labels.append(f'eta={round(ETA,2)}')
+        plt.plot(x_values, y_avg_values, colors[file_num], alpha=0.5)
+        file_num += 1
+    
+    plt.title(f'Parametro de orden va en funcion de la densidad \n L={round(L,2)} y {int(iterations)} iteraciones')
+    plt.xlabel('Densidad (ρ)')
+    plt.ylabel('Parametro de orden (va)')
+    plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
+    plt.show()

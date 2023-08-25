@@ -37,6 +37,9 @@ def parseOrderParameterVaFile(orderParameterVaFile):
 
     return N, L, Rc, eta, iterations, order_parameters
 
+#----------------------------------------------------------------
+#----------------------------------------------------------------
+
 def parse_order_parameter_over_iteration(orderParameterVariatingEtaFile):
     with open(orderParameterVariatingEtaFile, 'r') as file:
         first_line = file.readline().strip().split()
@@ -58,6 +61,34 @@ def parse_order_parameter_directory(dir_path):
             filepath = os.path.join(dir_path, filename)
             N, L, Rc, iterations, data_dict = parse_order_parameter_over_iteration(filepath)
             file_info = {'N': N, 'L': L, 'Rc': Rc, 'iterations': iterations, 'data_dict': data_dict}
+            all_data[filename] = file_info
+
+    return all_data
+
+#----------------------------------------------------------------
+#----------------------------------------------------------------
+
+def parse_variating_density_file(file_path):
+    with open(file_path, 'r') as file:
+        first_line = file.readline().strip().split()
+        eta, L, Rc, iterations = map(float, first_line)
+        data_dict = {}
+        for line in file:
+            elements = line.split()
+            key = float(elements[0])
+            data = [float(value) for value in elements[1:]]
+            data_dict[key] = data
+
+    return eta, L, Rc, iterations, data_dict
+
+def parse_variating_density_directory(dir_path):
+    all_data = {}
+
+    for filename in os.listdir(dir_path):
+        if filename.endswith('.txt'): 
+            filepath = os.path.join(dir_path, filename)
+            eta, L, Rc, iterations, data_dict = parse_order_parameter_over_iteration(filepath)
+            file_info = {'eta': eta, 'L': L, 'Rc': Rc, 'iterations': iterations, 'data_dict': data_dict}
             all_data[filename] = file_info
 
     return all_data
