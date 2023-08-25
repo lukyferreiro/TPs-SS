@@ -12,29 +12,17 @@ import java.util.*;
 public class BenchmarkDensity {
     public static void main(String[] args) throws IOException, ParseException {
 
+        final int SIMULATIONS = 5;
         final double Rc = 1.0;
         final double DT = 1.0;
         final int MAX_ITERATIONS = 2000;
-
-        ParticlesParserResult parser;
-        double gridCondition;
-        long optimalM;
-
-        //-----Calculo de va variando la densidad ----
-
-        double L = 10.0;
+        final double L = 10.0;
         final int MIN_N = 100;
-        final int MAX_N = 200;
+        final int MAX_N = 1000;
         final int N_STEP = 100;
-        final int SIMULATIONS = 5;
-        double MAX_ETA = 4;
-        double ETA_STEP = 1;
-
-        gridCondition = L / Rc;
-        optimalM = (int) Math.floor(gridCondition);
-        if (gridCondition == (int) gridCondition) {
-            optimalM = (int) gridCondition - 1;
-        }
+        final double MAX_ETA = 4;
+        final double ETA_STEP = 1;
+        final long optimalM = (int) (L / Rc) - 1;
 
         for(double eta = 0; eta <= MAX_ETA; eta += ETA_STEP) {
 
@@ -52,7 +40,7 @@ public class BenchmarkDensity {
 
                     System.out.printf(Locale.US, "ρ=%.2f\n", density);
 
-                    parser = CreateStaticAndDynamicFiles.create(n, L);
+                    ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(n, L);
 
                     orderParametersDensity.put(density, new ArrayList<>());
                     orderParametersDensityMean.computeIfAbsent(density, k -> new ArrayList<>());
