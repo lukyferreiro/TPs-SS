@@ -15,10 +15,10 @@ def plot_va_eta_over_iterations(data_dict, N, L):
         if values is not None:
             ax.plot(values, label=f'η={eta}')
 
-    ax.set_title(F'Parametro de orden en funcion del tiempo\n N={int(N)}, L={round(L,3)}, ρ={round(N/(L*L), 3)}')
     ax.set_xlabel('Iteración')
     ax.set_ylabel('Parametro de orden (va)')
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    legend.set_title(f' N={int(N)}, L={round(L,3)}, ρ={round(N/(L*L), 3)}')
     plt.show()
 
 def plot_va_variating_eta(all_data):
@@ -48,10 +48,10 @@ def plot_va_variating_eta(all_data):
         plt.plot(x_values, y_avg_values, colors[file_num], alpha=0.5)
         file_num += 1
     
-    plt.title(f'Parametro de orden en funcion del ruido \n {int(iterations)} iteraciones')
     plt.xlabel('Amplitud de ruido (η)')
     plt.ylabel('Parametro de orden (va)')
-    plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
+    legend = plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
+    legend.set_title(f'{int(iterations)} iteraciones')
     plt.show()
 
 #----------------------------------------------------------------
