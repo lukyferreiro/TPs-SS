@@ -4,12 +4,14 @@ En este TP se implementa el algoritmo de bandadas de agentes propulsores usando 
 
 ## Generación de partículas
 
-Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json
+Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará
+los archivos static.txt y dynamic.txt.
 
-Tras esto se generarán dos archivos:
-- static.txt: con el valor de N, L y el radio de cada partícula y su propiedad.
-- dynamic.txt: con las posiciones X e Y de las N partículas en el tiempo 0
+## Simulacion Off-Lattice
 
+Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los datos de los archivos static.txt y dynamic.txt
+y creará dos archivos: off_lattice.txt (con la informacion de las particulas en cada tiempo) y time.txt (con el tiempo tardado
+en toda la ejecucion)
 
 ## Configuración
 

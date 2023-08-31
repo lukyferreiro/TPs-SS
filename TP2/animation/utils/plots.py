@@ -103,6 +103,7 @@ def plot_va_variating_density(all_data):
     
     plt.xlabel('Densidad (ρ)')
     plt.ylabel('Parametro de orden (va)')
+    plt.xticks(x_values[2:])
     legend = plt.legend(legend_labels, loc='center left', bbox_to_anchor=(1, 0.5)) 
     legend.set_title(f'L={round(L,2)}, {int(iterations)} iteraciones')
     plt.show()

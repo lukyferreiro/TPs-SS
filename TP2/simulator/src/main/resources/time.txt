@@ -1,1 +1,1 @@
-Total time - 2017.28310 ms
+Total time - 5609.30210 ms

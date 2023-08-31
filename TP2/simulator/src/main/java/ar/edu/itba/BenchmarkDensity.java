@@ -17,9 +17,10 @@ public class BenchmarkDensity {
         final double DT = 1.0;
         final int MAX_ITERATIONS = 2000;
         final double L = 10.0;
-        final int MIN_N = 100;
-        final int MAX_N = 1000;
-        final int N_STEP = 100;
+//        final int MIN_N = 100;
+//        final int MAX_N = 1000;
+//        final int N_STEP = 100;
+        final List<Integer> listN = List.of(50,75,100,200,300,400,500,600,700,800,900,1000);
         final double MAX_ETA = 4;
         final double ETA_STEP = 1;
         final long optimalM = (int) (L / Rc) - 1;
@@ -34,7 +35,7 @@ public class BenchmarkDensity {
                 System.out.printf(Locale.US, "----SIMULATION %d------\n", sim);
                 final Map<Double, List<Double>> orderParametersDensity = new TreeMap<>(Double::compare);
 
-                for (int n = MIN_N; n <= MAX_N; n += N_STEP) {
+                for (Integer n : listN) {
 
                     final double density = n / (L * L);
 
@@ -45,9 +46,7 @@ public class BenchmarkDensity {
                     orderParametersDensity.put(density, new ArrayList<>());
                     orderParametersDensityMean.computeIfAbsent(density, k -> new ArrayList<>());
 
-                    OffLatticeResult results = OffLattice.startSimulation(
-                            parser.getParticlesPerTime().get(0), L, optimalM,
-                            Rc, DT, eta, true, MAX_ITERATIONS);
+                    OffLatticeResult results = OffLattice.startSimulation(parser.getParticlesPerTime().get(0), L, optimalM, Rc, DT, eta, true, MAX_ITERATIONS);
 
                     orderParametersDensity.get(density).addAll(results.getOrderParameter());
                     double mean = results.getOrderParameter().stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
