@@ -11,3 +11,7 @@ En este TP se implementa el algoritmo Cell Index Method con visualización de lo
 ## TP2 - [Autómata Off-Lattice: Bandadas de agentes autopropulsados](https://github.com/lukyferreiro/TPs-SS/tree/main/TP2)
 
 En este TP se implementa el algoritmo de bandadas de agentes propulsores usando un autómata Off-Lattice.
+
+## TP3 - [Dinámica Molecular Dirigida por Eventos](https://github.com/lukyferreiro/TPs-SS/tree/main/TP3)
+
+En este TP se implementa 
