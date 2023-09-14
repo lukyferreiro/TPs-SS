@@ -8,6 +8,10 @@ public class Particle {
     private final int id;
     private final double radius;
     private final double mass;
+    private double x;
+    private double y;
+    private double speed;
+    private double angle;
 
     public Particle(int id, double radius, double mass) {
         this.id = id;
@@ -24,6 +28,40 @@ public class Particle {
     public double getMass() {
         return mass;
     }
+    public double getX() {
+        return x;
+    }
+    public double getY() {
+        return y;
+    }
+    public void setX(double x) {
+        this.x = x;
+    }
+    public void setY(double y) {
+        this.y = y;
+    }
+    public double getSpeed() {
+        return speed;
+    }
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+    public double getAngle() {
+        return angle;
+    }
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+    public double getVelocityX() {
+        return Math.cos(angle) * speed;
+    }
+    public double getVelocityY() {
+        return Math.sin(angle) * speed;
+    }
+
+    public static double calculateDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -38,55 +76,18 @@ public class Particle {
         return Objects.hash(id);
     }
 
-    public static class Position {
-        private final double x;
-        private final double y;
-
-        public Position(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public double getX() {
-            return x;
-        }
-        public double getY() {
-            return y;
-        }
-
-        public static double calculateDistance(Position p1, Position p2) {
-            return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
-        }
-
+    @Override
+    public String toString() {
+        return "Particle{" + "id=" + id + ", radius=" + radius + ", mass=" + mass + ", x=" + x + ", y=" + y + ", speed=" + speed + ", angle=" + angle + '}';
     }
 
-    public static class State {
-        private final Position position;
-        private final double velocityX;
-        private final double velocityY;
+    //        public static State nextInstant(State currentState, double time) {
+//            Position position = new Position(
+//                    currentState.position.getX() + currentState.getVelocityX() * time,
+//                    currentState.position.getY() + currentState.getVelocityY() * time
+//            );
+//
+//            return new State(position, currentState.getVelocityX(), currentState.getVelocityY());
+//        }
 
-        public State(Position position, double velocityX, double velocityY) {
-            this.position = position;
-            this.velocityX = velocityX;
-            this.velocityY = velocityY;
-        }
-
-        public Position getPosition() {
-            return position;
-        }
-        public double getVelocityX() {
-            return velocityX;
-        }
-        public double getVelocityY() {
-            return velocityY;
-        }
-        public static State nextInstant(State currentState, double time) {
-            Position position = new Position(
-                    currentState.position.getX() + currentState.getVelocityX() * time,
-                    currentState.position.getY() + currentState.getVelocityY() * time
-            );
-
-            return new State(position, currentState.getVelocityX(), currentState.getVelocityY());
-        }
-    }
 }

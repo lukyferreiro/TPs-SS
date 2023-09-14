@@ -1,6 +1,8 @@
 package ar.edu.itba;
 
 import ar.edu.itba.utils.ConfigMethodParser;
+import ar.edu.itba.utils.ParticlesParser;
+import ar.edu.itba.utils.ParticlesParserResult;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -21,6 +23,7 @@ public class Simulation {
         final File staticFile = new File(config.getStaticFile());
         final File dynamicFile = new File(config.getDynamicFile());
 
+        final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
     }
 }

@@ -3,16 +3,14 @@ package ar.edu.itba.utils;
 import ar.edu.itba.models.Particle;
 
 import java.util.List;
-import java.util.Map;
 
-import static ar.edu.itba.models.Particle.State;
 
 public class ParticlesParserResult {
     private final int N;
     private final double L;
-    private final List<Map<Particle, State>> particlesPerTime;
+    private final List<List<Particle>> particlesPerTime;
 
-    public ParticlesParserResult(int N, double L, List<Map<Particle, State>> particlesPerTime) {
+    public ParticlesParserResult(int N, double L, List<List<Particle>> particlesPerTime) {
         this.N = N;
         this.L = L;
         this.particlesPerTime = particlesPerTime;
@@ -24,7 +22,7 @@ public class ParticlesParserResult {
     public double getL() {
         return L;
     }
-    public List<Map<Particle, State>> getParticlesPerTime() {
+    public List<List<Particle>> getParticlesPerTime() {
         return particlesPerTime;
     }
 }

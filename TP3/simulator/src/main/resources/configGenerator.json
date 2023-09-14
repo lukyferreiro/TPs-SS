@@ -2,6 +2,7 @@
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
   "N": 400,
+  "side": 0.09,
   "L": 0.03,
   "max_radius": 0.0015,
   "min_radius": 0.0015,
