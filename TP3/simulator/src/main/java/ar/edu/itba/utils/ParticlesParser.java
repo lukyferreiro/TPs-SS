@@ -8,8 +8,6 @@ import java.util.*;
 
 import java.lang.Double;
 import java.lang.Integer;
-import static ar.edu.itba.models.Particle.Position;
-import static ar.edu.itba.models.Particle.State;
 
 public class ParticlesParser {
 
@@ -35,7 +33,7 @@ public class ParticlesParser {
 
         int particleIndex = 0;
         int timeIndex = -1;
-        final List<Map<Particle, State>> particlesPerTime = new ArrayList<>();
+        final List<List<Particle>> particlesPerTime = new ArrayList<>();
 
         while (dynamicScanner.hasNextLine()) {
             List<String> dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(" "));
@@ -45,22 +43,18 @@ public class ParticlesParser {
                 particleIndex = 0;
                 timeIndex++;
                 dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(" "));
-                particlesPerTime.add(new HashMap<>());
+                particlesPerTime.add(new ArrayList<>());
             }
 
-            final Map<Particle, State> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+            final List<Particle> currentParticlesPerTime = particlesPerTime.get(timeIndex);
             final Particle currentParticle = particles.get(particleIndex);
 
-            final State currentParticleState = new State(
-                    new Position(
-                            Double.parseDouble(dynamicArray.get(0)),    //En primera posicion tengo X
-                            Double.parseDouble(dynamicArray.get(1))     //En segunda posicion tengo Y
-                    ),
-                    Double.parseDouble(dynamicArray.get(2)),    //En tercera posicion tengo la velocidad
-                    Double.parseDouble(dynamicArray.get(3))     //En cuarta posicion tengo el angulo
-            );
+            currentParticle.setX(Double.parseDouble(dynamicArray.get(0)));     //En primera posicion tengo X
+            currentParticle.setY(Double.parseDouble(dynamicArray.get(1)));     //En segunda posicion tengo Y
+            currentParticle.setSpeed(Double.parseDouble(dynamicArray.get(2)));     //En tercera posicion tengo la velocidad
+            currentParticle.setAngle(Double.parseDouble(dynamicArray.get(3)));     //En cuarta posicion tengo el angulo
 
-            currentParticlesPerTime.put(currentParticle, currentParticleState);
+            currentParticlesPerTime.add(currentParticle);
             particleIndex++;
         }
 
