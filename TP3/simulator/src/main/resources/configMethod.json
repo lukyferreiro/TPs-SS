@@ -2,5 +2,6 @@
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
   "outFile": "src/main/resources/off_lattice.txt",
-  "outTimeFile": "src/main/resources/time.txt"
+  "outTimeFile": "src/main/resources/time.txt",
+  "L": 0.03
 }

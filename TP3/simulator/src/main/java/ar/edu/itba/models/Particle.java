@@ -8,8 +8,7 @@ public class Particle {
     private final int id;
     private final double radius;
     private final double mass;
-    private double x;
-    private double y;
+    private Position position;
     private double speed;
     private double angle;
 
@@ -28,18 +27,13 @@ public class Particle {
     public double getMass() {
         return mass;
     }
-    public double getX() {
-        return x;
+    public Position getPosition() {
+        return position;
     }
-    public double getY() {
-        return y;
+    public void setPosition(Position position) {
+        this.position = position;
     }
-    public void setX(double x) {
-        this.x = x;
-    }
-    public void setY(double y) {
-        this.y = y;
-    }
+
     public double getSpeed() {
         return speed;
     }
@@ -59,6 +53,10 @@ public class Particle {
         return Math.sin(angle) * speed;
     }
 
+    public static double calculateVelocity(double vx, double vy) {
+        return Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2));
+    }
+
     public static double calculateDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
@@ -76,18 +74,5 @@ public class Particle {
         return Objects.hash(id);
     }
 
-    @Override
-    public String toString() {
-        return "Particle{" + "id=" + id + ", radius=" + radius + ", mass=" + mass + ", x=" + x + ", y=" + y + ", speed=" + speed + ", angle=" + angle + '}';
-    }
-
-    //        public static State nextInstant(State currentState, double time) {
-//            Position position = new Position(
-//                    currentState.position.getX() + currentState.getVelocityX() * time,
-//                    currentState.position.getY() + currentState.getVelocityY() * time
-//            );
-//
-//            return new State(position, currentState.getVelocityX(), currentState.getVelocityY());
-//        }
 
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba;
 
+import ar.edu.itba.gasDiffusion.GasDiffusion;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -24,6 +25,8 @@ public class Simulation {
         final File dynamicFile = new File(config.getDynamicFile());
 
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
+
+        GasDiffusion.run(parser.getParticlesPerTime(), parser.getN(), parser.getSide(), config.getL());
 
     }
 }

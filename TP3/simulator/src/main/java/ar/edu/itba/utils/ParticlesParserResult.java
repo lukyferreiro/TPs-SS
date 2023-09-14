@@ -7,20 +7,20 @@ import java.util.List;
 
 public class ParticlesParserResult {
     private final int N;
-    private final double L;
+    private final double side;
     private final List<List<Particle>> particlesPerTime;
 
-    public ParticlesParserResult(int N, double L, List<List<Particle>> particlesPerTime) {
+    public ParticlesParserResult(int N, double side, List<List<Particle>> particlesPerTime) {
         this.N = N;
-        this.L = L;
+        this.side = side;
         this.particlesPerTime = particlesPerTime;
     }
 
     public int getN() {
         return N;
     }
-    public double getL() {
-        return L;
+    public double getSide() {
+        return side;
     }
     public List<List<Particle>> getParticlesPerTime() {
         return particlesPerTime;

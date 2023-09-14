@@ -1,6 +1,7 @@
 package ar.edu.itba;
 
 import ar.edu.itba.models.Particle;
+import ar.edu.itba.models.Position;
 import ar.edu.itba.utils.ConfigGeneratorParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -33,7 +34,7 @@ public class Generator {
 
         try (PrintWriter pw = new PrintWriter(staticFile)) {
             pw.println(config.getN());
-            pw.println(config.getL());
+            pw.println(config.getSide());
             for (int i = 0; i < config.getN(); i++) {
                 final double radius = minR + Math.random() * (maxR - minR);
                 pw.printf(Locale.US, "%f %f\n", radius, config.getMass());
@@ -59,7 +60,8 @@ public class Generator {
                         x = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         y = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         for (Particle other : particles) {
-                            double distance = Particle.calculateDistance(x,y,other.getX(),other.getY());
+                            Position otherPosition = new Position(other.getPosition().getX(),other.getPosition().getY());
+                            double distance = particle.getPosition().calculateDistance(otherPosition);
                             if (distance < 2 * particle.getRadius()) {
                                 superposition = true;
                                 break;
@@ -67,12 +69,10 @@ public class Generator {
                         }
                     } while (superposition);
 
-                    System.out.println(j);
-
                     particle.setAngle(angle);
                     particle.setSpeed(speed);
-                    particle.setX(x);
-                    particle.setY(y);
+                    particle.getPosition().setX(x);
+                    particle.getPosition().setY(y);
 
                     pw.printf(Locale.US, "%f %f %f %f\n", x, y, speed, angle);
                 }
