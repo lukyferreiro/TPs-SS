@@ -7,12 +7,12 @@ public class Particle {
 
     private final int id;
     private final double radius;
-    private final double property;
+    private final double mass;
 
-    public Particle(int id, double radius, double property) {
+    public Particle(int id, double radius, double mass) {
         this.id = id;
         this.radius = radius;
-        this.property = property;
+        this.mass = mass;
     }
 
     public int getId() {
@@ -21,8 +21,8 @@ public class Particle {
     public double getRadius() {
         return radius;
     }
-    public double getProperty() {
-        return property;
+    public double getMass() {
+        return mass;
     }
 
     @Override
@@ -57,44 +57,36 @@ public class Particle {
         public static double calculateDistance(Position p1, Position p2) {
             return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
         }
-        public static double calculateDistancePeriodic(Position p1, Position p2, double L) {
-            double dx = Math.abs(p1.getX() - p2.getX());
-            double dy = Math.abs(p1.getY() - p2.getY());
 
-            // Aplicar condiciones periódicas en ambas direcciones
-            dx = Math.min(dx, L - dx);
-            dy = Math.min(dy, L - dy);
-
-            return Math.sqrt(Math.pow(dx,2) + Math.pow(dy,2));
-        }
     }
 
     public static class State {
         private final Position position;
-        private final double speed;
-        private final double angle; //In radians
+        private final double velocityX;
+        private final double velocityY;
 
-        public State(Position position, double speed, double angle) {
+        public State(Position position, double velocityX, double velocityY) {
             this.position = position;
-            this.speed = speed;
-            this.angle = angle;
+            this.velocityX = velocityX;
+            this.velocityY = velocityY;
         }
 
         public Position getPosition() {
             return position;
         }
-        public double getAngle() {
-            return angle;
+        public double getVelocityX() {
+            return velocityX;
         }
-        public double getSpeed() {
-            return speed;
+        public double getVelocityY() {
+            return velocityY;
         }
-        public double getXVelocity() {
-            return Math.cos(angle) * speed;
-        }
-        public double getYVelocity() {
-            return Math.sin(angle) * speed;
-        }
+        public static State nextInstant(State currentState, double time) {
+            Position position = new Position(
+                    currentState.position.getX() + currentState.getVelocityX() * time,
+                    currentState.position.getY() + currentState.getVelocityY() * time
+            );
 
+            return new State(position, currentState.getVelocityX(), currentState.getVelocityY());
+        }
     }
 }

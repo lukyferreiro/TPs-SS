@@ -23,7 +23,7 @@ public class CreateStaticAndDynamicFiles {
 
         final double MIN_R = 0.0;
         final double MAX_R = 0.0;
-        final double PROPERTY = 1.0;
+        final double MASS = 1.0;
         final double SPEED = 0.03;
         final double MAX_ANGLE = 2 * Math.PI;
         final int TIMES = 1;
@@ -32,7 +32,7 @@ public class CreateStaticAndDynamicFiles {
             pw.println(N);
             pw.println(L);
             for (int i = 0; i < N; i++) {
-                pw.printf(Locale.US, "%f %f\n", MIN_R + Math.random() * (MAX_R - MIN_R), PROPERTY);
+                pw.printf(Locale.US, "%f %f\n", MIN_R + Math.random() * (MAX_R - MIN_R), MASS);
             }
         }
 

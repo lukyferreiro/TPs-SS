@@ -33,7 +33,7 @@ public class Generator {
             pw.println(config.getN());
             pw.println(config.getL());
             for (int i = 0; i < config.getN(); i++) {
-                pw.printf(Locale.US, "%f %f\n", minR + Math.random() * (maxR - minR), config.getProperty());
+                pw.printf(Locale.US, "%f %f\n", minR + Math.random() * (maxR - minR), config.getMass());
             }
         }
 
