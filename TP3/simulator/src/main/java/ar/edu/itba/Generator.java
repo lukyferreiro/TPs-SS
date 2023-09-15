@@ -60,18 +60,18 @@ public class Generator {
                         x = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         y = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         for (Particle other : particles) {
-                            Position otherPosition = new Position(other.getPosition().getX(), other.getPosition().getY());
-                            double distance = particle.getPosition().calculateDistance(otherPosition);
-                            if (distance < 2 * particle.getRadius()) {
-                                superposition = true;
-                                break;
+                            System.out.println(other);
+                            if(particle.getPosition() != null && other.getPosition() != null) {
+                                double distance = particle.getPosition().calculateDistance(other.getPosition());
+                                if (distance < 2 * particle.getRadius()) {
+                                    superposition = true;
+                                    break;
+                                }
                             }
                         }
                     } while (superposition);
 
-                    particle.getPosition().setX(x);
-                    particle.getPosition().setY(y);
-
+                    particle.setPosition(new Position(x, y));
                     pw.printf(Locale.US, "%f %f %f %f\n", x, y, speed, angle);
                 }
             }

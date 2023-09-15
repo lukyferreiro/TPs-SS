@@ -90,7 +90,7 @@ public enum BoundaryType {
 
     private static boolean isInBoundaryHorizontal(Position boundaryPosition, double length, Particle particle, double time) {
         Position nextPosition = particle.getPosition().moveForward(particle, time);
-        Position right = boundaryPosition.add(new Position(0, length));
+        Position right = boundaryPosition.add(new Position(length, 0));
         Position left = boundaryPosition;
         return left.isLeftOf(nextPosition) && right.isRightOf(nextPosition);
     }

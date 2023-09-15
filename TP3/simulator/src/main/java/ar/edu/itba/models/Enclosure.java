@@ -41,12 +41,12 @@ public class Enclosure implements Iterable<Enclosure>{
                 new Boundary(new Position(0, 0), this.side, BoundaryType.BOTTOM),
                 new Boundary(new Position(0, 0), this.side, BoundaryType.LEFT),
                 new Boundary(new Position(0, this.side), this.side, BoundaryType.TOP),
-                new Boundary(new Position(0, 0), (this.side - L) / 2, BoundaryType.RIGHT),
-                new Boundary(new Position(0, this.side - (this.side - L) / 2), (this.side - L) / 2, BoundaryType.RIGHT),
+                new Boundary(new Position(this.side, 0), (this.side - L) / 2, BoundaryType.RIGHT),
+                new Boundary(new Position(this.side, this.side - (this.side - L) / 2), (this.side - L) / 2, BoundaryType.RIGHT),
                 // rectangulo de la derecha
                 new Boundary(new Position(this.side, (this.side - L) / 2), this.side, BoundaryType.BOTTOM),
                 new Boundary(new Position(this.side, this.side - (this.side - L) / 2), this.side, BoundaryType.TOP),
-                new Boundary(new Position(this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
+                new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
         );
         this.obstacleCollisionTimes.putAll(getInitialWallCollisionTimes(obstacles, particles));
         setNextCollision();
@@ -65,9 +65,9 @@ public class Enclosure implements Iterable<Enclosure>{
         return collisionTimes;
     }
 
-    private <V> Pair<Particle, V> getNextCollision(Map<Pair<Particle, V>, Double> wallCollisionTimes) {
+    private <V> Pair<Particle, V> getNextCollision(Map<Pair<Particle, V>, Double> collisionTimes) {
         Map.Entry<Pair<Particle, V>, Double> maxEntry = null;
-        for (Map.Entry<Pair<Particle, V>, Double> entry : wallCollisionTimes.entrySet()) {
+        for (Map.Entry<Pair<Particle, V>, Double> entry : collisionTimes.entrySet()) {
             double collisionTime = entry.getValue();
             if (maxEntry == null || collisionTime < maxEntry.getValue()) {
                 maxEntry = entry;

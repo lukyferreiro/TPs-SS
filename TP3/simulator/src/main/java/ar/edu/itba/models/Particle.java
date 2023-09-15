@@ -105,5 +105,8 @@ public class Particle {
         return Objects.hash(id);
     }
 
-
+    @Override
+    public String toString() {
+        return "Particle{" + "id=" + id + ", radius=" + radius + ", mass=" + mass + ", position=" + position + ", vx=" + vx + ", vy=" + vy + '}';
+    }
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.utils;
 
 import ar.edu.itba.models.Particle;
+import ar.edu.itba.models.Position;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,8 +50,9 @@ public class ParticlesParser {
             final List<Particle> currentParticlesPerTime = particlesPerTime.get(timeIndex);
             final Particle currentParticle = particles.get(particleIndex);
 
-            currentParticle.getPosition().setX(Double.parseDouble(dynamicArray.get(0)));     //En primera posicion tengo X
-            currentParticle.getPosition().setY(Double.parseDouble(dynamicArray.get(1)));     //En segunda posicion tengo Y
+            final double x = Double.parseDouble(dynamicArray.get(0));     //En primera posicion tengo X
+            final double y = Double.parseDouble(dynamicArray.get(1));     //En segunda posicion tengo Y
+            currentParticle.setPosition(new Position(x, y));
 
             final double speed = Double.parseDouble(dynamicArray.get(2));     //En tercera posicion tengo la velocidad
             final double angle = Double.parseDouble(dynamicArray.get(3));     //En cuarta posicion tengo el angulo
