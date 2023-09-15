@@ -22,10 +22,6 @@ public class Pair<T, V> {
         return value2;
     }
 
-    public static <T, V> Pair<T, V> of(T value1, V value2) {
-        return new Pair<>(value1, value2);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

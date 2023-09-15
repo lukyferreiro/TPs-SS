@@ -74,22 +74,22 @@ public class Particle {
         double deltaRx = this.getPosition().getX() - p.getPosition().getX();
         double deltaRy = this.getPosition().getY() - p.getPosition().getY();
         double deltaVx = this.getVx() - p.getVx();
-        double deltaVy = this.getVx() - p.getVy();
+        double deltaVy = this.getVy() - p.getVy();
 
         double omega = this.radius + p.getRadius();
 
-        double dotProductDvDr = deltaRx * deltaVx + deltaRy * deltaVy;
+        double dotProductDvDr = (deltaRx * deltaVx) + (deltaRy * deltaVy);
         if (dotProductDvDr >= 0) {
             return Double.MAX_VALUE;
         }
-        double dotProductDvDv = deltaVx * deltaVx + deltaVy * deltaVy;
-        double dotProductDrDr = deltaRx * deltaRx + deltaRy * deltaRy;
+        double dotProductDvDv = (deltaVx * deltaVx) + (deltaVy * deltaVy);
+        double dotProductDrDr = (deltaRx * deltaRx) + (deltaRy * deltaRy);
         double d = Math.pow(dotProductDvDr, 2) - dotProductDvDv * (dotProductDrDr - Math.pow(omega, 2));
         if (d < 0) {
             return Double.MAX_VALUE;
         }
 
-        return - (dotProductDvDr + Math.sqrt(d))/dotProductDvDv;
+        return - (dotProductDvDr + Math.sqrt(d)) / dotProductDvDv;
     }
 
     @Override
