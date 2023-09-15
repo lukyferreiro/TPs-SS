@@ -13,43 +13,18 @@ public class Position {
     public double getX() {
         return x;
     }
-
     public void setX(double x) {
         this.x = x;
     }
     public double getY() {
         return y;
     }
-
     public void setY(double y) {
         this.y = y;
     }
 
     public Position add(Position p) {
         return new Position(this.getX() + p.getX(), this.getY() + p.getY());
-    }
-
-    public double dotProduct(Position p) {
-        return this.getX() * p.getX() + this.getY() * p.getY();
-    }
-
-    public Position substract(Position p) {
-        return new Position(this.getX() - p.getX(), this.getY() - p.getY());
-    }
-
-    public Position multiply(double scalar) {
-        return new Position(this.getX() * scalar, this.getY() * scalar);
-    }
-
-
-    private double wrapAxis(double value, double boardLength) {
-        if (value > boardLength) {
-            value -= boardLength;
-        } else if (value < 0) {
-            value += boardLength;
-        }
-
-        return value;
     }
 
     public Position moveForward(Particle particle, double time) {
