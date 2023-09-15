@@ -2,7 +2,7 @@ package ar.edu.itba.models;
 
 import java.util.*;
 
-public class Enclosure implements Iterable<Enclosure>{
+public class Enclosure{
 
     private final List<Particle> particles;
     private final double L;
@@ -24,7 +24,7 @@ public class Enclosure implements Iterable<Enclosure>{
     public double getTime() {
         return time;
     }
-    public Collection<Particle> getParticles() {
+    public List<Particle> getParticles() {
         return particles;
     }
     public double getL() {
@@ -34,7 +34,7 @@ public class Enclosure implements Iterable<Enclosure>{
         return side;
     }
 
-    private void initializeEnclosure(Collection<Particle> particles, double L) {
+    private void initializeEnclosure(List<Particle> particles, double L) {
         this.particleCollisionTimes.putAll(getInitialCollisionTimes(particles));
         Collection<Boundary> obstacles = Arrays.asList(
                 // cuadrado de la izquierda
@@ -53,10 +53,10 @@ public class Enclosure implements Iterable<Enclosure>{
     }
 
     private Map<Pair<Particle, Particle>, Double> getInitialCollisionTimes(Collection<Particle> particles) {
-        final Map<Pair<Particle, Particle>, Double> collisionTimes = new HashMap<>();
+        Map<Pair<Particle, Particle>, Double> collisionTimes = new HashMap<>();
         for (Particle p1 : particles) {
             for (Particle p2 : particles) {
-                final Pair<Particle, Particle> pair = new Pair<>(p1, p2);
+                Pair<Particle, Particle> pair = new Pair<>(p1, p2);
                 if (!collisionTimes.containsKey(pair)) {
                     collisionTimes.put(pair, pair.getOne().getCollisionTime(pair.getOther()));
                 }
@@ -78,7 +78,7 @@ public class Enclosure implements Iterable<Enclosure>{
 
 
     private Map<Pair<Particle, Boundary>, Double> getInitialWallCollisionTimes(Collection<Boundary> boundaries, Collection<Particle> particles) {
-        final Map<Pair<Particle, Boundary>, Double> collisionTimes = new HashMap<>();
+        Map<Pair<Particle, Boundary>, Double> collisionTimes = new HashMap<>();
         for (Particle p : particles) {
             for (Boundary b : boundaries) {
                 Pair<Particle, Boundary> pair = new Pair<>(p, b);
@@ -91,7 +91,7 @@ public class Enclosure implements Iterable<Enclosure>{
 
     private void updateCollisionTimesAfterCollision(Pair<Particle, Particle> particlesInvolved, double collisionDelta) {
         for (Map.Entry<Pair<Particle, Particle>, Double> entry : particleCollisionTimes.entrySet()) {
-            final Pair<Particle, Particle> pair = entry.getKey();
+            Pair<Particle, Particle> pair = entry.getKey();
             if (particlesInvolved.has(pair.getOne()) || particlesInvolved.has(pair.getOther())) {
                 double nextCollision = pair.getOne().getCollisionTime(pair.getOther());
                 entry.setValue(nextCollision);
@@ -103,7 +103,7 @@ public class Enclosure implements Iterable<Enclosure>{
             }
         }
         for (Map.Entry<Pair<Particle, Boundary>, Double> entry : obstacleCollisionTimes.entrySet()) {
-            final Pair<Particle, Boundary> pair = entry.getKey();
+            Pair<Particle, Boundary> pair = entry.getKey();
             if (particlesInvolved.has(pair.getOne())) {
                 double nextCollision = pair.getOther().getCollisionTime(pair.getOne());
                 entry.setValue(nextCollision);
@@ -117,8 +117,8 @@ public class Enclosure implements Iterable<Enclosure>{
     }
 
     private void setNextCollision() {
-        final Pair<Particle, Particle> particleCollision = getNextCollision(particleCollisionTimes);
-        final Pair<Particle, Boundary> wallCollision = getNextCollision(obstacleCollisionTimes);
+        Pair<Particle, Particle> particleCollision = getNextCollision(particleCollisionTimes);
+        Pair<Particle, Boundary> wallCollision = getNextCollision(obstacleCollisionTimes);
 
         double particleCollisionTime = particleCollisionTimes.getOrDefault(particleCollision, Double.MAX_VALUE);
         double wallCollisionTime = obstacleCollisionTimes.getOrDefault(wallCollision, Double.MAX_VALUE);
@@ -131,7 +131,7 @@ public class Enclosure implements Iterable<Enclosure>{
         }
     }
 
-    private Enclosure getNextEnclosure() {
+    public Enclosure getNextEnclosure() {
         if (isFirstIteration) {
             isFirstIteration = false;
             return this;
@@ -140,15 +140,16 @@ public class Enclosure implements Iterable<Enclosure>{
         // actualizo la posicion y velocidad de esas dos particulas en base al choque
         // recalculo los tiempos de choque solo para las particulas que chocaron con las demas
         // actualizo todas las otras particulas avanzandolas en el tiempo de forma "normal"
-        final Object o = nextCollision.getOther();
-        final Particle particle = nextCollision.getOne();
-        final double delta = nextCollisionDelta;
-        particles.forEach(p -> p.moveForwardInTime(delta));
-        if (o instanceof Boundary boundary) {
-            boundary.collide(nextCollision.getOne());
+        Particle particle = nextCollision.getOne();
+        Object o = nextCollision.getOther();
+        double delta = nextCollisionDelta;
+        this.particles.forEach(p -> p.moveForwardInTime(delta));
+        if (o instanceof Boundary) {
+            Boundary boundary = (Boundary) o;
+            boundary.collide(particle);
             updateCollisionTimesAfterCollision(new Pair<>(particle, particle), delta);
         } else {
-            final Particle particle2 = (Particle) o;
+            Particle particle2 = (Particle) o;
             particle.collide(particle2);
             updateCollisionTimesAfterCollision(new Pair<>(particle, particle2), delta);
         }
@@ -157,21 +158,6 @@ public class Enclosure implements Iterable<Enclosure>{
         setNextCollision();
 
         return this;
-    }
-
-    @Override
-    public Iterator<Enclosure> iterator() {
-        return new Iterator<>() {
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public Enclosure next() {
-                return getNextEnclosure();
-            }
-        };
     }
 
 }

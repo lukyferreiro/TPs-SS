@@ -44,7 +44,7 @@ public class Simulation {
                 pw.append(String.format("%d\n", i));
                 final List<Particle> currentStates = results.getParticles().get(i);
                 currentStates.forEach((particle) ->
-                        pw.printf(Locale.US, "%d %.5f %.5f %.3f %.5f\n",
+                        pw.printf(Locale.US, "%d %f %f %f %f\n",
                                 particle.getId(),
                                 particle.getPosition().getX(),
                                 particle.getPosition().getY(),
@@ -57,7 +57,7 @@ public class Simulation {
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
-            pw.append(String.format(Locale.US, "Total time - %.5f ms\n", totalTimeMillis));
+            pw.append(String.format(Locale.US, "Total time - %f ms\n", totalTimeMillis));
         }
 
 

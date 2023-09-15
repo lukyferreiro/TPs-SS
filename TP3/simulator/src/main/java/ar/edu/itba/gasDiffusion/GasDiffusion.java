@@ -4,26 +4,25 @@ import ar.edu.itba.models.Enclosure;
 import ar.edu.itba.models.Particle;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class GasDiffusion {
 
     public static GasDiffusionResult run(List<List<Particle>> particlesPerTime, Integer iterations, Double side, Double L) {
-        final long startTime = System.nanoTime();
+        long startTime = System.nanoTime();
         Enclosure enclosure = new Enclosure(particlesPerTime.get(0), side, L);
-        Iterator<Enclosure> it = enclosure.iterator();
+
         List<List<Particle>> particlesOverTime = new ArrayList<>();
+        particlesOverTime.add(particlesPerTime.get(0));
+
         for (int i = 0; i < iterations; i++) {
-//            double time = i * deltaT;
-            Enclosure next = it.next();
-//            while (next.getTime() < time) {
-//                next = it.next();
-//            }
-            particlesOverTime.add((List<Particle>) next.getParticles());
+            Enclosure nextEnclosure = enclosure.getNextEnclosure();
+            particlesOverTime.add(nextEnclosure.getParticles());
+            enclosure = nextEnclosure;
         }
-        final long endTime = System.nanoTime();
-        final long totalTime = endTime - startTime;
+
+        long endTime = System.nanoTime();
+        long totalTime = endTime - startTime;
         return new GasDiffusionResult(particlesOverTime, totalTime);
     }
 }

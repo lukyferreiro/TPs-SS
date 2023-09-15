@@ -69,7 +69,6 @@ public class Generator {
 
                         Position position = new Position(x,y);
                         for (Particle other : particles) {
-                            System.out.println(other);
                             if(other.getPosition() != null) {
                                 double distance = position.calculateDistance(other.getPosition());
                                 if (distance < 2 * particle.getRadius()) {

@@ -46,9 +46,9 @@ public class Particle {
         this.vy = vy;
     }
 
-    public void moveForwardInTime(double delta) {
-        double newX = this.getPosition().getX() + this.vx * delta;
-        double newY = this.getPosition().getY() + this.vy * delta;
+    public void moveForwardInTime(double deltaTime) {
+        double newX = this.getPosition().getX() + this.vx * deltaTime;
+        double newY = this.getPosition().getY() + this.vy * deltaTime;
         this.setPosition(new Position(newX, newY));
     }
 
@@ -65,8 +65,8 @@ public class Particle {
 
         this.setVx(this.vx + (Jx / this.mass));
         this.setVy(this.vy + (Jy / this.mass));
-        p.setVx(p.vx + (Jx / p.mass));
-        p.setVy(p.vy + (Jy / p.mass));
+        p.setVx(p.getVx() - (Jx / p.getMass()));
+        p.setVy(p.getVy() - (Jy / p.getMass()));
     }
 
 
