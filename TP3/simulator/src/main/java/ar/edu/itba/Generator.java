@@ -59,10 +59,19 @@ public class Generator {
                         superposition = false;
                         x = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         y = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
+
+                        // Comprobar si la partícula está dentro del recinto
+                        if (x < particle.getRadius() || x > config.getSide() - particle.getRadius() ||
+                                y < particle.getRadius() || y > config.getSide() - particle.getRadius()) {
+                            superposition = true;
+                            continue; // Volver a generar coordenadas si está fuera del recinto
+                        }
+
+                        Position position = new Position(x,y);
                         for (Particle other : particles) {
                             System.out.println(other);
-                            if(particle.getPosition() != null && other.getPosition() != null) {
-                                double distance = particle.getPosition().calculateDistance(other.getPosition());
+                            if(other.getPosition() != null) {
+                                double distance = position.calculateDistance(other.getPosition());
                                 if (distance < 2 * particle.getRadius()) {
                                     superposition = true;
                                     break;

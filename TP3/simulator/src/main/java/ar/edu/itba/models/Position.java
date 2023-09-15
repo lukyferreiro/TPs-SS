@@ -75,8 +75,7 @@ public class Position {
     }
 
     public double calculateDistance(Position p) {
-        return Math.sqrt(Math.pow(getX() - p.getX(), 2) + Math.pow(getY() - p.getY(), 2));
+        return Math.sqrt(Math.pow(this.x - p.getX(), 2) + Math.pow(this.y - p.getY(), 2));
     }
-
 
 }
