@@ -122,7 +122,7 @@ public class Enclosure{
 
         double particleCollisionTime = particleCollisionTimes.getOrDefault(particleCollision, Double.MAX_VALUE);
         double wallCollisionTime = obstacleCollisionTimes.getOrDefault(wallCollision, Double.MAX_VALUE);
-        if (particleCollisionTime < wallCollisionTime) {
+        if (particleCollisionTime < wallCollisionTime && particleCollisionTime > 0) {
             this.nextCollision = particleCollision;
             this.nextCollisionDelta = particleCollisionTime;
         } else {
@@ -131,10 +131,10 @@ public class Enclosure{
         }
     }
 
-    public Enclosure getNextEnclosure() {
+    public void getNextEnclosure() {
         if (isFirstIteration) {
             this.isFirstIteration = false;
-            return this;
+            return;
         }
         // calculo que particulas chocan en el proximo evento
         // actualizo la posicion y velocidad de esas dos particulas en base al choque
@@ -143,9 +143,8 @@ public class Enclosure{
         Particle particle = this.nextCollision.getOne();
         Object o = this.nextCollision.getOther();
         double delta = this.nextCollisionDelta;
-        System.out.println(delta);
         this.particles.forEach(p -> p.moveForwardInTime(delta));
-        //System.out.println(this.particles);
+
         if (o instanceof Boundary) {
             Boundary boundary = (Boundary) o;
             boundary.collide(particle);
@@ -158,8 +157,6 @@ public class Enclosure{
 
         time += delta;
         setNextCollision();
-
-        return this;
     }
 
 }

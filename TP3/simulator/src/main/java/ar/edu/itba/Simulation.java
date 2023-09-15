@@ -31,35 +31,17 @@ public class Simulation {
 
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
-        GasDiffusionResult results = GasDiffusion.run(parser.getParticlesPerTime(), 500, parser.getSide(), config.getL());
+        final File outFile = new File(config.getOutFile());
+        GasDiffusionResult results = GasDiffusion.run(parser.getParticlesPerTime(), 1000, parser.getSide(), config.getL(), outFile);
 
         System.out.println("Simulation finished ...\n");
         System.out.println("Writing Results ...\n");
 
         final File outTimeFile = new File(config.getOutTimeFile());
-        final File outFile = new File(config.getOutFile());
-
-        try (PrintWriter pw = new PrintWriter(outFile)) {
-            for (int i = 0; i < results.getParticles().size(); i++) {
-                pw.append(String.format("%d\n", i));
-                final List<Particle> currentStates = results.getParticles().get(i);
-                currentStates.forEach((particle) ->
-                        pw.printf(Locale.US, "%d %f %f %f %f\n",
-                                particle.getId(),
-                                particle.getPosition().getX(),
-                                particle.getPosition().getY(),
-                                particle.getVx(),
-                                particle.getVy()
-                        )
-                );
-            }
-        }
 
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
             final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
             pw.append(String.format(Locale.US, "Total time - %f ms\n", totalTimeMillis));
         }
-
-
     }
 }
