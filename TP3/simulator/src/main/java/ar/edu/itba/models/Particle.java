@@ -9,8 +9,8 @@ public class Particle {
     private final double radius;
     private final double mass;
     private Position position;
-    private double speed;
-    private double angle;
+    private double vx;
+    private double vy;
 
     public Particle(int id, double radius, double mass) {
         this.id = id;
@@ -33,32 +33,63 @@ public class Particle {
     public void setPosition(Position position) {
         this.position = position;
     }
-
-    public double getSpeed() {
-        return speed;
+    public double getVx() {
+        return vx;
     }
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setVx(double vx) {
+        this.vx = vx;
     }
-    public double getAngle() {
-        return angle;
+    public double getVy() {
+        return vy;
     }
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
-    public double getVelocityX() {
-        return Math.cos(angle) * speed;
-    }
-    public double getVelocityY() {
-        return Math.sin(angle) * speed;
+    public void setVy(double vy) {
+        this.vy = vy;
     }
 
-    public static double calculateVelocity(double vx, double vy) {
-        return Math.sqrt(Math.pow(vx, 2) + Math.pow(vy, 2));
+    public void moveForwardInTime(double delta) {
+        double newX = this.getPosition().getX() + this.vx * delta;
+        double newY = this.getPosition().getY() + this.vy * delta;
+        this.setPosition(new Position(newX, newY));
     }
 
-    public static double calculateDistance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    public void collide(Particle p) {
+        double deltaRx = p.getPosition().getX() - this.getPosition().getX();
+        double deltaRy = p.getPosition().getY() - this.getPosition().getY();
+        double deltaVx = p.getVx() - this.getVx();
+        double deltaVy = p.getVx() - this.getVy();
+
+        double omega = this.radius + p.getRadius();
+        double J = (2 * this.mass * p.getMass() * (deltaRx * deltaVx + deltaRy * deltaVy)) / (omega * 2);
+        double Jx = J * deltaRx / omega;
+        double Jy = J * deltaRy / omega;
+
+        this.setVx(this.vx + (Jx / this.mass));
+        this.setVy(this.vy + (Jy / this.mass));
+        p.setVx(p.vx + (Jx / p.mass));
+        p.setVy(p.vy + (Jy / p.mass));
+    }
+
+
+    public double getCollisionTime(Particle p) {
+        double deltaRx = this.getPosition().getX() - p.getPosition().getX();
+        double deltaRy = this.getPosition().getY() - p.getPosition().getY();
+        double deltaVx = this.getVx() - p.getVx();
+        double deltaVy = this.getVx() - p.getVy();
+
+        double omega = this.radius + p.getRadius();
+
+        double dotProductDvDr = deltaRx * deltaVx + deltaRy * deltaVy;
+        if (dotProductDvDr >= 0) {
+            return Double.MAX_VALUE;
+        }
+        double dotProductDvDv = deltaVx * deltaVx + deltaVy * deltaVy;
+        double dotProductDrDr = deltaRx * deltaRx + deltaRy * deltaRy;
+        double d = Math.pow(dotProductDvDr, 2) - dotProductDvDv * (dotProductDrDr - Math.pow(omega, 2));
+        if (d < 0) {
+            return Double.MAX_VALUE;
+        }
+
+        return - (dotProductDvDr + Math.sqrt(d))/dotProductDvDv;
     }
 
     @Override

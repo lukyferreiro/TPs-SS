@@ -60,7 +60,7 @@ public class Generator {
                         x = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         y = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
                         for (Particle other : particles) {
-                            Position otherPosition = new Position(other.getPosition().getX(),other.getPosition().getY());
+                            Position otherPosition = new Position(other.getPosition().getX(), other.getPosition().getY());
                             double distance = particle.getPosition().calculateDistance(otherPosition);
                             if (distance < 2 * particle.getRadius()) {
                                 superposition = true;
@@ -69,8 +69,6 @@ public class Generator {
                         }
                     } while (superposition);
 
-                    particle.setAngle(angle);
-                    particle.setSpeed(speed);
                     particle.getPosition().setX(x);
                     particle.getPosition().setY(y);
 

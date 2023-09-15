@@ -12,11 +12,7 @@ public class Boundary {
     }
 
     public double getCollisionTime(Particle particle) {
-        double time = type.getCollisionTime(boundaryPosition, length, particle);
-        if (time < 0) {
-            System.out.println((String.format("Negative value for wall %s\n", type)));
-        }
-        return time;
+        return type.getCollisionTime(boundaryPosition, length, particle);
     }
 
     public void collide(Particle particle) {

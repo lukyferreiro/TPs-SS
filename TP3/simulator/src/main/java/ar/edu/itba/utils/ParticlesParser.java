@@ -51,8 +51,11 @@ public class ParticlesParser {
 
             currentParticle.getPosition().setX(Double.parseDouble(dynamicArray.get(0)));     //En primera posicion tengo X
             currentParticle.getPosition().setY(Double.parseDouble(dynamicArray.get(1)));     //En segunda posicion tengo Y
-            currentParticle.setSpeed(Double.parseDouble(dynamicArray.get(2)));     //En tercera posicion tengo la velocidad
-            currentParticle.setAngle(Double.parseDouble(dynamicArray.get(3)));     //En cuarta posicion tengo el angulo
+
+            final double speed = Double.parseDouble(dynamicArray.get(2));     //En tercera posicion tengo la velocidad
+            final double angle = Double.parseDouble(dynamicArray.get(3));     //En cuarta posicion tengo el angulo
+            currentParticle.setVx(speed * Math.cos(angle));
+            currentParticle.setVy(speed * Math.sin(angle));
 
             currentParticlesPerTime.add(currentParticle);
             particleIndex++;

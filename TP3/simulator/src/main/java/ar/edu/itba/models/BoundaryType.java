@@ -5,14 +5,15 @@ public enum BoundaryType {
     LEFT {
         @Override
         public void collide(Particle particle) {
-            particle.setSpeed(Particle.calculateVelocity(-particle.getVelocityX(), particle.getVelocityY()));
+            particle.setVx(-particle.getVx());
+            particle.setVy(particle.getVy());
         }
 
         // wallPos is bottom side of wall
         @Override
         public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
-            double vx = particle.getVelocityX();
+            double vx = particle.getVx();
             if (vx >= 0 || (x + particle.getRadius()) > particle.getPosition().getX()) {
                 return Double.MAX_VALUE;
             } else {
@@ -23,14 +24,15 @@ public enum BoundaryType {
     }, RIGHT {
         @Override
         public void collide(Particle particle) {
-            particle.setSpeed(Particle.calculateVelocity(-particle.getVelocityX(), particle.getVelocityY()));
+            particle.setVx(-particle.getVx());
+            particle.setVy(particle.getVy());
         }
 
         // wallPos is bottom side of wall
         @Override
         public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
-            double vx = particle.getVelocityX();
+            double vx = particle.getVx();
             if (vx <= 0 || (x - particle.getRadius()) < particle.getPosition().getX()) {
                 return Double.MAX_VALUE;
             } else {
@@ -42,14 +44,15 @@ public enum BoundaryType {
     }, TOP {
         @Override
         public void collide(Particle particle) {
-            particle.setSpeed(Particle.calculateVelocity(particle.getVelocityX(), -particle.getVelocityY()));
+            particle.setVx(particle.getVx());
+            particle.setVy(-particle.getVy());
         }
 
         // wallPos is left side of wall
         @Override
         public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
-            double vy = particle.getVelocityY();
+            double vy = particle.getVy();
             if (vy <= 0 || (y - particle.getRadius()) < particle.getPosition().getY()) {
                 return Double.MAX_VALUE;
             } else {
@@ -60,14 +63,15 @@ public enum BoundaryType {
     }, BOTTOM {
         @Override
         public void collide(Particle particle) {
-            particle.setSpeed(Particle.calculateVelocity(particle.getVelocityX(), -particle.getVelocityY()));
+            particle.setVx(particle.getVx());
+            particle.setVy(-particle.getVy());
         }
 
         // wallPos is left side of wall
         @Override
         public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
-            double vy = particle.getVelocityY();
+            double vy = particle.getVy();
             if (vy >= 0 || (y + particle.getRadius()) > particle.getPosition().getY()) {
                 return Double.MAX_VALUE;
             } else {

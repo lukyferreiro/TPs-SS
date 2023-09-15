@@ -53,8 +53,8 @@ public class Position {
     }
 
     public Position moveForward(Particle particle, double time) {
-        double x = getX() + particle.getVelocityX() * time;
-        double y = getY() + particle.getVelocityY() * time;
+        double x = getX() + particle.getVx() * time;
+        double y = getY() + particle.getVy() * time;
         return new Position(x, y);
     }
 
