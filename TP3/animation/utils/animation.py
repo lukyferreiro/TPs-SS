@@ -25,12 +25,13 @@ def update(frame, particles_dict, SIDE, L):
     y_positions = []
 
     for id, particle_info in particles_dict[frame].items():
-        x = particle_info['x']
-        y = particle_info['y']
-        x_positions.append(x)
-        y_positions.append(y)
-        circle = plt.Circle((x, y), radius=0.0015, fill=True)
-        plt.gca().add_patch(circle)
+        if isinstance(id, int):
+            x = particle_info['x']
+            y = particle_info['y']
+            x_positions.append(x)
+            y_positions.append(y)
+            circle = plt.Circle((x, y), radius=0.0015, fill=True)
+            plt.gca().add_patch(circle)
 
     plt.xlim(0, 2 * SIDE)
     plt.ylim(0, SIDE)

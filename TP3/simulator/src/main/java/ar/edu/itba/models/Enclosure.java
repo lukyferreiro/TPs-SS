@@ -8,7 +8,6 @@ public class Enclosure {
     private final double L;
     private final double side;
     private double time = 0;
-    private double area;
     private boolean isFirstIteration = true;
     private double nextCollisionDelta;
     private final Map<Pair<Particle,Bounceable>, Double> allCollisions = new HashMap<>();
@@ -21,7 +20,6 @@ public class Enclosure {
         this.side = side;
         this.L = L;
         this.particles = particles;
-        this.area = (side * side) + (side * L);
         initializeEnclosure(particles, L);
     }
 
@@ -44,15 +42,15 @@ public class Enclosure {
                 new CornerParticle(particles.size()+1, new Position(this.side, (this.side - L) / 2)),
                 new CornerParticle(particles.size()+2, new Position(this.side, ((this.side - L) / 2) + L)),
                 // Recinto de la izquierda
-                new Boundary(new Position(0, 0), this.side, BoundaryType.BOTTOM),
-                new Boundary(new Position(0, 0), this.side, BoundaryType.LEFT),
-                new Boundary(new Position(0, this.side), this.side, BoundaryType.TOP),
-                new Boundary(new Position(this.side, 0), (this.side - L) / 2, BoundaryType.RIGHT),
-                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), (this.side - L) / 2, BoundaryType.RIGHT),
+                new Boundary(new Position(0, 0), this.side, BoundaryType.BOTTOM, 0),
+                new Boundary(new Position(0, 0), this.side, BoundaryType.LEFT, 0),
+                new Boundary(new Position(0, this.side), this.side, BoundaryType.TOP, 0),
+                new Boundary(new Position(this.side, 0), (this.side - L) / 2, BoundaryType.RIGHT, 0),
+                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), (this.side - L) / 2, BoundaryType.RIGHT, 0),
                 // Recinto de la derecha
-                new Boundary(new Position(this.side, (this.side - L) / 2), this.side, BoundaryType.BOTTOM),
-                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), this.side, BoundaryType.TOP),
-                new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
+                new Boundary(new Position(this.side, (this.side - L) / 2), this.side, BoundaryType.BOTTOM, 1),
+                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), this.side, BoundaryType.TOP, 1),
+                new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT, 1)
         );
         setInitialCollisionTimes(obstacles,particles);
         setNextCollisions();
@@ -108,7 +106,7 @@ public class Enclosure {
         }
     }
 
-    public double getNextEnclosure(boolean calculatePressure, List<Double> times,List<Double> pressures) {
+    public double getNextEnclosure() {
         if (isFirstIteration) {
             this.isFirstIteration = false;
             return 0;
@@ -124,7 +122,7 @@ public class Enclosure {
 
         if (o instanceof Boundary) {
             Boundary boundary = (Boundary) o;
-            wallCollisions.add(new Collision(nextCollision.getOne(),boundary, time, delta));
+            wallCollisions.add(new Collision(nextCollision.getOne(), boundary, time));
             boundary.collide(particle);
             updateCollisionTimesAfterCollision(new Pair<>(particle, particle), delta);
         }  else {
@@ -132,20 +130,8 @@ public class Enclosure {
             particle2.collide(particle);
             updateCollisionTimesAfterCollision(new Pair<>(particle, particle2), delta);
         }
-        if (calculatePressure) {
-            double pressure = 0;
-            for (Collision c:wallCollisions) {
-                pressure+= c.getDeltaF();
-            }
-            pressure/=this.area;
-            times.add(time);
 
-            System.out.println("PRESSURE");
-            System.out.println(pressure);
 
-            pressures.add(Math.abs(pressure));
-            wallCollisions.clear();
-        }
 
         time += delta;
         setNextCollisions();
@@ -153,14 +139,25 @@ public class Enclosure {
         return delta;
     }
 
-    private double calculatePressure(Collection<Collision> collisions) {
-        double pressure = 0;
-
-        for (Collision collision: collisions) {
-
+    public Pair<Double, Double> calculatePressure(double deltaT, List<Double> times) {
+        double pressureA = 0;
+        double pressureB = 0;
+        for (Collision c:wallCollisions) {
+            if (c.bouncer.getId() == 0) {
+                pressureA += c.getDeltaF();
+            }
+            else {
+                pressureB += c.getDeltaF();
+            }
         }
 
-        return 0;
+        pressureA/=deltaT;
+        pressureB/=deltaT;
+
+        times.add(time);
+        Pair<Double, Double> pressures = (new Pair<>((pressureA/(side*side)) , (pressureB/(side*L))));
+        wallCollisions.clear();
+        return pressures;
     }
 
     private static class Collision {
@@ -170,7 +167,7 @@ public class Enclosure {
         private final Double time;
         private final Double deltaF;
 
-        Collision(Particle particle, Boundary bouncer, Double time, Double delta){
+        Collision(Particle particle, Boundary bouncer, Double time){
             this.particle = particle;
             this.bouncer = bouncer;
             this.time = time;
@@ -178,10 +175,10 @@ public class Enclosure {
             double F = 0;
 
             if (bouncer.getType().equals(BoundaryType.LEFT) || bouncer.getType().equals(BoundaryType.RIGHT)) {
-                F = (2 * particle.getMass() * particle.getVx())/delta;
+                F = Math.abs((2 * particle.getMass() * particle.getVx()));
             }
             else {
-                F = (2 * particle.getMass() * particle.getVy())/delta;
+                F = Math.abs((2 * particle.getMass() * particle.getVy()));
             }
 
             this.deltaF = F;

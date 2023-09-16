@@ -1,9 +1,10 @@
 import json
 from utils.dataConfig import DataConfig
-from utils.particlesParser import parseGasDiffusionFile, parse
+from utils.particlesParser import parseGasDiffusionFile
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, writers
 from utils.animation import update
+from utils.plots import plot_pressure_over_time
 
 def main(): 
     BASE = '../simulator/'
@@ -19,14 +20,11 @@ def main():
     particles_dict = parseGasDiffusionFile(TO_OUT)
     #particles_dict = parse('../simulator/src/main/resources/simulation.json')
 
+    #plot_pressure_over_time(particles_dict, c.L)
+
     animation_times = list(particles_dict.keys())
 
-    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,
-                         interval=1, fargs=(particles_dict, c.side, c.L)).save("simulationMenosParticulas.gif")
-    
-    Writer = writers['ffmpeg']
-    writer = Writer(fps=20, metadata=dict(artist='Me'), bitrate=1800)
-    anim.save('animation.mp4', writer=writer)
+    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,interval=1, fargs=(particles_dict, c.side, c.L)).save("falopa.gif")
 
 
 if __name__ == "__main__":

@@ -28,10 +28,9 @@ public class Simulation {
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
         final File outFile = new File(config.getOutFile());
-        final File outTimeFile = new File(config.getOutTimeFile());
 
         System.out.println("Simulation started ...\n");
-        GasDiffusion.run(parser.getParticlesPerTime(), 30, parser.getSide(), config.getL(), outFile, outTimeFile);
+        GasDiffusion.run(parser.getParticlesPerTime(), 60, 1.0, parser.getSide(), config.getL(), outFile);
         System.out.println("Simulation finished ...\n");
 
     }
