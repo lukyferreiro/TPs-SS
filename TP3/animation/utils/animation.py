@@ -16,6 +16,8 @@ def update(frame, particles_dict, SIDE, L):
         (SIDE, 0)
     ]
 
+    print(frame)
+
     poligono_rectangulo = Polygon(vertices_rectangulo, closed=True, edgecolor='black', facecolor='none')
     plt.gca().add_patch(poligono_rectangulo)
 

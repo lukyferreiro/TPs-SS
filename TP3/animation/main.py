@@ -1,9 +1,8 @@
 import json
 from utils.dataConfig import DataConfig
-from utils.particlesParser import parseGasDiffusionFile
+from utils.particlesParser import parseGasDiffusionFile, parse
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, writers
 from utils.animation import update
 
 def main(): 
@@ -18,13 +17,17 @@ def main():
     TO_DYNAMIC = BASE + c.dynamicFile
 
     particles_dict = parseGasDiffusionFile(TO_OUT)
+    #particles_dict = parse('../simulator/src/main/resources/simulation.json')
 
     animation_times = list(particles_dict.keys())
 
-    ani = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,
-                         interval=1, fargs=(particles_dict, c.side, c.L)).save("simulation.gif")
+    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,
+                         interval=1, fargs=(particles_dict, c.side, c.L)).save("simulationMenosParticulas.gif")
+    
+    Writer = writers['ffmpeg']
+    writer = Writer(fps=20, metadata=dict(artist='Me'), bitrate=1800)
+    anim.save('animation.mp4', writer=writer)
 
-    plt.show()
 
 if __name__ == "__main__":
     main()
