@@ -11,6 +11,10 @@ public class Boundary implements Bounceable {
         this.type = type;
     }
 
+    public BoundaryType getType() {
+        return type;
+    }
+
     @Override
     public double getCollisionTime(Particle particle) {
         return type.getCollisionTime(boundaryPosition, length, particle);
