@@ -1,3 +1,5 @@
+import re
+
 def parseGasDiffusionFile(gasDiffusionFile):
     data_dict = {}
     current_time = None
@@ -5,8 +7,8 @@ def parseGasDiffusionFile(gasDiffusionFile):
     with open(gasDiffusionFile, 'r') as file:
         for line in file:
             line = line.strip()
-            if line.isdigit():
-                current_time = int(line)
+            if re.match(r'^\d+\.\d+$', line):
+                current_time = float(line)
                 data_dict[current_time] = {}
             else:
                 parts = line.split()

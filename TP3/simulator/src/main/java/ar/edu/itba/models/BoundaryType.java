@@ -11,14 +11,14 @@ public enum BoundaryType {
 
         // wallPos is bottom side of wall
         @Override
-        public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
             double vx = particle.getVx();
             if (vx >= 0 || (x + particle.getRadius()) > particle.getPosition().getX()) {
-                return Double.MAX_VALUE;
+                return null;
             } else {
-                double time = (x + particle.getRadius() - particle.getPosition().getX()) / vx;
-                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                Double time = (x + particle.getRadius() - particle.getPosition().getX()) / vx;
+                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : null;
             }
         }
     }, RIGHT {
@@ -30,14 +30,14 @@ public enum BoundaryType {
 
         // wallPos is bottom side of wall
         @Override
-        public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
             double vx = particle.getVx();
             if (vx <= 0 || (x - particle.getRadius()) < particle.getPosition().getX()) {
-                return Double.MAX_VALUE;
+                return null;
             } else {
                 double time = (x - particle.getRadius() - particle.getPosition().getX()) / vx;
-                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : null;
             }
 
         }
@@ -50,14 +50,14 @@ public enum BoundaryType {
 
         // wallPos is left side of wall
         @Override
-        public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
             double vy = particle.getVy();
             if (vy <= 0 || (y - particle.getRadius()) < particle.getPosition().getY()) {
-                return Double.MAX_VALUE;
+                return null;
             } else {
                 double time = (y - particle.getRadius() - particle.getPosition().getY()) / vy;
-                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : null;
             }
         }
     }, BOTTOM {
@@ -69,14 +69,14 @@ public enum BoundaryType {
 
         // wallPos is left side of wall
         @Override
-        public double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
             double vy = particle.getVy();
             if (vy >= 0 || (y + particle.getRadius()) > particle.getPosition().getY()) {
-                return Double.MAX_VALUE;
+                return null;
             } else {
                 double time = (y + particle.getRadius() - particle.getPosition().getY()) / vy;
-                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : null;
             }
         }
     };
@@ -97,5 +97,5 @@ public enum BoundaryType {
 
     public abstract void collide(Particle particle);
 
-    public abstract double getCollisionTime(Position boundaryPosition, double length, Particle particle);
+    public abstract Double getCollisionTime(Position boundaryPosition, double length, Particle particle);
 }

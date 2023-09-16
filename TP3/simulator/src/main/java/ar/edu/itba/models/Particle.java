@@ -70,7 +70,7 @@ public class Particle {
     }
 
 
-    public double getCollisionTime(Particle p) {
+    public Double getCollisionTime(Particle p) {
         double deltaRx = this.getPosition().getX() - p.getPosition().getX();
         double deltaRy = this.getPosition().getY() - p.getPosition().getY();
         double deltaVx = this.getVx() - p.getVx();
@@ -80,13 +80,13 @@ public class Particle {
 
         double dotProductDvDr = (deltaRx * deltaVx) + (deltaRy * deltaVy);
         if (dotProductDvDr >= 0) {
-            return Double.MAX_VALUE;
+            return null;
         }
         double dotProductDvDv = (deltaVx * deltaVx) + (deltaVy * deltaVy);
         double dotProductDrDr = (deltaRx * deltaRx) + (deltaRy * deltaRy);
         double d = Math.pow(dotProductDvDr, 2) - dotProductDvDv * (dotProductDrDr - Math.pow(omega, 2));
         if (d < 0) {
-            return Double.MAX_VALUE;
+            return null;
         }
 
         return - (dotProductDvDr + Math.sqrt(d)) / dotProductDvDv;

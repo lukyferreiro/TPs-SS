@@ -11,7 +11,7 @@ public class Boundary {
         this.type = type;
     }
 
-    public double getCollisionTime(Particle particle) {
+    public Double getCollisionTime(Particle particle) {
         return type.getCollisionTime(boundaryPosition, length, particle);
     }
 

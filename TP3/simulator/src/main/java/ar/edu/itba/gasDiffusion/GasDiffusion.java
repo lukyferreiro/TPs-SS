@@ -25,7 +25,7 @@ public class GasDiffusion {
 
                 List<Particle> particles = enclosure.getParticles();
 
-                pw.printf(Locale.US, "%.10f\n", enclosure.getTime());
+                pw.printf(Locale.US, "%.20f\n", enclosure.getTime());
                 particles.forEach((particle) ->
                         pw.printf(Locale.US, "%d %.20f %.20f %f %f\n",
                                 particle.getId(),

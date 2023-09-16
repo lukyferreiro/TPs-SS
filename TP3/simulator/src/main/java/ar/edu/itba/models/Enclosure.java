@@ -48,6 +48,8 @@ public class Enclosure{
                 new Boundary(new Position(this.side, (this.side - L) / 2), this.side, BoundaryType.BOTTOM),
                 new Boundary(new Position(this.side, this.side - (this.side - L) / 2), this.side, BoundaryType.TOP),
                 new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
+
+                // esquinas
         );
         this.obstacleCollisionTimes.putAll(getInitialWallCollisionTimes(obstacles, particles));
         setNextCollision();
@@ -83,11 +85,11 @@ public class Enclosure{
         Pair<Particle, Particle> particleCollision = getNextCollision(particleCollisionTimes);
         Pair<Particle, Boundary> wallCollision = getNextCollision(obstacleCollisionTimes);
 
-        double particleCollisionTime = particleCollisionTimes.getOrDefault(particleCollision, Double.MAX_VALUE);
-        double wallCollisionTime = obstacleCollisionTimes.getOrDefault(wallCollision, Double.MAX_VALUE);
+        Double particleCollisionTime = particleCollisionTimes.getOrDefault(particleCollision, null);
+        Double wallCollisionTime = obstacleCollisionTimes.getOrDefault(wallCollision, null);
 
-        //Nos fijamos cual es la primera coleccion que ocurre: con pared o con particula
-        if (particleCollisionTime < wallCollisionTime && particleCollisionTime > 0) {
+        //Nos fijamos cual es la primera colisión que ocurre: con pared o con particula
+        if (particleCollisionTime != null && particleCollisionTime.compareTo(wallCollisionTime) < 0 && particleCollisionTime > 0) {
             this.nextCollision = new Collision<Particle>(particleCollision.getOne(), particleCollision.getOther(), particleCollisionTime);
         } else {
             this.nextCollision = new Collision<Boundary>(wallCollision.getOne(), wallCollision.getOther(), wallCollisionTime);
@@ -99,8 +101,8 @@ public class Enclosure{
         //Buscamos el tiempo mas chico en colisionar
         Map.Entry<Pair<Particle, V>, Double> pairWithLowestTime = null;
         for (Map.Entry<Pair<Particle, V>, Double> entry : collisionTimes.entrySet()) {
-            double collisionTime = entry.getValue();
-            if (pairWithLowestTime == null || collisionTime < pairWithLowestTime.getValue()) {
+            Double collisionTime = entry.getValue();
+            if ((pairWithLowestTime == null || pairWithLowestTime.getValue() == null)|| (collisionTime != null && collisionTime > 0 && collisionTime.compareTo(pairWithLowestTime.getValue()) < 0)) {
                 pairWithLowestTime = entry;
             }
         }
@@ -111,30 +113,36 @@ public class Enclosure{
         // Recalculo los tiempos de choque solo para las particulas que chocaron con respecto a las demas
         for (Map.Entry<Pair<Particle, Particle>, Double> entry : particleCollisionTimes.entrySet()) {
             Pair<Particle, Particle> pair = entry.getKey();
+
+            Double nextCollision = pair.getOne().getCollisionTime(pair.getOther());
+            entry.setValue(nextCollision);
+
             // Si tengo un par de una de las particulas involucradas, recalculo el tiempo
-            if (particlesInvolved.has(pair.getOne()) || particlesInvolved.has(pair.getOther())) {
-                double nextCollision = pair.getOne().getCollisionTime(pair.getOther());
-                entry.setValue(nextCollision);
-            } else {    // Sino, le resto el tiempo que ya tenia con el nuevo
-                double prevCollisionTime = entry.getValue();
-                if (prevCollisionTime != Double.MAX_VALUE) {
-                    entry.setValue(prevCollisionTime - collisionDelta);
-                }
-            }
+//            if (particlesInvolved.has(pair.getOne()) || particlesInvolved.has(pair.getOther())) {
+//                Double nextCollision = pair.getOne().getCollisionTime(pair.getOther());
+//                entry.setValue(nextCollision);
+//            } else {    // Sino, le resto el tiempo que ya tenia con el nuevo
+//                Double prevCollisionTime = entry.getValue();
+//                if (prevCollisionTime != null) {
+//                    entry.setValue(prevCollisionTime - collisionDelta);
+//                }
+//            }
         }
 
         // Analago al anterior pero con las paredes
         for (Map.Entry<Pair<Particle, Boundary>, Double> entry : obstacleCollisionTimes.entrySet()) {
             Pair<Particle, Boundary> pair = entry.getKey();
-            if (particlesInvolved.has(pair.getOne())) {
-                double nextCollision = pair.getOther().getCollisionTime(pair.getOne());
-                entry.setValue(nextCollision);
-            } else {
-                double prevCollisionTime = entry.getValue();
-                if (prevCollisionTime != Double.MAX_VALUE) {
-                    entry.setValue(prevCollisionTime - collisionDelta);
-                }
-            }
+            Double nextCollision = pair.getOther().getCollisionTime(pair.getOne());
+            entry.setValue(nextCollision);
+//            if (particlesInvolved.has(pair.getOne())) {
+//                Double nextCollision = pair.getOther().getCollisionTime(pair.getOne());
+//                entry.setValue(nextCollision);
+//            } else {
+//                Double prevCollisionTime = entry.getValue();
+//                if (prevCollisionTime != null) {
+//                    entry.setValue(prevCollisionTime - collisionDelta);
+//                }
+//            }
         }
     }
 
