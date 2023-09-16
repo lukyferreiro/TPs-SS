@@ -29,7 +29,6 @@ public class Pair<T, V> {
             return false;
         }
         return (value1.equals(pair.value1) && value2.equals(pair.value2)) || (value1.equals(pair.value2) && value2.equals(pair.value1));
-
     }
 
     @Override

@@ -31,7 +31,7 @@ public class Simulation {
         final File outTimeFile = new File(config.getOutTimeFile());
 
         System.out.println("Simulation started ...\n");
-        GasDiffusion.run(parser.getParticlesPerTime(), 10000, parser.getSide(), config.getL(), outFile, outTimeFile);
+        GasDiffusion.run(parser.getParticlesPerTime(), 30, parser.getSide(), config.getL(), outFile, outTimeFile);
         System.out.println("Simulation finished ...\n");
 
     }
