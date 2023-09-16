@@ -34,7 +34,7 @@ public class ParticlesParser {
 
         int particleIndex = 0;
         int timeIndex = -1;
-        final List<List<Particle>> particlesPerTime = new ArrayList<>();
+        final List<Set<Particle>> particlesPerTime = new ArrayList<>();
 
         while (dynamicScanner.hasNextLine()) {
             List<String> dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(" "));
@@ -44,10 +44,10 @@ public class ParticlesParser {
                 particleIndex = 0;
                 timeIndex++;
                 dynamicArray = Arrays.asList(dynamicScanner.nextLine().split(" "));
-                particlesPerTime.add(new ArrayList<>());
+                particlesPerTime.add(new HashSet<>());
             }
 
-            final List<Particle> currentParticlesPerTime = particlesPerTime.get(timeIndex);
+            final Set<Particle> currentParticlesPerTime = particlesPerTime.get(timeIndex);
             final Particle currentParticle = particles.get(particleIndex);
 
             final double x = Double.parseDouble(dynamicArray.get(0));     //En primera posicion tengo X

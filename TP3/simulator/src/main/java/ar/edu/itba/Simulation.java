@@ -12,8 +12,6 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
 
 public class Simulation {
     public static void main(String[] args) throws IOException, ParseException {
@@ -30,16 +28,11 @@ public class Simulation {
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
         final File outFile = new File(config.getOutFile());
-        GasDiffusionResult results = GasDiffusion.run(parser.getParticlesPerTime(), 1000, parser.getSide(), config.getL(), outFile);
-
-        System.out.println("Simulation finished ...\n");
-        System.out.println("Writing Results ...\n");
-
         final File outTimeFile = new File(config.getOutTimeFile());
 
-        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-            final double totalTimeMillis = (double) results.getTotalTime() / 1_000_000; // Convert nanoseconds to milliseconds
-            pw.append(String.format(Locale.US, "Total time - %f ms\n", totalTimeMillis));
-        }
+        System.out.println("Simulation started ...\n");
+        GasDiffusion.run(parser.getParticlesPerTime(), 10000, parser.getSide(), config.getL(), outFile, outTimeFile);
+        System.out.println("Simulation finished ...\n");
+
     }
 }

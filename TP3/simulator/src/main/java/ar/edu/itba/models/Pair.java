@@ -6,12 +6,12 @@ public class Pair<T, V> {
     private final T value1;
     private final V value2;
 
-    public Pair(T value1, V value2) {
+    Pair(T value1, V value2) {
         this.value1 = value1;
         this.value2 = value2;
     }
 
-    public boolean has(T value) {
+    public boolean has(Object value) {
         return value.equals(value1) || value.equals(value2);
     }
 

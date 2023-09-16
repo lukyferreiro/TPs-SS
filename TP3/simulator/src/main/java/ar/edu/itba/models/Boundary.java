@@ -1,6 +1,6 @@
 package ar.edu.itba.models;
 
-public class Boundary {
+public class Boundary implements Bounceable {
     private final Position boundaryPosition;
     private final BoundaryType type;
     private final double length;
@@ -11,10 +11,12 @@ public class Boundary {
         this.type = type;
     }
 
-    public Double getCollisionTime(Particle particle) {
+    @Override
+    public double getCollisionTime(Particle particle) {
         return type.getCollisionTime(boundaryPosition, length, particle);
     }
 
+    @Override
     public void collide(Particle particle) {
         type.collide(particle);
     }

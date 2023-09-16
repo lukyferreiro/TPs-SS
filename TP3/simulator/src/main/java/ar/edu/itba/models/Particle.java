@@ -3,7 +3,7 @@ package ar.edu.itba.models;
 import java.util.Objects;
 import java.lang.Math;
 
-public class Particle {
+public class Particle implements Bounceable {
 
     private final int id;
     private final double radius;
@@ -19,19 +19,31 @@ public class Particle {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
     public double getRadius() {
-        return radius;
+        return this.radius;
     }
     public double getMass() {
-        return mass;
+        return this.mass;
     }
     public Position getPosition() {
-        return position;
+        return this.position;
     }
     public void setPosition(Position position) {
         this.position = position;
+    }
+    public double getX() {
+        return this.position.getX();
+    }
+    public void setX(double x) {
+        this.position.setX(x);
+    }
+    public double getY() {
+        return this.position.getY();
+    }
+    public void setY(double y) {
+        this.position.setY(y);
     }
     public double getVx() {
         return vx;
@@ -47,21 +59,23 @@ public class Particle {
     }
 
     public void moveForwardInTime(double deltaTime) {
-        double newX = this.getPosition().getX() + this.vx * deltaTime;
-        double newY = this.getPosition().getY() + this.vy * deltaTime;
+        double newX = this.getX() + this.vx * deltaTime;
+        double newY = this.getY() + this.vy * deltaTime;
         this.setPosition(new Position(newX, newY));
     }
 
+    @Override
     public void collide(Particle p) {
-        double deltaRx = p.getPosition().getX() - this.getPosition().getX();
-        double deltaRy = p.getPosition().getY() - this.getPosition().getY();
+        double deltaRx = p.getX() - this.getX();
+        double deltaRy = p.getY() - this.getY();
         double deltaVx = p.getVx() - this.getVx();
         double deltaVy = p.getVy() - this.getVy();
 
-        double omega = this.radius + p.getRadius();
-        double J = (2 * this.mass * p.mass * (deltaRx * deltaVx + deltaRy * deltaVy)) / (omega * (this.mass + p.mass));
-        double Jx = J * deltaRx / omega;
-        double Jy = J * deltaRy / omega;
+        double sigma = this.radius + p.getRadius();
+        double dvdr = deltaRx * deltaVx + deltaRy * deltaVy;
+        double J = (2 * this.mass * p.getMass() * dvdr) / (sigma * (this.mass + p.getMass()));
+        double Jx = (J * deltaRx) / sigma;
+        double Jy = (J * deltaRy) / sigma;
 
         this.setVx(this.vx + (Jx / this.mass));
         this.setVy(this.vy + (Jy / this.mass));
@@ -69,27 +83,28 @@ public class Particle {
         p.setVy(p.getVy() - (Jy / p.getMass()));
     }
 
-
-    public Double getCollisionTime(Particle p) {
-        double deltaRx = this.getPosition().getX() - p.getPosition().getX();
-        double deltaRy = this.getPosition().getY() - p.getPosition().getY();
+    @Override
+    public double getCollisionTime(Particle p) {
+        double deltaRx = this.getX() - p.getX();
+        double deltaRy = this.getY() - p.getY();
         double deltaVx = this.getVx() - p.getVx();
         double deltaVy = this.getVy() - p.getVy();
 
-        double omega = this.radius + p.getRadius();
+        double sigma = this.radius + p.getRadius();
 
-        double dotProductDvDr = (deltaRx * deltaVx) + (deltaRy * deltaVy);
-        if (dotProductDvDr >= 0) {
-            return null;
+        double dvdr = (deltaRx * deltaVx) + (deltaRy * deltaVy);
+        if (dvdr >= 0) {
+            return Double.MAX_VALUE;
         }
-        double dotProductDvDv = (deltaVx * deltaVx) + (deltaVy * deltaVy);
-        double dotProductDrDr = (deltaRx * deltaRx) + (deltaRy * deltaRy);
-        double d = Math.pow(dotProductDvDr, 2) - dotProductDvDv * (dotProductDrDr - Math.pow(omega, 2));
+
+        double dvdv = (deltaVx * deltaVx) + (deltaVy * deltaVy);
+        double drdr = (deltaRx * deltaRx) + (deltaRy * deltaRy);
+        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sigma, 2));
         if (d < 0) {
-            return null;
+            return Double.MAX_VALUE;
         }
 
-        return - (dotProductDvDr + Math.sqrt(d)) / dotProductDvDv;
+        return - (dvdr + Math.sqrt(d)) / dvdv;
     }
 
     @Override
