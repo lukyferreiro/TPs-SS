@@ -8,9 +8,9 @@ public class Particle {
     private final int id;
     private final double radius;
     private final double mass;
-    private Position position;
-    private double vx;
-    private double vy;
+    protected Position position;
+    protected double vx;
+    protected double vy;
 
     public Particle(int id, double radius, double mass) {
         this.id = id;
@@ -56,10 +56,10 @@ public class Particle {
         double deltaRx = p.getPosition().getX() - this.getPosition().getX();
         double deltaRy = p.getPosition().getY() - this.getPosition().getY();
         double deltaVx = p.getVx() - this.getVx();
-        double deltaVy = p.getVx() - this.getVy();
+        double deltaVy = p.getVy() - this.getVy();
 
         double omega = this.radius + p.getRadius();
-        double J = (2 * this.mass * p.getMass() * (deltaRx * deltaVx + deltaRy * deltaVy)) / (omega * 2);
+        double J = (2 * this.mass * p.mass * (deltaRx * deltaVx + deltaRy * deltaVy)) / (omega * (this.mass + p.mass));
         double Jx = J * deltaRx / omega;
         double Jy = J * deltaRy / omega;
 

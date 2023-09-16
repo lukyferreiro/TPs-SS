@@ -11,7 +11,7 @@ public class Enclosure{
     private boolean isFirstIteration = true;
     private final Map<Pair<Particle, Particle>, Double> particleCollisionTimes = new HashMap<>();
     private final Map<Pair<Particle, Boundary>, Double> obstacleCollisionTimes = new HashMap<>();
-    private final List<Collision<?>> allCollitions = new ArrayList<>();
+    private final List<Collision<?>> allCollisions = new ArrayList<>();
     private Collision<?> nextCollision;
 
 
@@ -43,13 +43,11 @@ public class Enclosure{
                 new Boundary(new Position(0, 0), this.side, BoundaryType.LEFT),
                 new Boundary(new Position(0, this.side), this.side, BoundaryType.TOP),
                 new Boundary(new Position(this.side, 0), (this.side - L) / 2, BoundaryType.RIGHT),
-                new Boundary(new Position(this.side, this.side - (this.side - L) / 2), (this.side - L) / 2, BoundaryType.RIGHT),
+                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), (this.side - L) / 2, BoundaryType.RIGHT),
                 // rectangulo de la derecha
                 new Boundary(new Position(this.side, (this.side - L) / 2), this.side, BoundaryType.BOTTOM),
-                new Boundary(new Position(this.side, this.side - (this.side - L) / 2), this.side, BoundaryType.TOP),
+                new Boundary(new Position(this.side, ((this.side - L) / 2) + L), this.side, BoundaryType.TOP),
                 new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
-
-                // esquinas
         );
         this.obstacleCollisionTimes.putAll(getInitialWallCollisionTimes(obstacles, particles));
         setNextCollision();
@@ -157,11 +155,15 @@ public class Enclosure{
         // actualizo todas las otras particulas avanzandolas en el tiempo de forma "normal"
         Particle particle = this.nextCollision.getParticle();
         Object o = this.nextCollision.getOther();
-        double delta = this.nextCollision.getTime();
+        Double delta = this.nextCollision.getTime();
+
+        if (delta == null) {
+            return;
+        }
 
         this.particles.forEach(p -> p.moveForwardInTime(delta));
 
-        allCollitions.add(this.nextCollision);
+        allCollisions.add(this.nextCollision);
         this.nextCollision = null;
 
         if (o instanceof Boundary) {
