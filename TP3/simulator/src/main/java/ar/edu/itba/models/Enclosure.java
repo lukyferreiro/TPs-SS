@@ -11,6 +11,7 @@ public class Enclosure{
     private boolean isFirstIteration = true;
     private final Map<Pair<Particle, Particle>, Double> particleCollisionTimes = new HashMap<>();
     private final Map<Pair<Particle, Boundary>, Double> obstacleCollisionTimes = new HashMap<>();
+    private final Map<Pair<Particle, CornerParticle>, Double> cornerCollisionTimes = new HashMap<>();
     private final List<Collision<?>> allCollisions = new ArrayList<>();
     private Collision<?> nextCollision;
 
@@ -50,6 +51,11 @@ public class Enclosure{
                 new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT)
         );
         this.obstacleCollisionTimes.putAll(getInitialWallCollisionTimes(obstacles, particles));
+        Collection<CornerParticle> corners = Arrays.asList(
+                new CornerParticle(10000, new Position(this.side, (this.side - L) / 2)),
+                new CornerParticle(10001, new Position(this.side, ((this.side - L) / 2) + L))
+        );
+        this.cornerCollisionTimes.putAll(getInitialCornerCollisionTimes(corners, particles));
         setNextCollision();
     }
 
@@ -79,18 +85,37 @@ public class Enclosure{
         return collisionTimes;
     }
 
+    private Map<Pair<Particle, CornerParticle>, Double> getInitialCornerCollisionTimes(Collection<CornerParticle> corners, Collection<Particle> particles) {
+        //Guardamos las proximas colision entre todas las particulas y las esquinas
+        Map<Pair<Particle, CornerParticle>, Double> collisionTimes = new HashMap<>();
+        for (Particle p : particles) {
+            for (CornerParticle c : corners) {
+                Pair<Particle, CornerParticle> pair = new Pair<>(p, c);
+                collisionTimes.put(pair, c.getCollisionTime(p));
+            }
+        }
+        return collisionTimes;
+    }
+
     private void setNextCollision() {
         Pair<Particle, Particle> particleCollision = getNextCollision(particleCollisionTimes);
         Pair<Particle, Boundary> wallCollision = getNextCollision(obstacleCollisionTimes);
+        Pair<Particle, CornerParticle> cornersCollision = getNextCollision(cornerCollisionTimes);
 
         Double particleCollisionTime = particleCollisionTimes.getOrDefault(particleCollision, null);
         Double wallCollisionTime = obstacleCollisionTimes.getOrDefault(wallCollision, null);
+        Double cornerCollisionTime = cornerCollisionTimes.getOrDefault(cornersCollision, null);
 
-        //Nos fijamos cual es la primera colisión que ocurre: con pared o con particula
-        if (particleCollisionTime != null && particleCollisionTime.compareTo(wallCollisionTime) < 0 && particleCollisionTime > 0) {
+        //Nos fijamos cual es la primera colisión que ocurre: con pared, con particula o con esquina
+        //TODO check
+        if (particleCollisionTime != null && wallCollisionTime != null && cornerCollisionTime == null
+                && particleCollisionTime > 0 && particleCollisionTime.compareTo(wallCollisionTime) < 0) {
             this.nextCollision = new Collision<Particle>(particleCollision.getOne(), particleCollision.getOther(), particleCollisionTime);
-        } else {
+        } else if (wallCollisionTime != null && particleCollisionTime != null && cornerCollisionTime == null
+                && wallCollisionTime > 0 && wallCollisionTime.compareTo(particleCollisionTime) < 0) {
             this.nextCollision = new Collision<Boundary>(wallCollision.getOne(), wallCollision.getOther(), wallCollisionTime);
+        } else {
+            this.nextCollision = new Collision<CornerParticle>(cornersCollision.getOne(), cornersCollision.getOther(), cornerCollisionTime);
         }
 
     }
@@ -142,6 +167,13 @@ public class Enclosure{
 //                }
 //            }
         }
+
+        // Analago al anterior pero con las esquinas
+        for (Map.Entry<Pair<Particle, CornerParticle>, Double> entry : cornerCollisionTimes.entrySet()) {
+            Pair<Particle, CornerParticle> pair = entry.getKey();
+            Double nextCollision = pair.getOther().getCollisionTime(pair.getOne());
+            entry.setValue(nextCollision);
+        }
     }
 
     public void getNextEnclosure() {
@@ -170,6 +202,10 @@ public class Enclosure{
             Boundary boundary = (Boundary) o;
             boundary.collide(particle);
             updateCollisionTimesAfterCollision(new Pair<>(particle, particle), delta);
+        } else if (o instanceof CornerParticle){
+            CornerParticle corner = (CornerParticle) o;
+            corner.collide(particle);
+            updateCollisionTimesAfterCollision(new Pair<>(particle, corner), delta);
         } else {
             Particle particle2 = (Particle) o;
             particle2.collide(particle);

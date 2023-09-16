@@ -2,7 +2,6 @@ package ar.edu.itba;
 
 import ar.edu.itba.gasDiffusion.GasDiffusion;
 import ar.edu.itba.gasDiffusion.GasDiffusionResult;
-import ar.edu.itba.models.Particle;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -14,7 +13,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Locale;
 
 public class Simulation {
