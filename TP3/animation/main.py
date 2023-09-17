@@ -4,7 +4,7 @@ from utils.particlesParser import parseGasDiffusionFile
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, writers
 from utils.animation import update
-from utils.plots import plot_pressure_over_time
+from utils.plots import plot_pressure_over_time, plot_pressure_over_L
 
 def main(): 
     BASE = '../simulator/'
@@ -15,16 +15,16 @@ def main():
 
     c = DataConfig(config)
     TO_OUT = BASE + c.outFile
-    TO_DYNAMIC = BASE + c.dynamicFile
 
-    particles_dict = parseGasDiffusionFile("D:\\PC\\Downloads\\Simulación de Sistemas\\TPs-SS\\TP3\\simulator\\src\\main\\resources\\benchmark\\N_200_L_0.03_it_0.txt")
-    #particles_dict = parseGasDiffusionFile("D:\PC\Downloads\Simulación de Sistemas\TPs-SS\TP3\simulator\src\main\resources\benchmark\N_200_L_0.03_it_0.txt")
-    #particles_dict = parse('../simulator/src/main/resources/simulation.json')
+    particles_dict = parseGasDiffusionFile(TO_OUT)
 
-    plot_pressure_over_time(particles_dict, c.L)
+    plot_pressure_over_time(particles_dict, c.L, c.N)
+
+    PATH = '../simulator/src/main/resources/benchmark/N_200'
+    #plot_pressure_over_L(PATH)
 
     animation_times = list(particles_dict.keys())
-    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,interval=1, fargs=(particles_dict, c.side, c.L)).save("simulation.gif")
+    #anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,interval=1, fargs=(particles_dict, c.side, c.L)).save("simulation.gif")
 
 
 if __name__ == "__main__":

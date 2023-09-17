@@ -20,14 +20,16 @@ public class GasDiffusion {
 
         List<Double> times = new ArrayList<>();
         Pair<Double, Double> pressures;
+        Double totalPressure;
 
         double timePassed = 0;
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
             while (enclosure.getTime() < time) {
                 if (timePassed > deltaT) {
-                    pressures = enclosure.calculatePressure(timePassed, times);
-                    writeFile(pw, enclosure.getParticles(), enclosure.getTime(), pressures);
+                    pressures = enclosure.calculatePressure(times);
+                    totalPressure = enclosure.calculateTotalPressure();
+                    writeFile(pw, enclosure.getParticles(), enclosure.getTime(), pressures, totalPressure);
                     timePassed = 0;
                 }
 
@@ -39,11 +41,12 @@ public class GasDiffusion {
 
         long endTime = System.nanoTime();
         long totalTime = endTime - startTime;
+        System.out.println("Total time: " + totalTime / 1_000_000);
     }
 
-    private static void writeFile(PrintWriter pw, Set<Particle> particles, double time, Pair<Double, Double> pressures){
+    private static void writeFile(PrintWriter pw, Set<Particle> particles, double time, Pair<Double, Double> pressures, Double totalPressure){
         pw.printf(Locale.US, "%.20f\n", time);
-        pw.printf(Locale.US, "P1=%.5f P2=%.5f\n", pressures.getOne(), pressures.getOther());
+        pw.printf(Locale.US, "P1=%.5f P2=%.5f P3=%.5f\n", pressures.getOne(), pressures.getOther(), totalPressure);
         particles.forEach((particle) ->
                 pw.printf(Locale.US, "%d %.20f %.20f\n",
                         particle.getId(),

@@ -139,25 +139,32 @@ public class Enclosure {
         return delta;
     }
 
-    public Pair<Double, Double> calculatePressure(double deltaT, List<Double> times) {
+    public Pair<Double, Double> calculatePressure(List<Double> times) {
         double pressureA = 0;
         double pressureB = 0;
-        for (Collision c:wallCollisions) {
+        for (Collision c : wallCollisions) {
             if (c.bouncer.getId() == 0) {
-                pressureA += c.getDeltaF();
-            }
-            else {
-                pressureB += c.getDeltaF();
+                pressureA += c.getDeltaP();
+            } else {
+                pressureB += c.getDeltaP();
             }
         }
 
-        pressureA/=deltaT;
-        pressureB/=deltaT;
+        pressureA /= this.time;
+        pressureB /= this.time;
 
         times.add(time);
-        Pair<Double, Double> pressures = (new Pair<>((pressureA/(side*side)) , (pressureB/(side*L))));
-        wallCollisions.clear();
-        return pressures;
+        return (new Pair<>((pressureA / (3 * side + side - L)), (pressureB / (2 * side + L))));
+    }
+
+    public Double calculateTotalPressure() {
+        double pressure = 0;
+        for (Collision c : wallCollisions) {
+            pressure += c.getDeltaP();
+        }
+
+        pressure /= this.time;
+        return pressure / ((3 * side + side - L) +(2 * side + L));
     }
 
     private static class Collision {
@@ -167,21 +174,11 @@ public class Enclosure {
         private final Double time;
         private final Double deltaP;
 
-        Collision(Particle particle, Boundary bouncer, Double time){
+        Collision(Particle particle, Boundary bouncer, Double time) {
             this.particle = particle;
             this.bouncer = bouncer;
             this.time = time;
-
-            double P = 0;
-
-            if (bouncer.getType().equals(BoundaryType.LEFT) || bouncer.getType().equals(BoundaryType.RIGHT)) {
-                P = Math.abs((2 * particle.getMass() * particle.getVx()));
-            }
-            else {
-                P = Math.abs((2 * particle.getMass() * particle.getVy()));
-            }
-
-            this.deltaP = P;
+            this.deltaP = Math.abs((2 * particle.getMass() * (Math.sqrt(Math.pow(particle.getVx(),2) + Math.pow(particle.getVy(),2)))));
         }
 
         public Particle getParticle() {
