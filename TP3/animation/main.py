@@ -24,7 +24,7 @@ def main():
     plot_pressure_over_time(particles_dict, c.L)
 
     animation_times = list(particles_dict.keys())
-    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,interval=1, fargs=(particles_dict, c.side, c.L)).save("falopa.gif")
+    anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,interval=1, fargs=(particles_dict, c.side, c.L)).save("simulation.gif")
 
 
 if __name__ == "__main__":

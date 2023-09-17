@@ -165,23 +165,23 @@ public class Enclosure {
         private final Particle particle;
         private final Boundary bouncer;
         private final Double time;
-        private final Double deltaF;
+        private final Double deltaP;
 
         Collision(Particle particle, Boundary bouncer, Double time){
             this.particle = particle;
             this.bouncer = bouncer;
             this.time = time;
 
-            double F = 0;
+            double P = 0;
 
             if (bouncer.getType().equals(BoundaryType.LEFT) || bouncer.getType().equals(BoundaryType.RIGHT)) {
-                F = Math.abs((2 * particle.getMass() * particle.getVx()));
+                P = Math.abs((2 * particle.getMass() * particle.getVx()));
             }
             else {
-                F = Math.abs((2 * particle.getMass() * particle.getVy()));
+                P = Math.abs((2 * particle.getMass() * particle.getVy()));
             }
 
-            this.deltaF = F;
+            this.deltaP = F;
         }
 
         public Particle getParticle() {
@@ -209,8 +209,8 @@ public class Enclosure {
 
         }
 
-        public Double getDeltaF() {
-            return deltaF;
+        public Double getDeltaP() {
+            return this.deltaP;
         }
     }
 
