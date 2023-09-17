@@ -25,52 +25,12 @@ def plot_pressure_over_time(data_dict, L, N):
     legend.set_title(f'L={round(L,3)}, N={N}')
     plt.show()
 
-def plot_pressure_over_L(dirPath):
-    pressure_values = {}
-    N = 0
-
-    for filename in os.listdir(dirPath):
-        if filename.endswith(".txt"):
-            file_path = os.path.join(dirPath, filename)
-            particles_dict = parseGasDiffusionFile(file_path)
-            
-            parts = filename.split("_")
-            N = int(parts[1])
-            L = float(parts[3])
-
-            pressures = [data['PT'] for data in particles_dict.values()]
-            
-            if (N, L) not in pressure_values:
-                pressure_values[(N, L)] = []
-            pressure_values[(N, L)].extend(pressures)
-
-    pressure_averages = {}
-    pressure_stddevs = {}
-    for key, values in pressure_values.items():
-        N, L = key
-        average_pressure = np.mean(values)  #TODO ver a partir de cuando se estaciona
-        stddev_pressure = np.std(values)
-        pressure_averages[(N, L)] = average_pressure
-        pressure_stddevs[(N, L)] = stddev_pressure
-
-    N_L_values = list(pressure_averages.keys())
-    averages = [pressure_averages[key] for key in N_L_values]
-    stddevs = [pressure_stddevs[key] for key in N_L_values]
-
-    labels = [f"L={L}" for _, L in N_L_values]
-
-    plt.figure(figsize=(12, 6))
-    plt.bar(labels, averages, yerr=stddevs, capsize=5)
-    plt.ylabel('Presión ($\\frac{kg}{m \\cdot s^2}$)')
-    plt.title(f"Presión promedio en función de L con N={N}")
-    plt.tight_layout()
-    plt.show()
-
 def plot_pressure_vs_area(dirPath):
     pressure_values = {}
     areas_inv = {}
     pressure_averages = {}
     pressure_stddevs = {}
+    N = 0
 
     for filename in os.listdir(dirPath):
         if filename.endswith(".txt"):
@@ -88,8 +48,8 @@ def plot_pressure_vs_area(dirPath):
 
             pressure_values[(N, L)].extend(pressures)
             areas_inv[(N, L)] = 1 / (0.09*0.09 + 0.09*L)
-            pressure_averages[(N, L)] = np.mean(pressures)
-            pressure_stddevs[(N, L)] = np.std(pressures)
+            pressure_averages[(N, L)] = np.mean(pressures[40:])  # A partir de 40 ya esta estacionado
+            pressure_stddevs[(N, L)] = np.std(pressures[40:])
 
     N_L_values = list(pressure_values.keys())
 
@@ -100,23 +60,40 @@ def plot_pressure_vs_area(dirPath):
 
     # Grafica P vs A^-1 con barras de error
     plt.figure(figsize=(12, 6))
-    plt.scatter(areas_inv_values, pressure_values, marker='o', label='Datos experimentales')
-    plt.errorbar(areas_inv_values, pressure_values, yerr=pressure_errors, fmt='o', capthick=2, label='Barras de Error')
+    plt.scatter(areas_inv_values, pressure_values, marker='o')
+    plt.errorbar(areas_inv_values, pressure_values, yerr=pressure_errors, fmt='o', capthick=2)
     plt.ylabel('Presión ($\\frac{kg}{m \\cdot s^2}$)')
-    plt.xlabel('Área Inversa ($m^{-2}$)')
-    plt.title("Presión promedio en función de Área Inversa")
+    plt.xlabel('$A^{-1}$')
+    plt.title("P vs. $A^{{-1}}$ con N={}".format(N))
     
-    # Realiza el ajuste de la línea recta
-    slope, intercept, r_value, p_value, std_err = linregress(areas_inv_values, pressure_values)
+    # Realiza el ajuste manual de la línea recta
+    x = np.array(areas_inv_values)
+    y = np.array(pressure_values)
+    
+    # Calcula los parámetros del ajuste manual
+    n = len(x)
+    slope = (n * np.sum(x * y) - np.sum(x) * np.sum(y)) / (n * np.sum(x**2) - (np.sum(x))**2)
+    intercept = (np.sum(y) - slope * np.sum(x)) / n
     
     # Calcula la constante de la ley de los gases ideales (P·A = constante)
     constant = slope
+
+    # Calcula el coeficiente de determinación (R^2)
+    y_pred = slope * x + intercept
+    ssr = np.sum((y_pred - y)**2)
+    sst = np.sum((y - np.mean(y))**2)
+    r_squared = 1 - (ssr / sst)
+
+    # Calcula el error estándar de la estimación (SEE)
+    see = np.sqrt(np.sum((y - y_pred)**2) / (n - 2))
     
-    # Grafica la línea recta de ajuste
-    plt.plot(areas_inv_values, [slope * x + intercept for x in areas_inv_values], label=f'Ajuste lineal (P·A = {constant:.2f})', linestyle='--')
+    # Grafica la línea recta de ajuste manual
+    plt.plot(areas_inv_values, [slope * xi + intercept for xi in x], label=f'Ajuste lineal (P·A = {constant:.2f})', linestyle='--')
     
+    print(f"Coeficiente de determinación (R^2): {r_squared:.4f}")
+    print(f"Error estándar de la estimación (SEE): {see:.4f}")
+
     plt.legend()
-    plt.tight_layout()
     plt.show()
 
 def calculate_MSD_and_plot(data_dict):
@@ -156,5 +133,4 @@ def calculate_MSD_and_plot(data_dict):
     plt.title('Desplazamiento Cuadrático Medio (MSD) vs Tiempo')
     plt.show()
 
-    # Imprimir el coeficiente de difusión
     print(f'Coeficiente de Difusión (D): {D:.4f}')

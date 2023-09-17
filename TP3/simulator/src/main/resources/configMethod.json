@@ -3,5 +3,5 @@
   "dynamicFile": "src/main/resources/dynamic.txt",
   "outFile": "src/main/resources/gas_diffusion.txt",
   "outTimeFile": "src/main/resources/time.txt",
-  "L": 0.03
+  "L": 0.09
 }
