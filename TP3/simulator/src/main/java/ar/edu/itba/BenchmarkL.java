@@ -29,10 +29,10 @@ public class BenchmarkL {
 
                     parser = CreateStaticAndDynamicFiles.create(n);
 
-                    final File outFile = new File("src/main/resources/benchmark/N_" + n + "_L_" + l + "_it_" + sim + ".txt");
+                    final File outFile = new File("src/main/resources/benchmark/N_" + n + "/N_" + n + "_L_" + l + "_it_" + sim + ".txt");
 
                     System.out.println("Simulation started ...\n");
-                    GasDiffusion.run(parser.getParticlesPerTime(), 300, 0.5, parser.getSide(), l, outFile);
+                    GasDiffusion.run(parser.getParticlesPerTime(), 150, 0.5, parser.getSide(), l, outFile);
                     System.out.println("Simulation finished ...\n");
                 }
             }

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from utils.particlesParser import parseGasDiffusionFile
+from scipy.stats import linregress
 
 def plot_pressure_over_time(data_dict, L, N):
     fig, ax = plt.subplots()
@@ -26,7 +27,6 @@ def plot_pressure_over_time(data_dict, L, N):
 
 def plot_pressure_over_L(dirPath):
     pressure_values = {}
-
     N = 0
 
     for filename in os.listdir(dirPath):
@@ -65,3 +65,96 @@ def plot_pressure_over_L(dirPath):
     plt.title(f"Presión promedio en función de L con N={N}")
     plt.tight_layout()
     plt.show()
+
+def plot_pressure_vs_area(dirPath):
+    pressure_values = {}
+    areas_inv = {}
+    pressure_averages = {}
+    pressure_stddevs = {}
+
+    for filename in os.listdir(dirPath):
+        if filename.endswith(".txt"):
+            file_path = os.path.join(dirPath, filename)
+            particles_dict = parseGasDiffusionFile(file_path)
+            
+            parts = filename.split("_")
+            N = int(parts[1])
+            L = float(parts[3])
+
+            pressures = [data['PT'] for data in particles_dict.values()]
+            
+            if (N, L) not in pressure_values:
+                pressure_values[(N, L)] = []
+
+            pressure_values[(N, L)].extend(pressures)
+            areas_inv[(N, L)] = 1 / (0.09*0.09 + 0.09*L)
+            pressure_averages[(N, L)] = np.mean(pressures)
+            pressure_stddevs[(N, L)] = np.std(pressures)
+
+    N_L_values = list(pressure_values.keys())
+
+    # Extrae los valores de A^-1 y P
+    areas_inv_values = [areas_inv[key] for key in N_L_values]
+    pressure_values = [pressure_averages[key] for key in N_L_values]
+    pressure_errors = [pressure_stddevs[key] for key in N_L_values]
+
+    # Grafica P vs A^-1 con barras de error
+    plt.figure(figsize=(12, 6))
+    plt.scatter(areas_inv_values, pressure_values, marker='o', label='Datos experimentales')
+    plt.errorbar(areas_inv_values, pressure_values, yerr=pressure_errors, fmt='o', capthick=2, label='Barras de Error')
+    plt.ylabel('Presión ($\\frac{kg}{m \\cdot s^2}$)')
+    plt.xlabel('Área Inversa ($m^{-2}$)')
+    plt.title("Presión promedio en función de Área Inversa")
+    
+    # Realiza el ajuste de la línea recta
+    slope, intercept, r_value, p_value, std_err = linregress(areas_inv_values, pressure_values)
+    
+    # Calcula la constante de la ley de los gases ideales (P·A = constante)
+    constant = slope
+    
+    # Grafica la línea recta de ajuste
+    plt.plot(areas_inv_values, [slope * x + intercept for x in areas_inv_values], label=f'Ajuste lineal (P·A = {constant:.2f})', linestyle='--')
+    
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def calculate_MSD_and_plot(data_dict):
+    times = list(data_dict.keys())
+    
+    MSD = []
+    
+    for t in times:
+        if t == times[0]:
+            continue  # Saltar el primer tiempo, ya que el MSD es 0 en t=0
+        displacement_sq = 0
+        
+        # Iterar a través de las partículas
+        for particle_id, particle_data in data_dict[t].items():
+            initial_data = data_dict[times[0]][particle_id]
+            displacement_sq += (particle_data['x'] - initial_data['x'])**2 + (particle_data['y'] - initial_data['y'])**2
+        
+        MSD.append(displacement_sq / len(data_dict[t]))
+    
+    # Realizar el ajuste lineal en el tiempo de interés (por ejemplo, los primeros tiempos)
+    # El coeficiente de difusión D es la pendiente de la línea ajustada
+    time_of_interest =  60    #TODO definir tiempo de interes
+    fit_range = np.where(np.array(times[1:]) <= time_of_interest)
+    fit_times = np.array(times[1:])[fit_range]
+    fit_MSD = np.array(MSD)[fit_range]
+
+    # Realizar el ajuste lineal
+    slope, intercept = np.polyfit(fit_times, fit_MSD, 1)
+    D = slope / 4  # Coeficiente de difusión
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(times, MSD, label='MSD vs Tiempo')
+    plt.plot(fit_times, slope * fit_times + intercept, 'r', label='Ajuste Lineal')
+    plt.xlabel('Tiempo')
+    plt.ylabel('MSD')
+    plt.legend()
+    plt.title('Desplazamiento Cuadrático Medio (MSD) vs Tiempo')
+    plt.show()
+
+    # Imprimir el coeficiente de difusión
+    print(f'Coeficiente de Difusión (D): {D:.4f}')
