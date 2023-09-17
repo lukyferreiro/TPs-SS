@@ -109,14 +109,16 @@ def calculate_MSD_and_plot(data_dict):
         # Iterar a través de las partículas
         for particle_id, particle_data in data_dict[t].items():
             initial_data = data_dict[times[0]][particle_id]
-            displacement_sq += (particle_data['x'] - initial_data['x'])**2 + (particle_data['y'] - initial_data['y'])**2
+            if isinstance(particle_data, dict) and isinstance(initial_data, dict):
+                x_diff = particle_data['x'] - initial_data['x']
+                y_diff = particle_data['y'] - initial_data['y']
+                displacement_sq += x_diff**2 + y_diff**2
         
         MSD.append(displacement_sq / len(data_dict[t]))
     
     # Realizar el ajuste lineal en el tiempo de interés (por ejemplo, los primeros tiempos)
     # El coeficiente de difusión D es la pendiente de la línea ajustada
-    time_of_interest =  60    #TODO definir tiempo de interes
-    fit_range = np.where(np.array(times[1:]) <= time_of_interest)
+    fit_range = np.where(np.array(times[1:]) )
     fit_times = np.array(times[1:])[fit_range]
     fit_MSD = np.array(MSD)[fit_range]
 
@@ -125,7 +127,7 @@ def calculate_MSD_and_plot(data_dict):
     D = slope / 4  # Coeficiente de difusión
 
     plt.figure(figsize=(8, 6))
-    plt.scatter(times, MSD, label='MSD vs Tiempo')
+    plt.scatter(times[1:], MSD, label='MSD vs Tiempo')
     plt.plot(fit_times, slope * fit_times + intercept, 'r', label='Ajuste Lineal')
     plt.xlabel('Tiempo')
     plt.ylabel('MSD')
