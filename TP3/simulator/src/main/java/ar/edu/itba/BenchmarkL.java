@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class BenchmarkL {
     public static void main(String[] args) throws IOException, ParseException {
-        final int SIMULATIONS = 1;
+        final int SIMULATIONS = 5;
         ParticlesParserResult parser;
         List<Integer> listN;
         List<Double> listL;
@@ -40,7 +40,7 @@ public class BenchmarkL {
                     final File outFile = new File("src/main/resources/benchmark/N_" + listN.get(iter) + "_L_" + listL.get(j) + "_it_" + sim + ".txt");
 
                     System.out.println("Simulation started ...\n");
-                    GasDiffusion.run(parser.getParticlesPerTime(), 1, 0.5, parser.getSide(),listL.get(j), outFile);
+                    GasDiffusion.run(parser.getParticlesPerTime(), 300, 0.5, parser.getSide(),listL.get(j), outFile);
                     System.out.println("Simulation finished ...\n");
                 }
             }
