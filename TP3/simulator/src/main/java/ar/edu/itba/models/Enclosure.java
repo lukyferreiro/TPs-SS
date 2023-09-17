@@ -181,7 +181,7 @@ public class Enclosure {
                 P = Math.abs((2 * particle.getMass() * particle.getVy()));
             }
 
-            this.deltaP = F;
+            this.deltaP = P;
         }
 
         public Particle getParticle() {
