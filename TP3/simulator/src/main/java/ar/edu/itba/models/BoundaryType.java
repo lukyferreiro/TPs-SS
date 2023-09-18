@@ -11,14 +11,14 @@ public enum BoundaryType {
 
         // boundaryPosition is bottom side of wall
         @Override
-        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getTc(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
             double vx = particle.getVx();
             if (vx >= 0 || (x + particle.getRadius()) > particle.getX()) {
                 return Double.MAX_VALUE;
             } else {
                 double time = (x + particle.getRadius() - particle.getX()) / vx;
-                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return checkInnerCornerVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
             }
         }
     }, RIGHT {
@@ -28,16 +28,16 @@ public enum BoundaryType {
             particle.setVy(particle.getVy());
         }
 
-        // wallPos is bottom side of wall
+        // boundaryPosition is bottom side of wall
         @Override
-        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getTc(Position boundaryPosition, double length, Particle particle) {
             double x = boundaryPosition.getX();
             double vx = particle.getVx();
             if (vx <= 0 || (x - particle.getRadius()) < particle.getX()) {
                 return Double.MAX_VALUE;
             } else {
                 double time = (x - particle.getRadius() - particle.getX()) / vx;
-                return isInBoundaryVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return checkInnerCornerVertical(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
             }
 
         }
@@ -48,16 +48,16 @@ public enum BoundaryType {
             particle.setVy(-particle.getVy());
         }
 
-        // wallPos is left side of wall
+        // boundaryPosition is left side of wall
         @Override
-        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getTc(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
             double vy = particle.getVy();
             if (vy <= 0 || (y - particle.getRadius()) < particle.getY()) {
                 return Double.MAX_VALUE;
             } else {
                 double time = (y - particle.getRadius() - particle.getY()) / vy;
-                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return checkInnerCornerHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
             }
         }
     }, BOTTOM {
@@ -67,35 +67,33 @@ public enum BoundaryType {
             particle.setVy(-particle.getVy());
         }
 
-        // wallPos is left side of wall
+        // boundaryPosition is left side of wall
         @Override
-        public Double getCollisionTime(Position boundaryPosition, double length, Particle particle) {
+        public Double getTc(Position boundaryPosition, double length, Particle particle) {
             double y = boundaryPosition.getY();
             double vy = particle.getVy();
             if (vy >= 0 || (y + particle.getRadius()) > particle.getY()) {
                 return Double.MAX_VALUE;
             } else {
                 double time = (y + particle.getRadius() - particle.getY()) / vy;
-                return isInBoundaryHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
+                return checkInnerCornerHorizontal(boundaryPosition, length, particle, time) ? time : Double.MAX_VALUE;
             }
         }
     };
 
-    private static boolean isInBoundaryVertical(Position boundaryPosition, double length, Particle particle, double time) {
+    private static boolean checkInnerCornerVertical(Position boundaryPosition, double length, Particle particle, double time) {
         Position nextPosition = particle.getPosition().moveForward(particle, time);
         Position top = boundaryPosition.add(new Position(0, length));
-        Position bottom = boundaryPosition;
-        return top.isAbove(nextPosition) && bottom.isBelow(nextPosition);
+        return top.isAbove(nextPosition) && boundaryPosition.isBelow(nextPosition);
     }
 
-    private static boolean isInBoundaryHorizontal(Position boundaryPosition, double length, Particle particle, double time) {
+    private static boolean checkInnerCornerHorizontal(Position boundaryPosition, double length, Particle particle, double time) {
         Position nextPosition = particle.getPosition().moveForward(particle, time);
         Position right = boundaryPosition.add(new Position(length, 0));
-        Position left = boundaryPosition;
-        return left.isLeftOf(nextPosition) && right.isRightOf(nextPosition);
+        return boundaryPosition.isLeftOf(nextPosition) && right.isRightOf(nextPosition);
     }
 
     public abstract void collide(Particle particle);
 
-    public abstract Double getCollisionTime(Position boundaryPosition, double length, Particle particle);
+    public abstract Double getTc(Position boundaryPosition, double length, Particle particle);
 }

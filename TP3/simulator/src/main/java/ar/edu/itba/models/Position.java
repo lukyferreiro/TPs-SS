@@ -34,19 +34,16 @@ public class Position {
     }
 
     public boolean isAbove(Position p) {
-        return getY() > p.getY();
+        return this.y > p.getY();
     }
-
     public boolean isBelow(Position p) {
-        return getY() < p.getY();
+        return this.y < p.getY();
     }
-
     public boolean isLeftOf(Position p) {
-        return getX() < p.getX();
+        return this.x < p.getX();
     }
-
     public boolean isRightOf(Position p) {
-        return getX() > p.getX();
+        return this.x > p.getX();
     }
 
     public double calculateDistance(Position p) {

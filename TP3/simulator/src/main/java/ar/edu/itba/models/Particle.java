@@ -84,7 +84,7 @@ public class Particle implements Bounceable {
     }
 
     @Override
-    public double getCollisionTime(Particle p) {
+    public double getTc(Particle p) {
         double deltaRx = this.getX() - p.getX();
         double deltaRy = this.getY() - p.getY();
         double deltaVx = this.getVx() - p.getVx();

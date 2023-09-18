@@ -12,15 +12,13 @@ public class Enclosure {
     private double nextCollisionDelta;
     private final Map<Pair<Particle,Bounceable>, Double> allCollisions = new HashMap<>();
     private final Collection<Pair<Particle,Bounceable>> nextCollisions = new HashSet<>();
-
     private final Collection<Collision> wallCollisions = new HashSet<>();
-
 
     public Enclosure(Set<Particle> particles, Double side, Double L) {
         this.side = side;
         this.L = L;
         this.particles = particles;
-        initializeEnclosure(particles, L);
+        createEnclosure(particles, L);
     }
 
     public double getTime() {
@@ -36,7 +34,7 @@ public class Enclosure {
         return this.side;
     }
 
-    private void initializeEnclosure(Set<Particle> particles, double L) {
+    private void createEnclosure(Set<Particle> particles, double L) {
         Collection<Bounceable> obstacles = Arrays.asList(
                 // Esquinas de union de los recintos
                 new CornerParticle(particles.size()+1, new Position(this.side, (this.side - L) / 2)),
@@ -52,17 +50,17 @@ public class Enclosure {
                 new Boundary(new Position(this.side, ((this.side - L) / 2) + L), this.side, BoundaryType.TOP, 1),
                 new Boundary(new Position(2 * this.side, (this.side - L) / 2), L, BoundaryType.RIGHT, 1)
         );
-        setInitialCollisionTimes(obstacles,particles);
+        setInitialTc(obstacles,particles);
         setNextCollisions();
     }
 
-    private void setInitialCollisionTimes(Collection<Bounceable> bounceables, Collection<Particle> particles) {
+    private void setInitialTc(Collection<Bounceable> bounceables, Collection<Particle> particles) {
         Set<Bounceable> allBounceables = new HashSet<>(bounceables);
         allBounceables.addAll(particles);
         for (Particle p : particles) {
             for (Bounceable b : allBounceables) {
                 Pair<Particle, Bounceable> pair = new Pair<>(p, b);
-                Double time = pair.getOther().getCollisionTime(pair.getOne());
+                Double time = pair.getOther().getTc(pair.getOne());
                 if (!allCollisions.containsKey(pair)) {
                     allCollisions.put(pair, time);
                 }
@@ -89,13 +87,13 @@ public class Enclosure {
         nextCollisionDelta = minTime;
     }
 
-    private void updateCollisionTimesAfterCollision(Pair<Particle, Particle> particlesInvolved, Double collisionDelta) {
+    private void updateTcAfterCollision(Pair<Particle, Particle> particlesInvolved, Double collisionDelta) {
         for (Map.Entry<Pair<Particle, Bounceable>, Double> entry : allCollisions.entrySet()) {
             Pair<Particle, Bounceable> pair = entry.getKey();
             double newTime = Double.MAX_VALUE;
             // Si tomamos el par contiene una particula que colisiono, recalculamos el tc
             if (particlesInvolved.has(pair.getOne()) || particlesInvolved.has(pair.getOther())) {
-                newTime = pair.getOther().getCollisionTime(pair.getOne());
+                newTime = pair.getOther().getTc(pair.getOne());
             } else {    // Sino, solo le restamos el tiempo que ya teniamos de antes
                 Double prevCollisionTime = entry.getValue();
                 if (prevCollisionTime.compareTo(Double.MAX_VALUE) < 0) {
@@ -124,14 +122,12 @@ public class Enclosure {
             Boundary boundary = (Boundary) o;
             wallCollisions.add(new Collision(nextCollision.getOne(), boundary, time));
             boundary.collide(particle);
-            updateCollisionTimesAfterCollision(new Pair<>(particle, particle), delta);
+            updateTcAfterCollision(new Pair<>(particle, particle), delta);
         }  else {
             Particle particle2 = (Particle) o;
             particle2.collide(particle);
-            updateCollisionTimesAfterCollision(new Pair<>(particle, particle2), delta);
+            updateTcAfterCollision(new Pair<>(particle, particle2), delta);
         }
-
-
 
         time += delta;
         setNextCollisions();

@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from utils.particlesParser import parseGasDiffusionFile
-from scipy.stats import linregress
 
 def plot_pressure_over_time(data_dict, L, N):
     fig, ax = plt.subplots()
@@ -67,7 +66,7 @@ def plot_pressure_vs_area(dirPaths):
         plt.errorbar(areas_inv_values, pressure_values, yerr=pressure_errors, fmt='o', capsize=6, ecolor="black")
 
         custom_labels = [f'{value:.2f} \n (L={key[1]})' for key, value in zip(N_L_values, areas_inv_values)]
-        plt.xticks(areas_inv_values, custom_labels)  # Puedes ajustar el ángulo de rotación según tus preferencias
+        plt.xticks(areas_inv_values, custom_labels)
 
         # Realiza el ajuste manual de la línea recta
         x = np.array(areas_inv_values)
@@ -99,7 +98,7 @@ def plot_pressure_vs_area(dirPaths):
     plt.legend()
     plt.show()
 
-def calculate_MSD_and_plot(data_dict):
+def calculate_MSD_and_plot(data_dict, N):
     times = list(data_dict.keys())
     
     MSD = []
@@ -130,12 +129,12 @@ def calculate_MSD_and_plot(data_dict):
     D = slope / 4  # Coeficiente de difusión
 
     plt.figure(figsize=(8, 6))
-    plt.scatter(times[1:], MSD, label='MSD vs Tiempo')
+    plt.scatter(times[1:], MSD)
     plt.plot(fit_times, slope * fit_times + intercept, 'r', label='Ajuste Lineal')
     plt.xlabel('Tiempo')
     plt.ylabel('MSD')
     plt.legend()
-    plt.title('Desplazamiento Cuadrático Medio (MSD) vs Tiempo')
+    plt.title(f'MSD vs Tiempo para N={N}')
     plt.show()
 
-    print(f'Coeficiente de Difusión (D): {D:.4f}')
+    print(f'Coeficiente de Difusión (D): {D:.20f}')
