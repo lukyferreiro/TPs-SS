@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import re
 from utils.particlesParser import parseGasDiffusionFile
 
 def plot_pressure_over_time(data_dict, L, N):
@@ -98,43 +99,59 @@ def plot_pressure_vs_area(dirPaths):
     plt.legend()
     plt.show()
 
-def calculate_MSD_and_plot(data_dict, N):
-    times = list(data_dict.keys())
+def calculate_average_MSD_and_plot(data_dicts, N):
+    # Inicializar listas para almacenar los MSD calculados para cada data_dict
+    all_MSDs = []
+
+    # Iterar a través de los data_dict en el array
+    for data_dict in data_dicts:
+        times = list(data_dict.keys())
+
+        MSD = []
+
+        for t in times:
+            if t < 50:
+                continue  
+            displacement_sq = 0
+
+            # Iterar a través de las partículas
+            for particle_id, particle_data in data_dict[t].items():
+                initial_data = data_dict[times[0]][particle_id]
+                if isinstance(particle_data, dict) and isinstance(initial_data, dict):
+                    x_diff = particle_data['x'] - initial_data['x']
+                    y_diff = particle_data['y'] - initial_data['y']
+                    displacement_sq += x_diff**2 + y_diff**2
+
+            MSD.append(displacement_sq / N)
+
+        all_MSDs.append(MSD)
     
-    MSD = []
-    
+    times2 = []
     for t in times:
-        if t == times[0]:
-            continue  # Saltar el primer tiempo, ya que el MSD es 0 en t=0
-        displacement_sq = 0
-        
-        # Iterar a través de las partículas
-        for particle_id, particle_data in data_dict[t].items():
-            initial_data = data_dict[times[0]][particle_id]
-            if isinstance(particle_data, dict) and isinstance(initial_data, dict):
-                x_diff = particle_data['x'] - initial_data['x']
-                y_diff = particle_data['y'] - initial_data['y']
-                displacement_sq += x_diff**2 + y_diff**2
-        
-        MSD.append(displacement_sq / len(data_dict[t]))
-    
+        if t > 50:
+            times2.append(t)
+
+    # Calcular el promedio de los MSDs y la desviación estándar
+    average_MSD = np.mean(all_MSDs, axis=0)
+    std_dev_MSD = np.std(all_MSDs, axis=0)
+
     # Realizar el ajuste lineal en el tiempo de interés (por ejemplo, los primeros tiempos)
     # El coeficiente de difusión D es la pendiente de la línea ajustada
-    fit_range = np.where(np.array(times[1:]) )
-    fit_times = np.array(times[1:])[fit_range]
-    fit_MSD = np.array(MSD)[fit_range]
+    fit_range = np.where(np.array(times2))
+    fit_times = np.array(times2)[fit_range]
+    fit_MSD = average_MSD[fit_range]
 
     # Realizar el ajuste lineal
     slope, intercept = np.polyfit(fit_times, fit_MSD, 1)
     D = slope / 4  # Coeficiente de difusión
+    D *= 1000000 
 
+    # Graficar el promedio de MSD con barras de error
     plt.figure(figsize=(8, 6))
-    plt.scatter(times[1:], MSD)
-    plt.plot(fit_times, slope * fit_times + intercept, 'r', label='Ajuste Lineal')
-    plt.xlabel('Tiempo')
-    plt.ylabel('MSD')
+    plt.errorbar(times2, average_MSD, yerr=std_dev_MSD, fmt='o', capsize=6, ecolor="black")
+    plt.plot(fit_times, slope * fit_times + intercept, 'r', label='Ajuste Lineal\n D={}x$10^{{-6}}$'.format(round(D,2)))
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Desplazamiento cuadratico medio ($m^{2}$)')
     plt.legend()
     plt.title(f'MSD vs Tiempo para N={N}')
     plt.show()
-
-    print(f'Coeficiente de Difusión (D): {D:.20f}')

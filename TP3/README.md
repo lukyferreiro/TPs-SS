@@ -1,7 +1,6 @@
-# TP2- Autómata Off-Lattice: Bandadas de agentes autopropulsados
+# TP3- Dinámica Molecular Dirigida por Eventos
 
-En este TP se implementa el algoritmo de bandadas de agentes propulsores usando un autómata Off-Lattice.
-
+En este TP se implementa el algoritmo de gas diffusion para la visualizacion de particulas en un recinto
 ## Generación de partículas
 
 Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará
@@ -21,13 +20,13 @@ en toda la ejecucion)
 {
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
-  "N": 50,
-  "L": 100.0,
-  "max_radius": 1.0,
-  "min_radius": 2.0,
+  "N": 400,
+  "side": 0.09,
+  "max_radius": 0.0015,
+  "min_radius": 0.0015,
   "times": 1,
-  "property": 1.0,
-  "speed": 0.03
+  "mass": 1.0,
+  "speed": 0.01
 }
 ```
 
@@ -36,11 +35,11 @@ en toda la ejecucion)
 | staticFile   | Path de donde se creará el archivo estático                           | 
 | dynamicFile  | Path de donde se creará el archivo dinámico                           | 
 | N            | Numero natural que representa la cantidad de partículas a generar     | 
-| L            | Numero real positivo que representa el lado del area de simulación    | 
+| side         | Numero real positivo que representa el lado del area de simulación    | 
 | max_radius   | Numero real positivo que representa el radio máximo de las partículas | 
 | min_radius   | Numero real positivo que representa el radio máximo de las partículas | 
 | times        | Numero natural que representa la cantidad de tiempos                  |
-| property     | Numero real que representa una propiedad de la particulas             |   
+| mass         | Numero real que representa la masa de la particula                    |   
 | speed        | Numero real que representa la velocidad de las particulas             |      
  
 #### configMethod.json 
@@ -49,14 +48,9 @@ en toda la ejecucion)
 {
   "staticFile": "src/main/resources/static.txt",
   "dynamicFile": "src/main/resources/dynamic.txt",
-  "outOffLatticeFile": "src/main/resources/off_lattice.txt",
-  "outOrderParametersVaFile": "src/main/resources/va.txt",
+  "outFile": "src/main/resources/gas_diffusion.txt",
   "outTimeFile": "src/main/resources/time.txt",
-  "isPeriodic": true,
-  "Rc": 1.0,
-  "dt": 1.0,
-  "eta": 1.0,
-  "iterations": 3000
+  "L": 0.09
 }
 ```
 
@@ -64,12 +58,7 @@ en toda la ejecucion)
 |---------------------------|--------------------------------------------------------------------------------------|
 | staticFile                | Path al archivo estático para tomar su información                                   | 
 | dynamicFile               | Path al archivo dinámico para tomar su información                                   | 
-| outOffLatticeFile         | Path de donde se creará el archivo con las posiciones y velocidad de las particulas  | 
-| outOrderParametersVaFile  | Path de donde se creará el archivo con los valores del parametro de orden            | 
+| outFile                   | Path de donde se creará el archivo con las posiciones de las particulas              | 
 | outTimeFile               | Path de donde se creará el archivo con el tiempo                                     | 
-| isPeriodic                | Booleano que representa si la simulación tiene en cuenta contornos periódicos        | 
-| Rc                        | Numero real positivo que representa el radio de interacción de las partículas        | 
-| dt                        | Numero real positivo que representa el paso temporal                                 | 
-| eta                       | Numero real positivo que representa la amplitud de ruido entre cada paso temporal    | 
-| iterations                | Numero entero positivo que representa la cantidad de iteraciones a realizar          | 
+| L                         | Numero real positivo que representa el alto del 2do recinto                          | 
  
