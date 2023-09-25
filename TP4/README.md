@@ -1,6 +1,7 @@
-# TP3 - Dinámica Molecular Dirigida por Eventos
+# TP4 - Dinámica Molecular regida por el paso temporal
 
-En este TP se implementa el algoritmo de gas diffusion para la visualizacion de particulas en un recinto
+En este TP se implementa 
+
 ## Generación de partículas
 
 Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará

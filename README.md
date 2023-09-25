@@ -14,4 +14,8 @@ En este TP se implementa el algoritmo de bandadas de agentes propulsores usando 
 
 ## TP3 - [Dinámica Molecular Dirigida por Eventos](https://github.com/lukyferreiro/TPs-SS/tree/main/TP3)
 
-En este TP se implementa 
+En este TP se implementa el algoritmo de gas diffusion para la visualizacion de particulas en un recinto.
+
+## TP4 - [Dinámica Molecular regida por el paso temporal](https://github.com/lukyferreiro/TPs-SS/tree/main/TP4)
+
+En este TP se implementa

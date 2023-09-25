@@ -87,13 +87,13 @@ def plot_pressure_vs_area(dirPaths):
         # Calcula el error estándar de la estimación (SEE)
         see = np.sqrt(np.sum((y - y_pred)**2) / (n - 2))
 
-        plt.plot(areas_inv_values, [slope * xi + intercept for xi in x], label=f'Ajuste lineal (P·A = {constant:.2f}, SEE={see:.4f})', linestyle='--')
+        plt.plot(areas_inv_values, [slope * xi + intercept for xi in x], label=f'Ajuste lineal (P·A = {constant:.2f}, SEE={see:.4f}, m={slope:.4f})', linestyle='--')
 
         print(f"Coeficiente de determinación (R^2): {r_squared:.4f}")
         print(f"Error estándar de la estimación (SEE): {see:.4f}")
 
     plt.ylabel('Presión ($\\frac{kg}{m \\cdot s^2}$)')
-    plt.xlabel('$A^{-1}$')
+    plt.xlabel('$A^{-1} (\\frac{1}{m^2})$')
     plt.title("P vs. $A^{{-1}}$")
     plt.grid(True)
     plt.legend()
