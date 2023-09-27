@@ -15,17 +15,18 @@ def plot_oscillator(dir, dt):
     gamma = 100
     k = 10000
     m = 70
-    t_arr = np.arange(0, 5 + dt, dt)
+
+    times = np.arange(0, 5 + dt, dt)
     exp_term = -(gamma / (2 * m))
     cos_term = ((k / m) - ((gamma ** 2) / (4 * m ** 2))) ** 0.5
-    analytic_values = A * np.exp(exp_term * t_arr) * np.cos(cos_term * t_arr)
+    analytic_values = A * np.exp(exp_term * times) * np.cos(cos_term * times)
 
-    data.append((analytic_values, t_arr))
+    data.append(analytic_values)
 
     ECM = []
     names = ['VerletOriginal', 'Beeman', 'GearPredictor']
+    
     print(f'Parsing {dt:.6f}')
-
 
     for i, name in enumerate(names):
         folder = os.path.join(dir, "benchmark")
@@ -33,15 +34,11 @@ def plot_oscillator(dir, dt):
         file = files[0]  
         
         positions_x = []
-        dts = []
         data_dict = parse(os.path.join(folder, file))
 
-        for time in sorted(data_dict.keys()):
-            particle_data = data_dict[time][1]
-
+        for time in data_dict.keys():
             #Soluciones numericas
-            dts.append(time)
-            positions_x.append(particle_data['x'])
+            positions_x.append(data_dict[time][1]['x'])
 
         difference = 0
         for i in range(0, len(analytic_values)):
@@ -49,16 +46,14 @@ def plot_oscillator(dir, dt):
         
         ecm = difference / len(analytic_values)
         ECM.append(ecm)
-
+        data.append(positions_x)
         print(f"ECM {name}: {ecm}")
-
-        data.append((positions_x, dts))
 
     names = ['Analitica', 'Verlet Original', 'Beeman', 'Gear predictor-corrector de orden 5']
 
     plt.figure(figsize=(12, 6))
-    for i, (x, dts) in enumerate(data):
-        plt.plot(dts, x, '-', label=names[i])
+    for i, positions_x in enumerate(data):
+        plt.plot(times, positions_x, '-', label=names[i])
 
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Posición (m)')
