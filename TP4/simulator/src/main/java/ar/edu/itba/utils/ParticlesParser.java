@@ -17,7 +17,7 @@ public class ParticlesParser {
         final Scanner dynamicScanner = new Scanner(dynamicFile);
 
         final int N = Integer.parseInt(staticScanner.nextLine().split(" ")[0]);
-        final double side = Double.parseDouble(staticScanner.nextLine().split(" ")[0]);
+        final double L = Double.parseDouble(staticScanner.nextLine().split(" ")[0]);
 
         final List<Particle> particles = new ArrayList<>();
 
@@ -56,15 +56,15 @@ public class ParticlesParser {
 
             final double speed = Double.parseDouble(dynamicArray.get(2));     //En tercera posicion tengo la velocidad
             final double angle = Double.parseDouble(dynamicArray.get(3));     //En cuarta posicion tengo el angulo
-            currentParticle.setVx(speed * Math.cos(angle));
-            currentParticle.setVy(speed * Math.sin(angle));
+            currentParticle.setVx(speed);
+            currentParticle.setVy(0.0);
 
             currentParticlesPerTime.add(currentParticle);
             particleIndex++;
         }
 
         dynamicScanner.close();
-        return new ParticlesParserResult(N, side, particlesPerTime);
+        return new ParticlesParserResult(N, L, particlesPerTime);
     }
 
 }

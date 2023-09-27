@@ -1,7 +1,0 @@
-{
-  "staticFile": "src/main/resources/static.txt",
-  "dynamicFile": "src/main/resources/dynamic.txt",
-  "outFile": "src/main/resources/outFile.txt",
-  "outTimeFile": "src/main/resources/time.txt",
-  "deltaT": 0.01
-}

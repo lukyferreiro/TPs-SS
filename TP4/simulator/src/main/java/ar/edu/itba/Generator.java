@@ -15,11 +15,12 @@ import java.util.*;
 
 public class Generator {
 
-    private static final Double MAX_ANGLE = 2 * Math.PI;
+    private static final double MIN_UI = 9.0;
+    private static final double MAX_UI = 12.0;
 
     public static void main(String[] args) throws IOException, ParseException {
 
-        FileReader fr = new FileReader("src/main/resources/configGenerator.json");
+        FileReader fr = new FileReader("src/main/resources/unidimensional_particles/configGenerator.json");
         JSONObject json = (JSONObject) new JSONParser().parse(fr);
         ConfigGeneratorParser config = new ConfigGeneratorParser(json);
 
@@ -47,23 +48,30 @@ public class Generator {
             for (int i = 0; i < config.getTimes(); i++) {
                 pw.println(i);
                 for (int j = 0; j < config.getN(); j++) {
+                    double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
+                    double angle = 0.0;
                     Particle particle = particles.get(j);
+
+                    System.out.println(j);
 
                     double x;
                     double y;
                     boolean superposition;
 
+                    //TODO chequear cuando N=30, como cada particula tiene diametro 4.5, entonces
+                    //todas las particulas ya me ocupan los 135cm de L
+                    //Cuando N=25 le cuesta encontrar espacio para las particulas tambien
+
                     do {
                         superposition = false;
                         x = random.nextDouble() * (config.getL() - 2 * particle.getRadius());
-                        y = random.nextDouble() * (config.getL() - 2 * particle.getRadius());
+                        y = 0.0;
 
                         // Comprobar si la partícula está dentro del recinto
-                        if (x < particle.getRadius() || x > config.getL() - particle.getRadius() ||
-                                y < particle.getRadius() || y > config.getL() - particle.getRadius()) {
-                            superposition = true;
-                            continue; // Volver a generar coordenadas si está fuera del recinto
-                        }
+//                        if (x < particle.getRadius() || x > config.getL() - particle.getRadius()) {
+//                            superposition = true;
+//                            continue; // Volver a generar coordenadas si está fuera del recinto
+//                        }
 
                         Position position = new Position(x,y);
                         for (Particle other : particles) {
@@ -78,7 +86,7 @@ public class Generator {
                     } while (superposition);
 
                     particle.setPosition(new Position(x, y));
-                    pw.printf(Locale.US, "%f %f\n", x, y);
+                    pw.printf(Locale.US, "%.20f %.1f %.20f %.1f\n", x, y, speed, angle);
                 }
             }
         }

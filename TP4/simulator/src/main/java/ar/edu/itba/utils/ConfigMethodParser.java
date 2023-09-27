@@ -8,8 +8,8 @@ public class ConfigMethodParser {
     private final String dynamicFile;
     private final String outFile;
     private final String outTimeFile;
-    private final Double deltaT;   
-
+    private final Double deltaT;
+    private final Double maxTime;
 
     public ConfigMethodParser(JSONObject json){
         this.staticFile = (String) json.get("staticFile");
@@ -17,6 +17,7 @@ public class ConfigMethodParser {
         this.outFile = (String) json.get("outFile");
         this.outTimeFile = (String) json.get("outTimeFile");
         this.deltaT = (Double) json.get("deltaT");
+        this.maxTime = (Double) json.get("maxTime");
     }
 
     public String getStaticFile() {
@@ -33,6 +34,9 @@ public class ConfigMethodParser {
     }
     public Double getDeltaT() {
         return deltaT;
+    }
+    public Double getMaxTime() {
+        return maxTime;
     }
 }
 

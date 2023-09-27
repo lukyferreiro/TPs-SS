@@ -1,5 +1,6 @@
 package ar.edu.itba;
 
+import ar.edu.itba.simulation.DynamicMolecular;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class Simulation {
     public static void main(String[] args) throws IOException, ParseException {
 
-        FileReader fr = new FileReader("src/main/resources/configMethod.json");
+        FileReader fr = new FileReader("src/main/resources/unidimensional_particles/configMethod.json");
         JSONObject json = (JSONObject) new JSONParser().parse(fr);
         ConfigMethodParser config = new ConfigMethodParser(json);
 
@@ -28,7 +29,7 @@ public class Simulation {
         final File outFile = new File(config.getOutFile());
 
         System.out.println("Simulation started ...\n");
-        //TODO call function
+        DynamicMolecular.run(parser.getParticlesPerTime(), parser.getL(),  config.getMaxTime(), config.getDeltaT());
         System.out.println("Simulation finished ...\n");
 
     }

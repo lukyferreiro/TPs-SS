@@ -43,7 +43,11 @@ def plot_oscillator(dir, dt):
             dts.append(time)
             positions_x.append(particle_data['x'])
 
-        ecm = np.sum((analytic_values - positions_x) ** 2) / len(analytic_values)
+        difference = 0
+        for i in range(0, len(analytic_values)):
+            difference += (analytic_values[i] - positions_x[i]) ** 2
+        
+        ecm = difference / len(analytic_values)
         ECM.append(ecm)
 
         print(f"ECM {name}: {ecm}")
