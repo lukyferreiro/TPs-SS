@@ -22,19 +22,19 @@ def plot_oscillator(dir, dt):
 
     data.append((analytic_values, t_arr))
 
+    ECM = []
     names = ['VerletOriginal', 'Beeman', 'GearPredictor']
+    print(f'Parsing {dt:.6f}')
+
+
     for i, name in enumerate(names):
         folder = os.path.join(dir, "benchmark")
         files = [f for f in os.listdir(folder) if re.match(f"{name}_{dt:.6f}\.txt", f)]
         file = files[0]  
-        print(f'Parsing {name}_{dt:.6f}')
         
         positions_x = []
         dts = []
         data_dict = parse(os.path.join(folder, file))
-
-        ecm = 0 
-        num_steps = 0
 
         for time in sorted(data_dict.keys()):
             particle_data = data_dict[time][1]
@@ -43,11 +43,8 @@ def plot_oscillator(dir, dt):
             dts.append(time)
             positions_x.append(particle_data['x'])
 
-            #Para el ECM
-            num_steps += 1
-            ecm += (analytic_values[int(time / dt)] - particle_data['x']) ** 2
-
-        ecm /= num_steps  # Normalizar por el número total de pasos
+        ecm = np.sum((analytic_values - positions_x) ** 2) / len(analytic_values)
+        ECM.append(ecm)
 
         print(f"ECM {name}: {ecm}")
 
@@ -64,3 +61,5 @@ def plot_oscillator(dir, dt):
     plt.legend()
     plt.grid(True)
     plt.show()
+
+    return ECM
