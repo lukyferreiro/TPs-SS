@@ -13,11 +13,13 @@ import static ar.edu.itba.algorithms.utils.R.values.*;
 
 public class GearPredictor {
 
+    private static final int GEAR_ORDER = 5;
     private static final Map<Integer, List<Double>> posSpeedCoefficients = Map.ofEntries(
             Map.entry(2, Arrays.asList(0.0, 1.0, 1.0)),
             Map.entry(3, Arrays.asList(1.0 / 6, 5.0 / 6, 1.0, 1.0 / 3)),
             Map.entry(4, Arrays.asList(19.0 / 90, 3.0 / 4, 1.0, 1.0 / 2, 1.0 / 12)),
-            Map.entry(5, Arrays.asList(3.0 / 16, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60)));
+            Map.entry(5, Arrays.asList(3.0 / 16, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60))
+    );
 
     private static final int TOTAL_PREDICTIONS = 6;
 
@@ -119,9 +121,9 @@ public class GearPredictor {
         for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
             Pair<Double, Double> rpi = predictions.get(i);
 
-            final double rcx = rpi.getOne() + GearPredictor.posSpeedCoefficients.get(5).get(i) * deltaR2.getOne()
+            final double rcx = rpi.getOne() + GearPredictor.posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.getOne()
                     * factorial(i) / Math.pow(dt, i);
-            final double rcy = rpi.getOther() + GearPredictor.posSpeedCoefficients.get(5).get(i) * deltaR2.getOther()
+            final double rcy = rpi.getOther() + GearPredictor.posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.getOther()
                     * factorial(i) / Math.pow(dt, i);
 
             corrections.add(rcx, rcy);

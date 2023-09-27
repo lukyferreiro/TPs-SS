@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Locale;
 
 public class BenchmarkOscillator {
@@ -30,6 +31,7 @@ public class BenchmarkOscillator {
     private static final String BEEMAN_DIR = "Beeman";
     private static final String GEAR_PREDICTOR_DIR = "GearPredictor";
     private static final String VERLET_ORIGINAL_DIR = "VerletOriginal";
+    private static final List<Double> DTS = List.of(0.01,0.001,0.0001,0.00001);
 
     public static void main(String[] args) throws IOException {
 
@@ -38,9 +40,9 @@ public class BenchmarkOscillator {
         oscillatorParticle.setVx(VX_0);
         oscillatorParticle.setVx(0);
 
-        for (int i = 0; i < RUNS; i++) {
-            double dt = BigDecimal.valueOf(DT_START * Math.pow(10, -i)).setScale(i + 2, RoundingMode.FLOOR).doubleValue();
-            System.out.printf("Running simulator with dt %.8f\n", dt);
+        for(Double dt : DTS) {
+            System.out.print("--------------------------\n");
+            System.out.printf(Locale.US, "Running simulator with dt %.6f\n", dt);
 
             for (Algorithm algorithm : Algorithm.values()) {
                 AlgorithmResult result;
@@ -80,8 +82,8 @@ public class BenchmarkOscillator {
         final File outResultsFile = new File(filePath);
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             result.getParticles().forEach((time, particle) -> {
-                pw.printf(Locale.US, "%f\n", time);
-                pw.printf(Locale.US, "%d %.20f %.20f %.20f %.20f\n",
+                pw.printf(Locale.US, "%.6f\n", time);
+                pw.printf(Locale.US, "%d %.20f %.1f %.20f %.1f\n",
                         particle.getId(),
                         particle.getX(),
                         particle.getY(),
