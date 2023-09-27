@@ -38,7 +38,7 @@ public class Generator {
             pw.println(config.getL());
             for (int i = 0; i < config.getN(); i++) {
                 final double radius = minR + Math.random() * (maxR - minR);
-                pw.printf(Locale.US, "%f %f\n", radius, config.getMass());
+                pw.printf(Locale.US, "%.2f %.1f\n", radius, config.getMass());
                 particles.add(new Particle(i, radius, config.getMass()));
             }
         }
@@ -86,7 +86,7 @@ public class Generator {
                     } while (superposition);
 
                     particle.setPosition(new Position(x, y));
-                    pw.printf(Locale.US, "%.20f %.1f %.20f %.1f\n", x, y, speed, angle);
+                    pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, y, speed, angle);
                 }
             }
         }
