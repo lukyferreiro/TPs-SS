@@ -20,6 +20,6 @@ class DataConfig:
       self.deltaT = check_float(data['deltaT'], 'deltaT')
 
       with open(f"../simulator/{self.staticFile}", 'r') as static:
-        self.side = float(static.readline().strip())ç
+        self.side = float(static.readline().strip())
         #TODO
       

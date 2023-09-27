@@ -59,7 +59,7 @@ public class SimulatorOscillator {
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
             result.getParticles().forEach((time, particle) -> {
-                    pw.append(String.format("%f\n", time));
+                    pw.printf(Locale.US, "%f\n", time);
                     pw.printf(Locale.US, "%d %.20f %.20f %.20f %.20f\n",
                             particle.getId(),
                             particle.getX(),

@@ -31,7 +31,6 @@ public class BenchmarkOscillator {
     private static final String GEAR_PREDICTOR_DIR = "GearPredictor";
     private static final String VERLET_ORIGINAL_DIR = "VerletOriginal";
 
-
     public static void main(String[] args) throws IOException {
 
         final Particle oscillatorParticle = new Particle(1, RADIUS, MASS);
@@ -68,7 +67,6 @@ public class BenchmarkOscillator {
                     }
                 }
             }
-
         }
 
         System.out.println("Done!");
@@ -82,7 +80,7 @@ public class BenchmarkOscillator {
         final File outResultsFile = new File(filePath);
         try (PrintWriter pw = new PrintWriter(outResultsFile)) {
             result.getParticles().forEach((time, particle) -> {
-                pw.append(String.format("%f\n", time));
+                pw.printf(Locale.US, "%f\n", time);
                 pw.printf(Locale.US, "%d %.20f %.20f %.20f %.20f\n",
                         particle.getId(),
                         particle.getX(),
@@ -92,6 +90,5 @@ public class BenchmarkOscillator {
                 );
             });
         }
-
     }
 }
