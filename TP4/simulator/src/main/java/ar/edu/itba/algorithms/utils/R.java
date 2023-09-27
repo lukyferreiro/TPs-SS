@@ -1,0 +1,30 @@
+package ar.edu.itba.algorithms.utils;
+
+import ar.edu.itba.models.Pair;
+
+import java.util.ArrayList;
+
+public class R {
+    private final ArrayList<Pair<Double, Double>> ri;
+
+    public R() {
+        this.ri = new ArrayList<>();
+    }
+
+    public void add(double x, double y) {
+        ri.add(new Pair<>(x, y));
+    }
+
+    public void set(int index, double x, double y) {
+        ri.set(index, new Pair<>(x, y));
+    }
+
+    public Pair<Double, Double> get(int index) {
+        return ri.get(index);
+    }
+
+    public enum values {
+        R0, R1, R2, R3, R4, R5
+    }
+
+}
