@@ -9,9 +9,9 @@ import java.util.Set;
 public class ParticlesParserResult {
     private final int N;
     private final double L;
-    private final List<Set<Particle>> particlesPerTime;
+    private final List<List<Particle>> particlesPerTime;
 
-    public ParticlesParserResult(int N, double L, List<Set<Particle>> particlesPerTime) {
+    public ParticlesParserResult(int N, double L, List<List<Particle>> particlesPerTime) {
         this.N = N;
         this.L = L;
         this.particlesPerTime = particlesPerTime;
@@ -23,7 +23,7 @@ public class ParticlesParserResult {
     public double getL() {
         return L;
     }
-    public List<Set<Particle>> getParticlesPerTime() {
+    public List<List<Particle>> getParticlesPerTime() {
         return particlesPerTime;
     }
 }

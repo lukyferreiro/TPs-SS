@@ -1,6 +1,6 @@
 package ar.edu.itba;
 
-import ar.edu.itba.simulation.DynamicMolecular;
+import ar.edu.itba.simulation.MolecularDynamic;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -29,7 +29,9 @@ public class Simulation {
         final File outFile = new File(config.getOutFile());
 
         System.out.println("Simulation started ...\n");
-        DynamicMolecular.run(parser.getParticlesPerTime(), parser.getL(),  config.getMaxTime(), config.getDeltaT(), config.getDeltaT2());
+
+        MolecularDynamic.run(parser.getParticlesPerTime(), parser.getL(),  config.getMaxTime(), config.getDeltaT(), config.getDeltaT2(), outFile);
+
         System.out.println("Simulation finished ...\n");
 
     }

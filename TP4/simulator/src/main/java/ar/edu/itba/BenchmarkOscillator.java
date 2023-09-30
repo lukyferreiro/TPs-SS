@@ -8,8 +8,6 @@ import ar.edu.itba.models.Position;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,14 +22,12 @@ public class BenchmarkOscillator {
     private static final double A = 1;
     private static final double VX_0 = -A * GAMMA / (2 * MASS);
     //VARIABLES
-    private static final double DT_START = 0.01;
     private static final Double MAX_TIME = 5.0;
     //BENCHMARk
-    private static final int RUNS = 5;
     private static final String BEEMAN_DIR = "Beeman";
     private static final String GEAR_PREDICTOR_DIR = "GearPredictor";
     private static final String VERLET_ORIGINAL_DIR = "VerletOriginal";
-    private static final List<Double> DTS = List.of(0.01,0.001,0.0001,0.00001);
+    private static final List<Double> DTS = List.of(0.01, 0.001, 0.0001, 0.00001);
 
     public static void main(String[] args) throws IOException {
 

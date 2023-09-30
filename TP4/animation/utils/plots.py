@@ -36,14 +36,14 @@ def plot_oscillator(dir, dt):
         positions_x = []
         data_dict = parse(os.path.join(folder, file))
 
+        #Soluciones numericas
         for time in data_dict.keys():
-            #Soluciones numericas
             positions_x.append(data_dict[time][1]['x'])
 
         difference = 0
         for i in range(0, len(analytic_values)):
             difference += (analytic_values[i] - positions_x[i]) ** 2
-        
+
         ecm = difference / len(analytic_values)
         ECM.append(ecm)
         data.append(positions_x)
