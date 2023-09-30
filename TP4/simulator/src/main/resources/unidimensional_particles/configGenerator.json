@@ -1,7 +1,7 @@
 {
   "staticFile": "src/main/resources/unidimensional_particles/static.txt",
   "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
-  "N": 20,
+  "N": 30,
   "L": 135.0,
   "R": 21.49,
   "max_radius": 2.25,

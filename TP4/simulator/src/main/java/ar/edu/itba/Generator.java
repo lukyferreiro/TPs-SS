@@ -47,46 +47,47 @@ public class Generator {
             final Random random = new Random();
             for (int i = 0; i < config.getTimes(); i++) {
                 pw.println(i);
-                for (int j = 0; j < config.getN(); j++) {
-                    double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
-                    double angle = 0.0;
-                    Particle particle = particles.get(j);
+                if (config.getN() == 30) {
+                    double count = 0.0;
+                    for (Particle p : particles) {
+                        double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", count, 0.0, speed, 0.0);
+                        count += 2 * p.getRadius();
+                    }
+                } else if (config.getN() == 25) {
+                    //TODO ver como ubicarlas pq le cuesta ubicarlas
+                } else {
+                    for (int j = 0; j < config.getN(); j++) {
+                        double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
+                        double angle = 0.0;
+                        Particle particle = particles.get(j);
 
-                    System.out.println(j);
+                        System.out.println(j);
 
-                    double x;
-                    double y;
-                    boolean superposition;
+                        double x;
+                        double y;
+                        boolean superposition;
 
-                    //TODO chequear cuando N=30, como cada particula tiene diametro 4.5, entonces
-                    //todas las particulas ya me ocupan los 135cm de L
-                    //Cuando N=25 le cuesta encontrar espacio para las particulas tambien
+                        do {
+                            superposition = false;
+                            x = random.nextDouble() * (config.getL() - 2 * particle.getRadius());
+                            y = 0.0;
 
-                    do {
-                        superposition = false;
-                        x = random.nextDouble() * (config.getL() - 2 * particle.getRadius());
-                        y = 0.0;
-
-                        // Comprobar si la partícula está dentro del recinto
-//                        if (x < particle.getRadius() || x > config.getL() - particle.getRadius()) {
-//                            superposition = true;
-//                            continue; // Volver a generar coordenadas si está fuera del recinto
-//                        }
-
-                        Position position = new Position(x,y);
-                        for (Particle other : particles) {
-                            if(other.getPosition() != null) {
-                                double distance = position.calculateDistance(other.getPosition());
-                                if (distance < 2 * particle.getRadius()) {
-                                    superposition = true;
-                                    break;
+                            Position position = new Position(x, y);
+                            for (Particle other : particles) {
+                                if (other.getPosition() != null) {
+                                    double distance = position.calculateDistance(other.getPosition());
+                                    if (distance < 2 * particle.getRadius()) {
+                                        superposition = true;
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                    } while (superposition);
+                        } while (superposition);
 
-                    particle.setPosition(new Position(x, y));
-                    pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, y, speed, angle);
+                        particle.setPosition(new Position(x, y));
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, y, speed, angle);
+                    }
                 }
             }
         }

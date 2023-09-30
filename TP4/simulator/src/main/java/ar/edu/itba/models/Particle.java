@@ -20,6 +20,16 @@ public class Particle {
         this.mass = mass;
     }
 
+    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u) {
+        this.id = id;
+        this.radius = radius;
+        this.mass = mass;
+        this.position = new Position(x, y);
+        this.vx = vx;
+        this.vy = vy;
+        this.u = u;
+    }
+
     public int getId() {
         return this.id;
     }

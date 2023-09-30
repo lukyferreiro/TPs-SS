@@ -34,10 +34,13 @@ public class MolecularDynamic {
         );
     }
 
-    public static void run(List<List<Particle>> particlesPerTime, Double L, Double maxTime, Double dt, Double dt2, File outFile) {
+    public static Map<Double, List<Particle>> run(
+            List<Particle> particles, Double L, Double maxTime,
+            Double dt, Double dt2, File outFile
+    ) {
         long startTime = System.nanoTime();
 
-        List<Particle> particles = particlesPerTime.get(0);
+        final Map<Double, List<Particle>> particlesOverTime = new HashMap<>();
 
         List<R> currentRs = calculateInitialRs(particles, dt);
 
@@ -47,16 +50,20 @@ public class MolecularDynamic {
         double currentTime = 0;
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
+
+            writeFile(pw, particles, 0.0);
+            particlesOverTime.put(0.0, particles);
+
             for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
                 for (Particle particle : particles) {
                     particle.setX(currentRs.get(particle.getId() - 1).get(R0.ordinal()).getOne(), L);
                     particle.setVx(currentRs.get(particle.getId() - 1).get(R1.ordinal()).getOne());
-//                particle.setAx(currentRs.get(particle.getId()).get(R2.ordinal()).getOne());
                 }
 
                 if (currentTime > dt2) {
                     writeFile(pw, particles, t);
+                    particlesOverTime.put(t, particles);
                     currentTime = 0;
                 }
                 else {
@@ -78,6 +85,8 @@ public class MolecularDynamic {
         long totalTime = endTime - startTime;
 
         System.out.println("Total time: " + totalTime / 1_000_000);
+
+        return particlesOverTime;
 
     }
 
@@ -127,16 +136,10 @@ public class MolecularDynamic {
                 if (i == 0) {
                     particles.get(count).setX(rpx, L);
                     newPredictions.add(rpx % L, 0.0);
-
                 } else if (i == 1) {
                     particles.get(count).setVx(rpx);
                     newPredictions.add(rpx, 0.0);
-                }
-//                } else if (i == 2) {
-//                    particles.get(i).setAx(rpx);
-//                    newPredictions.add(rpx, 0.0);
-//                }
-                else {
+                } else {
                     newPredictions.add(rpx, 0.0);
                 }
             }
@@ -212,7 +215,6 @@ public class MolecularDynamic {
         return (p.getU() - p.getVx());
     }
 
-    //fuerza que le ejerce p1 sobre p2
     private static double collisionForce(Particle p1, Particle p2) {
         double K = 2500.0;
         return K * (Math.abs(p1.getX() - p2.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());

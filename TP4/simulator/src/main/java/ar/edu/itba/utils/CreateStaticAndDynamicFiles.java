@@ -1,92 +1,91 @@
-//package ar.edu.itba.utils;
-//
-//import ar.edu.itba.models.Particle;
-//import ar.edu.itba.models.Position;
-//import org.json.simple.JSONObject;
-//import org.json.simple.parser.JSONParser;
-//import org.json.simple.parser.ParseException;
-//
-//import java.io.*;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Locale;
-//import java.util.Random;
-//
-//public class CreateStaticAndDynamicFiles {
-//
-//    public static ParticlesParserResult create(int N) throws IOException, ParseException {
-//        FileReader fr = new FileReader("src/main/resources/configGenerator.json");
-//        JSONObject json = (JSONObject) new JSONParser().parse(fr);
-//        ConfigGeneratorParser config = new ConfigGeneratorParser(json);
-//
-//        final File staticFile = new File(config.getStaticFile());
-//        final File dynamicFile = new File(config.getDynamicFile());
-//
-//        System.out.println("Generating particles ...\n");
-//
-//        final List<Particle> particles = new ArrayList<>();
-//        final double minR = config.getMinR();
-//        final double maxR = config.getMaxR();
-//
-//        try (PrintWriter pw = new PrintWriter(staticFile)) {
-//            pw.println(N);
-//            pw.println(config.getSide());
-//            for (int i = 0; i < N; i++) {
-//                final double radius = minR + Math.random() * (maxR - minR);
-//                pw.printf(Locale.US, "%f %f\n", radius, config.getMass());
-//                particles.add(new Particle(i, radius, config.getMass()));
-//            }
-//        }
-//
-//        try (PrintWriter pw = new PrintWriter(dynamicFile)) {
-//            final Random random = new Random();
-//            for (int i = 0; i < config.getTimes(); i++) {
-//                pw.println(i);
-//                for (int j = 0; j < N; j++) {
-//                    double speed = config.getSpeed();
-//                    double angle = random.nextDouble() * (2 * Math.PI);
-//                    Particle particle = particles.get(j);
-//
-//                    double x;
-//                    double y;
-//                    boolean superposition;
-//
-//                    do {
-//                        superposition = false;
-//                        x = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
-//                        y = random.nextDouble() * (config.getSide() - 2 * particle.getRadius());
-//
-//                        // Comprobar si la partícula está dentro del recinto
-//                        if (x < particle.getRadius() || x > config.getSide() - particle.getRadius() ||
-//                                y < particle.getRadius() || y > config.getSide() - particle.getRadius()) {
-//                            superposition = true;
-//                            continue; // Volver a generar coordenadas si está fuera del recinto
-//                        }
-//
-//                        Position position = new Position(x,y);
-//                        for (Particle other : particles) {
-//                            if(other.getPosition() != null) {
-//                                double distance = position.calculateDistance(other.getPosition());
-//                                if (distance < 2 * particle.getRadius()) {
-//                                    superposition = true;
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    } while (superposition);
-//
-//                    particle.setPosition(new Position(x, y));
-//                    pw.printf(Locale.US, "%f %f %f %f\n", x, y, speed, angle);
-//                }
-//            }
-//        }
-//
-//        System.out.println("Particles generated\n");
-//        ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
-//
-//        staticFile.delete();
-//        dynamicFile.delete();
-//
-//        return parser;
-//    }
-//}
+package ar.edu.itba.utils;
+
+import ar.edu.itba.models.Particle;
+import ar.edu.itba.models.Position;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
+public class CreateStaticAndDynamicFiles {
+
+    private static final double MIN_UI = 9.0;
+    private static final double MAX_UI = 12.0;
+    private static final double L = 135.0;
+    private static final double RADIUS = 2.25;
+    private static final double MASS = 25.0;
+
+    public static ParticlesParserResult create(int N) throws IOException {
+
+        final File staticFile = new File("src/main/resources/unidimensional_particles/static.txt");
+        final File dynamicFile = new File("src/main/resources/unidimensional_particles/dynamic.txt");
+
+
+        final List<Particle> particles = new ArrayList<>();
+
+        try (PrintWriter pw = new PrintWriter(staticFile)) {
+            pw.println(N);
+            pw.println(L);
+            for (int i = 0; i < N; i++) {
+                pw.printf(Locale.US, "%.2f %.1f\n", RADIUS, MASS);
+                particles.add(new Particle(i, RADIUS, MASS));
+            }
+        }
+
+        try (PrintWriter pw = new PrintWriter(dynamicFile)) {
+            final Random random = new Random();
+            for (int i = 0; i < 1; i++) {
+                pw.println(i);
+                if (N == 30){
+                    double count = 0.0;
+                    for(Particle p : particles){
+                        double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", count, 0.0, speed, 0.0);
+                        count += 2 * RADIUS;
+                    }
+                } else if (N == 25) {
+                    //TODO ver como ubicarlas pq le cuesta ubicarlas
+
+
+                } else {
+                    for (int j = 0; j < N; j++) {
+                        double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
+                        Particle particle = particles.get(j);
+
+                        double x;
+                        boolean superposition;
+
+                        do {
+                            superposition = false;
+                            x = random.nextDouble() * (L - 2 * RADIUS);
+
+                            Position position = new Position(x, 0.0);
+                            for (Particle other : particles) {
+                                if (other.getPosition() != null) {
+                                    double distance = position.calculateDistance(other.getPosition());
+                                    if (distance < 2 * RADIUS) {
+                                        superposition = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } while (superposition);
+
+                        particle.setPosition(new Position(x, 0.0));
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, 0.0, speed, 0.0);
+                    }
+                }
+            }
+        }
+
+        System.out.println("Particles generated\n");
+        ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
+
+        staticFile.delete();
+        dynamicFile.delete();
+
+        return parser;
+    }
+}

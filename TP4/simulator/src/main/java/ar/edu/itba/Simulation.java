@@ -30,7 +30,7 @@ public class Simulation {
 
         System.out.println("Simulation started ...\n");
 
-        MolecularDynamic.run(parser.getParticlesPerTime(), parser.getL(),  config.getMaxTime(), config.getDeltaT(), config.getDeltaT2(), outFile);
+        MolecularDynamic.run(parser.getParticlesPerTime().get(0), parser.getL(),  config.getMaxTime(), config.getDeltaT(), config.getDeltaT2(), outFile);
 
         System.out.println("Simulation finished ...\n");
 
