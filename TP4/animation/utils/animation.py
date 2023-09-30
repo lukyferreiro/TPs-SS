@@ -6,7 +6,7 @@ def update(frame, particles_dict, L):
 
     vertices_rectangulo = [
         (0, 0),
-        (0, L),
+        (L, 0),
     ]
 
     print(frame)
@@ -26,8 +26,8 @@ def update(frame, particles_dict, L):
             circle = plt.Circle((x, y), radius=2.25, fill=True)
             plt.gca().add_patch(circle)
 
-    plt.xlim(-5, L + 5)
-    plt.ylim(-5, 5)
-    plt.title(f'Tiempo: {frame}')
+    plt.xlim(0, L)
+    plt.ylim(-L, L)
+    plt.title(f'Tiempo: {frame:.2f}')
     plt.xlabel('Posición X')
     plt.ylabel('Posición Y')

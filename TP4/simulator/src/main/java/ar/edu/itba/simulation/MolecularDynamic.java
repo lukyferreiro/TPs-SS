@@ -39,10 +39,12 @@ public class MolecularDynamic {
 
         List<Particle> particles = particlesPerTime.get(0);
 
-        List<R> currentRs = calculateInitialRs(particles);
+        List<R> currentRs = calculateInitialRs(particles, dt);
 
         int iterations = 0;
         int totalIterations = (int) Math.ceil(maxTime / dt);
+
+        double currentTime = 0;
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
             for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
@@ -53,8 +55,13 @@ public class MolecularDynamic {
 //                particle.setAx(currentRs.get(particle.getId()).get(R2.ordinal()).getOne());
                 }
 
-                //TODO imprimir cada dt2
-                writeFile(pw, particles, t);
+                if (currentTime > dt2) {
+                    writeFile(pw, particles, t);
+                    currentTime = 0;
+                }
+                else {
+                    currentTime += dt;
+                }
 
                 final List<R> predictions = predict(currentRs, particles, dt, L);
 
@@ -74,7 +81,7 @@ public class MolecularDynamic {
 
     }
 
-    public static List<R> calculateInitialRs(List<Particle> particles) {
+    public static List<R> calculateInitialRs(List<Particle> particles, Double dt) {
         List<R> initialRs = new ArrayList<>();
         for (Particle p : particles) {
             final R currentR = new R();
@@ -84,7 +91,7 @@ public class MolecularDynamic {
             //r1
             currentR.add(p.getVx(), 0.0);
             //r2
-            double r2 = movementEcuation(p, particles);
+            double r2 = movementEquation(p, particles, dt);
             currentR.add(r2, 0.0);
 
             //r3
@@ -103,6 +110,8 @@ public class MolecularDynamic {
     private static List<R> predict(List<R> currentRs, List<Particle> particles, Double dt, Double L) {
         List<R> newRs = new ArrayList<>();
 
+        int count = 0;
+
         for (R currentR : currentRs) {
 
             final R newPredictions = new R();
@@ -116,11 +125,11 @@ public class MolecularDynamic {
                 }
 
                 if (i == 0) {
-                    particles.get(i).setX(rpx, L);
+                    particles.get(count).setX(rpx, L);
                     newPredictions.add(rpx % L, 0.0);
 
                 } else if (i == 1) {
-                    particles.get(i).setVx(rpx);
+                    particles.get(count).setVx(rpx);
                     newPredictions.add(rpx, 0.0);
                 }
 //                } else if (i == 2) {
@@ -130,9 +139,8 @@ public class MolecularDynamic {
                 else {
                     newPredictions.add(rpx, 0.0);
                 }
-
             }
-
+            count++;
             newRs.add(newPredictions);
         }
 
@@ -145,7 +153,7 @@ public class MolecularDynamic {
 
         for (Particle p : particles) {
 
-            Double F = movementEcuation(p, particles);
+            Double F = movementEquation(p, particles, dt);
 
             //Aceleración predecida
             Double r2x = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
@@ -207,13 +215,13 @@ public class MolecularDynamic {
     //fuerza que le ejerce p1 sobre p2
     private static double collisionForce(Particle p1, Particle p2) {
         double K = 2500.0;
-        return K * (Math.abs(p1.getX() - p2.getX()) - 2 * p1.getRadius()) * Math.signum(p1.getX() - p2.getX());
+        return K * (Math.abs(p1.getX() - p2.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());
     }
 
-    private static double movementEcuation(Particle p1, List<Particle> particles) {
+    private static double movementEquation(Particle p1, List<Particle> particles, Double dt) {
         double sumForces = 0;
         for (Particle p2 : particles) {
-            if (!p2.equals(p1)) {
+            if (!p2.equals(p1) && p2.collidesWith(p1, dt)) {
                 sumForces += collisionForce(p1, p2);
             }
         }

@@ -98,29 +98,26 @@ public class Particle {
 //        p.setVy(p.getVy() - (Jy / p.getMass()));
 //    }
 //
-//    @Override
-//    public double getTc(Particle p) {
-//        double deltaRx = this.getX() - p.getX();
-//        double deltaRy = this.getY() - p.getY();
-//        double deltaVx = this.getVx() - p.getVx();
-//        double deltaVy = this.getVy() - p.getVy();
-//
-//        double sigma = this.radius + p.getRadius();
-//
-//        double dvdr = (deltaRx * deltaVx) + (deltaRy * deltaVy);
-//        if (dvdr >= 0) {
-//            return Double.MAX_VALUE;
-//        }
-//
-//        double dvdv = (deltaVx * deltaVx) + (deltaVy * deltaVy);
-//        double drdr = (deltaRx * deltaRx) + (deltaRy * deltaRy);
-//        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sigma, 2));
-//        if (d < 0) {
-//            return Double.MAX_VALUE;
-//        }
-//
-//        return - (dvdr + Math.sqrt(d)) / dvdv;
-//    }
+    public boolean collidesWith(Particle p, Double dt) {
+        double deltaRx = this.getX() - p.getX();
+        double deltaVx = this.getVx() - p.getVx();
+
+        double sigma = this.radius + p.getRadius();
+
+        double dvdr = (deltaRx * deltaVx);
+        if (dvdr >= 0) {
+            return false;
+        }
+
+        double dvdv = (deltaVx * deltaVx);
+        double drdr = (deltaRx * deltaRx);
+        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sigma, 2));
+        if (d < 0) {
+            return false;
+        }
+
+        return (-(dvdr + Math.sqrt(d)) / dvdv ) < dt;
+    }
 
     @Override
     public boolean equals(Object o) {
