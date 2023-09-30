@@ -17,9 +17,6 @@ def main():
 
     particles_dict = parse(TO_OUT)
 
-    print(particles_dict)
-
-
     animation_times = list(particles_dict.keys())
     anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,
                          interval=1, fargs=(particles_dict, c.L)).save("simulation.gif")
