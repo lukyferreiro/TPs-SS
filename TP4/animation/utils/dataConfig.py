@@ -16,10 +16,10 @@ class DataConfig:
       self.staticFile = data['staticFile']
       self.dynamicFile = data['dynamicFile']
       self.outFile = data['outFile']
-      self.outTimeFile = data['outTimeFile']
       self.deltaT = check_float(data['deltaT'], 'deltaT')
+      self.deltaT2 = check_float(data['deltaT2'], 'deltaT2')
+      self.maxTime = check_float(data['maxTime'], 'maxTime')
 
       with open(f"../simulator/{self.staticFile}", 'r') as static:
-        self.side = float(static.readline().strip())
-        #TODO
-      
+        self.N = float(static.readline().strip())
+        self.L = float(static.readline().strip())      
