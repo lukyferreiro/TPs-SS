@@ -38,17 +38,17 @@ public class CreateStaticAndDynamicFiles {
             final Random random = new Random();
             for (int i = 0; i < 1; i++) {
                 pw.println(i);
-                if (N == 30){
-                    double count = 0.0;
-                    for(Particle p : particles){
+                if (N == 25 || N == 30) {
+                    int count = 0;
+                    for (Particle p : particles) {
+                        double requiredSpacing = 2 * RADIUS;
+                        double unusedSpace = L - (requiredSpacing * N);
+                        double spacing = unusedSpace > 0 ? unusedSpace / (N - 1) : 0;
                         double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
-                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", count, 0.0, speed, 0.0);
-                        count += 2 * RADIUS;
+                        double x = count * (requiredSpacing + spacing);
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, 0.0, speed, 0.0);
+                        count++;
                     }
-                } else if (N == 25) {
-                    //TODO ver como ubicarlas pq le cuesta ubicarlas
-
-
                 } else {
                     for (int j = 0; j < N; j++) {
                         double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);

@@ -26,3 +26,26 @@ def parse(file):
                 }
     
     return data_dict
+
+def parsePhiValues(file):
+    data_dict = {}
+    current_time = None
+
+    with open(file, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if re.match(r'^\d+$', line):
+                current_time = int(line)
+                data_dict[current_time] = {}
+            else:
+                parts = line.split()
+                phiValues = []
+
+                for part in parts:
+                    phiValues.append(part)
+
+                data_dict[current_time] = {
+                    'phiValues': phiValues
+                }
+    
+    return data_dict

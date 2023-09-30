@@ -7,6 +7,8 @@ import ar.edu.itba.models.Particle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static ar.edu.itba.algorithms.utils.R.values.*;
@@ -22,8 +24,8 @@ public class MolecularDynamic {
             Map.entry(5, Arrays.asList(3.0 / 16, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60))
     );
 
-    private static void writeFile(PrintWriter pw, List<Particle> particles, Double time) {
-        pw.printf(Locale.US, "%.20f\n", time);
+    private static void writeFile(PrintWriter pw, List<Particle> particles, Integer iteration) {
+        pw.printf(Locale.US, "%d\n", iteration);
         particles.forEach((particle) ->
                 pw.printf(Locale.US, "%d %.20f %.1f %.20f %.1f\n",
                     particle.getId(),
@@ -34,39 +36,48 @@ public class MolecularDynamic {
         );
     }
 
-    public static Map<Double, List<Particle>> run(
+    public static List<Particle> cloneParticles(List<Particle> particles) {
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle p : particles) {
+            Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU());
+            newParticles.add(particle);
+        }
+        return newParticles;
+    }
+
+    public static Map<Integer, List<Particle>> run(
             List<Particle> particles, Double L, Double maxTime,
             Double dt, Double dt2, File outFile
     ) {
         long startTime = System.nanoTime();
 
-        final Map<Double, List<Particle>> particlesOverTime = new HashMap<>();
+        final Map<Integer, List<Particle>> particlesOverTime = new HashMap<>();
 
         List<R> currentRs = calculateInitialRs(particles, dt);
 
-        int iterations = 0;
-        int totalIterations = (int) Math.ceil(maxTime / dt);
-
-        double currentTime = 0;
-
         try (PrintWriter pw = new PrintWriter(outFile)) {
 
-            writeFile(pw, particles, 0.0);
-            particlesOverTime.put(0.0, particles);
+            writeFile(pw, particles, 0);
+            particlesOverTime.put(0, particles);
 
-            for (double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
+            Double currentTime = dt;
+            int toPrintTime = 1;
+            int iterations = 1;
+            int totalIterations = (int) Math.ceil(maxTime / dt);
+
+            for (Double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
 
                 for (Particle particle : particles) {
                     particle.setX(currentRs.get(particle.getId() - 1).get(R0.ordinal()).getOne(), L);
                     particle.setVx(currentRs.get(particle.getId() - 1).get(R1.ordinal()).getOne());
                 }
 
-                if (currentTime > dt2) {
-                    writeFile(pw, particles, t);
-                    particlesOverTime.put(t, particles);
-                    currentTime = 0;
-                }
-                else {
+                if (currentTime >= dt2) {
+                    writeFile(pw, particles, toPrintTime);
+                    particlesOverTime.put(toPrintTime, cloneParticles(particles));
+                    currentTime = 0.0;
+                    toPrintTime++;
+                } else {
                     currentTime += dt;
                 }
 
@@ -100,7 +111,7 @@ public class MolecularDynamic {
             //r1
             currentR.add(p.getVx(), 0.0);
             //r2
-            double r2 = movementEquation(p, particles, dt);
+            Double r2 = movementEquation(p, particles, dt);
             currentR.add(r2, 0.0);
 
             //r3
@@ -126,7 +137,7 @@ public class MolecularDynamic {
             final R newPredictions = new R();
 
             for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
-                double rpx = 0;
+                Double rpx = 0.0;
 
                 for (int j = i; j < TOTAL_PREDICTIONS; j++) {
                     final Pair<Double, Double> rj = currentR.get(j);
@@ -161,7 +172,7 @@ public class MolecularDynamic {
             //Aceleración predecida
             Double r2x = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
 
-            final double deltaR2x = (F - r2x) * Math.pow(dt, 2) / factorial(2);
+            final Double deltaR2x = (F - r2x) * Math.pow(dt, 2) / factorial(2);
 
             deltasR2.add(deltaR2x);
         }
@@ -180,7 +191,7 @@ public class MolecularDynamic {
             for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
                 Double rpxi = prediction.get(i).getOne();
 
-                final double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
+                final Double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
 
                 if (i == 0) {
                     aux.add(rcx % L, 0.0);
@@ -211,17 +222,17 @@ public class MolecularDynamic {
         return factorial;
     }
 
-    private static double getForce(Particle p) {
+    private static Double getForce(Particle p) {
         return (p.getU() - p.getVx());
     }
 
-    private static double collisionForce(Particle p1, Particle p2) {
-        double K = 2500.0;
+    private static Double collisionForce(Particle p1, Particle p2) {
+        Double K = 2500.0;
         return K * (Math.abs(p1.getX() - p2.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());
     }
 
-    private static double movementEquation(Particle p1, List<Particle> particles, Double dt) {
-        double sumForces = 0;
+    private static Double movementEquation(Particle p1, List<Particle> particles, Double dt) {
+        Double sumForces = 0.0;
         for (Particle p2 : particles) {
             if (!p2.equals(p1) && p2.collidesWith(p1, dt)) {
                 sumForces += collisionForce(p1, p2);

@@ -12,7 +12,7 @@ import java.util.*;
 
 public class BenchmarkParticles {
 
-    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001, 0.00001);
+    final static List<Double> DTS = List.of(0.1, 0.01, 0.001);
     final static Double L = 135.0;
     final static Double MAX_TIME = 180.0;
     final static Double DT2 = 0.1;
@@ -24,67 +24,54 @@ public class BenchmarkParticles {
 
         final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(N);
 
-        final Map<Double, Map<Double, List<Particle>>> particlesWithDts = new HashMap<>();
+        final Map<Double, Map<Integer, List<Particle>>> particlesWithDts = new HashMap<>();
 
         for (Double dt : DTS) {
 
             final String file = "src/main/resources/unidimensional_particles/benchmark/" + dt + ".txt";
             final File outFile = new File(file);
 
-            List<Particle> particles = new ArrayList<>();
-            for(Particle p : parser.getParticlesPerTime().get(0)) {
-                Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU());
-                particles.add(particle);
-            }
+            List<Particle> particles = MolecularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<Double, List<Particle>> aux = MolecularDynamic.run(particles, L, MAX_TIME, dt, DT2, outFile);
+            Map<Integer, List<Particle>> aux = MolecularDynamic.run(particles, L, MAX_TIME, dt, DT2, outFile);
             particlesWithDts.put(dt, aux);
         }
 
         //------------PHI VALUE----------------
 
-        int iterations = 0;
-        double minTime =  DTS.get(0);
-        int totalIterations = (int) Math.ceil(MAX_TIME / minTime);
-
-        List<Double> allCurrentTime = new ArrayList<>();
-        for (double t = minTime; iterations < totalIterations; t += minTime, iterations += 1) {
-            allCurrentTime.add(t);
-        }
-
-        final Map<Double, List<Double>> phiValues = new HashMap<>();
+        final Map<Integer, List<Double>> phiValues = new HashMap<>();
 
         for(int i = 0; i < DTS.size() - 1; i++) {
-            double currentDt = DTS.get(i);
-            double nextDt = DTS.get(i + 1);
+            Double currentDt = DTS.get(i);
+            Double nextDt = DTS.get(i + 1);
 
-            Map<Double, List<Particle>> currentMap = particlesWithDts.get(currentDt);
-            Map<Double, List<Particle>> nextMap = particlesWithDts.get(nextDt);
+            Map<Integer, List<Particle>> currentMap = particlesWithDts.get(currentDt);
+            Map<Integer, List<Particle>> nextMap = particlesWithDts.get(nextDt);
 
             List<Double> currentPhiList = new ArrayList<>();
 
-            for(Double time : allCurrentTime) {
+            for(int iter = 0; iter < currentMap.size(); iter++) {
 
-                double phiValue = 0.0;
+                Double phiValue = 0.0;
 
                 for(int j = 0; j < N; j++) {
-                    phiValue += Math.abs(nextMap.get(time).get(j).getX() - currentMap.get(time).get(j).getX());
+                    phiValue += Math.abs(nextMap.get(iter).get(j).getX() - currentMap.get(iter).get(j).getX());
                 }
 
                 currentPhiList.add(phiValue);
 
             }
 
-            phiValues.put(currentDt, currentPhiList);
+            phiValues.put(i, currentPhiList);
         }
 
         final String filePhi = "src/main/resources/unidimensional_particles/benchmark/phiValues.txt";
         final File outPhiFile = new File(filePhi);
 
         try (PrintWriter pw = new PrintWriter(outPhiFile)) {
-            for(Map.Entry<Double, List<Double>> entry : phiValues.entrySet()) {
-                pw.println(String.format(Locale.US, "%.20f", entry.getKey()));
-                entry.getValue().forEach((phi) -> pw.append(String.format(Locale.US, "%.20f\n", phi)));
+            for(Map.Entry<Integer, List<Double>> entry : phiValues.entrySet()) {
+                pw.println(String.format(Locale.US, "%d", entry.getKey()));
+                entry.getValue().forEach((phi) -> pw.append(String.format(Locale.US, "%.20f ", phi)));
                 pw.println();
             }
         }

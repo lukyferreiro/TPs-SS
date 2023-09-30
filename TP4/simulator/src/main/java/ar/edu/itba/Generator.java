@@ -47,15 +47,17 @@ public class Generator {
             final Random random = new Random();
             for (int i = 0; i < config.getTimes(); i++) {
                 pw.println(i);
-                if (config.getN() == 30) {
-                    double count = 0.0;
+                if (config.getN() == 25 || config.getN() == 30) {
+                    int count = 0;
                     for (Particle p : particles) {
+                        double requiredSpacing = 2 * p.getRadius();
+                        double unusedSpace = config.getL() - (requiredSpacing * config.getN());
+                        double spacing = unusedSpace > 0 ? unusedSpace / (config.getN() - 1) : 0;
                         double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
-                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", count, 0.0, speed, 0.0);
-                        count += 2 * p.getRadius();
+                        double x = count * (requiredSpacing + spacing);
+                        pw.printf(Locale.US, "%.15f %.1f %.15f %.1f\n", x, 0.0, speed, 0.0);
+                        count++;
                     }
-                } else if (config.getN() == 25) {
-                    //TODO ver como ubicarlas pq le cuesta ubicarlas
                 } else {
                     for (int j = 0; j < config.getN(); j++) {
                         double speed = MIN_UI + Math.random() * (MAX_UI - MIN_UI);
