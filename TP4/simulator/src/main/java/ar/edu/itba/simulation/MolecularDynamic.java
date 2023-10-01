@@ -151,7 +151,7 @@ public class MolecularDynamic {
 
                 if (i == 0) {
                     particles.get(count).setX(rpx, L);
-                    newPredictions.add(rpx % L, 0.0);
+                    newPredictions.add(rpx, 0.0);
                 } else if (i == 1) {
                     particles.get(count).setVx(rpx);
                     newPredictions.add(rpx, 0.0);
@@ -240,7 +240,7 @@ public class MolecularDynamic {
         Double sumForces = 0.0;
         for (Particle p2 : particles) {
             if (!p2.equals(p1) && p2.collidesWith(p1, dt)) {
-                sumForces += collisionForce(p1, p2);
+                sumForces += collisionForce(p2, p1);
             }
         }
         return (getForce(p1) + sumForces) / p1.getMass();

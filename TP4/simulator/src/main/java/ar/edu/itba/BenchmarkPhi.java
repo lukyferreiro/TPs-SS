@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class BenchmarkParticles {
+public class BenchmarkPhi {
 
     final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001);
     final static Double L = 135.0;
@@ -29,7 +29,7 @@ public class BenchmarkParticles {
 
         for (Double dt : DTS) {
 
-            final String file = "src/main/resources/unidimensional_particles/benchmark/" + dt + ".txt";
+            final String file = "src/main/resources/unidimensional_particles/benchmark/phi/" + dt + ".txt";
             final File outFile = new File(file);
 
             List<Particle> particles = MolecularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
@@ -67,7 +67,7 @@ public class BenchmarkParticles {
             phiValues.put(i, currentPhiList);
         }
 
-        final String filePhi = "src/main/resources/unidimensional_particles/benchmark/phiValues.txt";
+        final String filePhi = "src/main/resources/unidimensional_particles/benchmark/phi/phiValues.txt";
         final File outPhiFile = new File(filePhi);
 
         try (PrintWriter pw = new PrintWriter(outPhiFile)) {

@@ -49,3 +49,18 @@ def parsePhiValues(file):
                 }
     
     return data_dict
+
+def parseVelocityValues(file):
+    data_dict = {}
+    with open(file, 'r') as file:
+        lines = file.readlines()
+        for i in range(0, len(lines), 3):
+            data_dict[int(lines[i].strip())] = {}
+            velocities = list(map(float, lines[i + 1].strip().split()))
+            errors = list(map(float, lines[i + 2].strip().split()))
+            data_dict[int(lines[i].strip())] = {
+                'velocityValues': velocities,
+                'errors': errors
+            }
+            
+    return data_dict
