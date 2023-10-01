@@ -199,7 +199,7 @@ public class MolecularDynamic {
                 final Double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
 
                 if (i == 0) {
-                    aux.add(rcx % L, 0.0);
+                    aux.add(rcx, 0.0);
                 } else {
                     aux.add(rcx, 0.0);
                 }
@@ -233,7 +233,7 @@ public class MolecularDynamic {
 
     private static Double collisionForce(Particle p1, Particle p2) {
         Double K = 2500.0;
-        return K * (Math.abs(p1.getX() - p2.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());
+        return K * (Math.abs(p2.getX() - p1.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());
     }
 
     private static Double movementEquation(Particle p1, List<Particle> particles, Double dt) {
