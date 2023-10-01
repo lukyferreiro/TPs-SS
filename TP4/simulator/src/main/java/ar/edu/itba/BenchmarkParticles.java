@@ -8,11 +8,12 @@ import ar.edu.itba.utils.ParticlesParserResult;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class BenchmarkParticles {
 
-    final static List<Double> DTS = List.of(0.1, 0.01, 0.001);
+    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001);
     final static Double L = 135.0;
     final static Double MAX_TIME = 180.0;
     final static Double DT2 = 0.1;
@@ -24,7 +25,7 @@ public class BenchmarkParticles {
 
         final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(N);
 
-        final Map<Double, Map<Integer, List<Particle>>> particlesWithDts = new HashMap<>();
+        final Map<Double, Map<BigDecimal, List<Particle>>> particlesWithDts = new HashMap<>();
 
         for (Double dt : DTS) {
 
@@ -33,7 +34,7 @@ public class BenchmarkParticles {
 
             List<Particle> particles = MolecularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<Integer, List<Particle>> aux = MolecularDynamic.run(particles, L, MAX_TIME, dt, DT2, outFile);
+            Map<BigDecimal, List<Particle>> aux = MolecularDynamic.run(particles, L, MAX_TIME, dt, DT2, outFile);
             particlesWithDts.put(dt, aux);
         }
 
@@ -45,8 +46,8 @@ public class BenchmarkParticles {
             Double currentDt = DTS.get(i);
             Double nextDt = DTS.get(i + 1);
 
-            Map<Integer, List<Particle>> currentMap = particlesWithDts.get(currentDt);
-            Map<Integer, List<Particle>> nextMap = particlesWithDts.get(nextDt);
+            Map<BigDecimal, List<Particle>> currentMap = particlesWithDts.get(currentDt);
+            Map<BigDecimal, List<Particle>> nextMap = particlesWithDts.get(nextDt);
 
             List<Double> currentPhiList = new ArrayList<>();
 
@@ -55,7 +56,8 @@ public class BenchmarkParticles {
                 Double phiValue = 0.0;
 
                 for(int j = 0; j < N; j++) {
-                    phiValue += Math.abs(nextMap.get(iter).get(j).getX() - currentMap.get(iter).get(j).getX());
+                    BigDecimal time = new BigDecimal(iter).multiply((new BigDecimal(DT2.toString())));
+                    phiValue += Math.abs(nextMap.get(time).get(j).getX() - currentMap.get(time).get(j).getX());
                 }
 
                 currentPhiList.add(phiValue);

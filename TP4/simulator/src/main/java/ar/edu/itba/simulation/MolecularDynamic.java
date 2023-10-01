@@ -24,8 +24,8 @@ public class MolecularDynamic {
             Map.entry(5, Arrays.asList(3.0 / 16, 251.0 / 360, 1.0, 11.0 / 18, 1.0 / 6, 1.0 / 60))
     );
 
-    private static void writeFile(PrintWriter pw, List<Particle> particles, Integer iteration) {
-        pw.printf(Locale.US, "%d\n", iteration);
+    private static void writeFile(PrintWriter pw, List<Particle> particles, BigDecimal time) {
+        pw.printf(Locale.US, "%.6f\n", time);
         particles.forEach((particle) ->
                 pw.printf(Locale.US, "%d %.20f %.1f %.20f %.1f\n",
                     particle.getId(),
@@ -45,40 +45,43 @@ public class MolecularDynamic {
         return newParticles;
     }
 
-    public static Map<Integer, List<Particle>> run(
+    public static Map<BigDecimal, List<Particle>> run(
             List<Particle> particles, Double L, Double maxTime,
             Double dt, Double dt2, File outFile
     ) {
         long startTime = System.nanoTime();
 
-        final Map<Integer, List<Particle>> particlesOverTime = new HashMap<>();
+        final Map<BigDecimal, List<Particle>> particlesOverTime = new HashMap<>();
 
         List<R> currentRs = calculateInitialRs(particles, dt);
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
 
-            writeFile(pw, particles, 0);
-            particlesOverTime.put(0, particles);
+            writeFile(pw, particles, new BigDecimal("0.0"));
+            particlesOverTime.put(new BigDecimal("0.0"), cloneParticles(particles));
 
-            Double currentTime = dt;
-            int toPrintTime = 1;
             int iterations = 1;
             int totalIterations = (int) Math.ceil(maxTime / dt);
 
-            for (Double t = dt; iterations < totalIterations; t += dt, iterations += 1) {
+            BigDecimal dtBig = new BigDecimal(dt.toString());
+            BigDecimal dt2Big = new BigDecimal(dt2.toString());
+            BigDecimal currentTime = dtBig;
+
+            for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
 
                 for (Particle particle : particles) {
                     particle.setX(currentRs.get(particle.getId() - 1).get(R0.ordinal()).getOne(), L);
                     particle.setVx(currentRs.get(particle.getId() - 1).get(R1.ordinal()).getOne());
                 }
 
-                if (currentTime >= dt2) {
-                    writeFile(pw, particles, toPrintTime);
-                    particlesOverTime.put(toPrintTime, cloneParticles(particles));
-                    currentTime = 0.0;
-                    toPrintTime++;
+                System.out.println(t);
+
+                if (currentTime.compareTo(dt2Big) >= 0) {
+                    writeFile(pw, particles, t);
+                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(particles));
+                    currentTime = dtBig;
                 } else {
-                    currentTime += dt;
+                    currentTime = currentTime.add(dtBig);
                 }
 
                 final List<R> predictions = predict(currentRs, particles, dt, L);
@@ -86,6 +89,8 @@ public class MolecularDynamic {
                 final List<Double> deltaR2 = getDeltaR2(predictions, particles, dt);
 
                 currentRs = correct(predictions, deltaR2, dt, L);
+
+                t = t.add(dtBig);
 
             }
         } catch (FileNotFoundException e) {
