@@ -15,7 +15,6 @@ import static ar.edu.itba.algorithms.utils.R.values.*;
 
 public class MolecularDynamic {
 
-    private static final int TOTAL_PREDICTIONS = 6;
     private static final int GEAR_ORDER = 5;
     private static final Map<Integer, List<Double>> posSpeedCoefficients = Map.ofEntries(
             Map.entry(2, Arrays.asList(0.0, 1.0, 1.0)),
@@ -65,32 +64,24 @@ public class MolecularDynamic {
 
             BigDecimal dtBig = new BigDecimal(dt.toString());
             BigDecimal dt2Big = new BigDecimal(dt2.toString());
-            BigDecimal currentTime = dtBig;
+            BigDecimal currentTime = new BigDecimal(0.0);
 
             for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
-
-                for (Particle particle : particles) {
-                    particle.setX(currentRs.get(particle.getId() - 1).get(R0.ordinal()).getOne(), L);
-                    particle.setVx(currentRs.get(particle.getId() - 1).get(R1.ordinal()).getOne());
-                }
-
                 System.out.println(t);
-
-                if (currentTime.compareTo(dt2Big) >= 0) {
-                    writeFile(pw, particles, t);
-                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(particles));
-                    currentTime = dtBig;
-                } else {
-                    currentTime = currentTime.add(dtBig);
-                }
-
                 final List<R> predictions = predict(currentRs, dt);
                 final List<Double> deltaR2 = getDeltaR2(predictions, particles, dt);
 
                 currentRs = correct(predictions, deltaR2, particles, dt, L);
 
-                t = t.add(dtBig);
+                currentTime = currentTime.add(dtBig);
 
+                if (dtBig.equals(dt2Big) || currentTime.compareTo(dt2Big) >= 0) {
+                    writeFile(pw, particles, t);
+                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(particles));
+                    currentTime = BigDecimal.ZERO;
+                }
+
+                t = t.add(dtBig);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -134,24 +125,43 @@ public class MolecularDynamic {
     private static List<R> predict(List<R> currentRs, Double dt) {
         List<R> newRs = new ArrayList<>();
 
-        int count = 0;
 
         for (R currentR : currentRs) {
 
             final R newPredictions = new R();
 
-            for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
-                Double rpx = 0.0;
+            Double rp0 = currentR.get(R0.ordinal()).getOne() +
+                    currentR.get(R1.ordinal()).getOne() * dt +
+                    currentR.get(R2.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
+                    currentR.get(R3.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3)+
+                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 4) / factorial(4)+
+                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 5) / factorial(5) ;
+            newPredictions.add(rp0 % 135.0, 0);
 
-                for (int j = i; j < TOTAL_PREDICTIONS; j++) {
-                    final Pair<Double, Double> rj = currentR.get(j);
-                    rpx += ( rj.getOne() * Math.pow(dt, j - i) / factorial(j - i) );
-                }
+            Double rp1 = currentR.get(R1.ordinal()).getOne() +
+                    currentR.get(R2.ordinal()).getOne() * dt +
+                    currentR.get(R3.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
+                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3) +
+                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 4) / factorial(4);
+            newPredictions.add(rp1, 0);
 
-                newPredictions.add(rpx, 0.0);
+            Double rp2 = currentR.get(R2.ordinal()).getOne() +
+                    currentR.get(R3.ordinal()).getOne() * dt +
+                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
+                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3);
+            newPredictions.add(rp2, 0);
 
-            }
-            count++;
+            Double rp3 = currentR.get(R3.ordinal()).getOne() +
+                    currentR.get(R4.ordinal()).getOne() * dt +
+                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) ;
+            newPredictions.add(rp3, 0);
+
+            Double rp4 = currentR.get(R4.ordinal()).getOne() + currentR.get(R5.ordinal()).getOne() * dt ;
+            newPredictions.add(rp4, 0);
+
+            Double rp5 = currentR.get(R5.ordinal()).getOne();
+            newPredictions.add(rp5, 0);
+
             newRs.add(newPredictions);
         }
 
@@ -167,9 +177,9 @@ public class MolecularDynamic {
             Double F = movementEquation(p, particles, dt);
 
             //Aceleración predecida
-            Double r2x = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
+            Double r2p = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
 
-            final Double deltaR2x = ((F - r2x) * Math.pow(dt, 2) / factorial(2));
+            final Double deltaR2x = ((F - r2p) * Math.pow(dt, 2) / factorial(2));
 
             deltasR2.add(deltaR2x);
         }
@@ -185,19 +195,25 @@ public class MolecularDynamic {
 
             final R aux = new R();
 
-            for (int i = 0; i < TOTAL_PREDICTIONS; i++) {
-                Double rpxi = prediction.get(i).getOne();
+            Double rc0 = prediction.get(R0.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R0.ordinal()) * deltaR2.get(count);
+            aux.add(rc0%L, 0.0);
+            particles.get(count).setX(rc0, L);
 
-                final Double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
+            Double rc1 = prediction.get(R1.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R1.ordinal()) * deltaR2.get(count);
+            aux.add(rc1, 0.0);
+            particles.get(count).setVx(rc1);
 
-                if (i == 0) {
-                    particles.get(count).setX(rcx, L);
-                } else if (i == 1) {
-                    particles.get(count).setVx(rcx);
-                }
+            Double rc2 = prediction.get(R2.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R2.ordinal()) * deltaR2.get(count) * factorial(R2.ordinal()) / Math.pow(dt, R2.ordinal());
+            aux.add(rc2, 0.0);
 
-                aux.add(rcx, 0.0);
-            }
+            Double rc3 = prediction.get(R3.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R3.ordinal()) * deltaR2.get(count) * factorial(R3.ordinal()) / Math.pow(dt, R3.ordinal());
+            aux.add(rc3, 0.0);
+
+            Double rc4 = prediction.get(R4.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R4.ordinal()) * deltaR2.get(count) * factorial(R4.ordinal()) / Math.pow(dt, R4.ordinal());;
+            aux.add(rc4, 0.0);
+
+            Double rc5 = prediction.get(R5.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R5.ordinal()) * deltaR2.get(count) * factorial(R5.ordinal()) / Math.pow(dt, R5.ordinal());;
+            aux.add(rc5, 0.0);
 
             corrections.add(aux);
             count++;

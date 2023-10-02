@@ -52,7 +52,7 @@ public class BenchmarkPhi {
 
             for(int iter = 0; iter < currentMap.size(); iter++) {
 
-                BigDecimal time = new BigDecimal(iter).multiply((new BigDecimal(DT2.toString())));
+                BigDecimal time = new BigDecimal(iter).multiply(BigDecimal.valueOf(DT2));
                 BigDecimal phiValue = new BigDecimal(0.0);
 
                 for(int j = 0; j < N; j++) {
