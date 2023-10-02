@@ -151,13 +151,12 @@ public class MolecularDynamic {
 
                 if (i == 0) {
                     particles.get(count).setX(rpx, L);
-                    newPredictions.add(rpx, 0.0);
                 } else if (i == 1) {
                     particles.get(count).setVx(rpx);
-                    newPredictions.add(rpx, 0.0);
-                } else {
-                    newPredictions.add(rpx, 0.0);
                 }
+
+                newPredictions.add(rpx, 0.0);
+
             }
             count++;
             newRs.add(newPredictions);
@@ -198,11 +197,7 @@ public class MolecularDynamic {
 
                 final Double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
 
-                if (i == 0) {
-                    aux.add(rcx, 0.0);
-                } else {
-                    aux.add(rcx, 0.0);
-                }
+                aux.add(rcx, 0.0);
             }
 
             corrections.add(aux);
