@@ -84,11 +84,10 @@ public class MolecularDynamic {
                     currentTime = currentTime.add(dtBig);
                 }
 
-                final List<R> predictions = predict(currentRs, particles, dt, L);
-
+                final List<R> predictions = predict(currentRs, dt);
                 final List<Double> deltaR2 = getDeltaR2(predictions, particles, dt);
 
-                currentRs = correct(predictions, deltaR2, dt, L);
+                currentRs = correct(predictions, deltaR2, particles, dt, L);
 
                 t = t.add(dtBig);
 
@@ -132,7 +131,7 @@ public class MolecularDynamic {
         return initialRs;
     }
 
-    private static List<R> predict(List<R> currentRs, List<Particle> particles, Double dt, Double L) {
+    private static List<R> predict(List<R> currentRs, Double dt) {
         List<R> newRs = new ArrayList<>();
 
         int count = 0;
@@ -146,13 +145,7 @@ public class MolecularDynamic {
 
                 for (int j = i; j < TOTAL_PREDICTIONS; j++) {
                     final Pair<Double, Double> rj = currentR.get(j);
-                    rpx += rj.getOne() * Math.pow(dt, j - i) / factorial(j - i);
-                }
-
-                if (i == 0) {
-                    particles.get(count).setX(rpx, L);
-                } else if (i == 1) {
-                    particles.get(count).setVx(rpx);
+                    rpx += ( rj.getOne() * Math.pow(dt, j - i) / factorial(j - i) );
                 }
 
                 newPredictions.add(rpx, 0.0);
@@ -176,7 +169,7 @@ public class MolecularDynamic {
             //Aceleración predecida
             Double r2x = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
 
-            final Double deltaR2x = (F - r2x) * Math.pow(dt, 2) / factorial(2);
+            final Double deltaR2x = ((F - r2x) * Math.pow(dt, 2) / factorial(2));
 
             deltasR2.add(deltaR2x);
         }
@@ -184,7 +177,7 @@ public class MolecularDynamic {
         return deltasR2;
     }
 
-    private static List<R> correct(List<R> predictions, List<Double> deltaR2, Double dt, Double L) {
+    private static List<R> correct(List<R> predictions, List<Double> deltaR2, List<Particle> particles, Double dt, Double L) {
         List<R> corrections = new ArrayList<>();
 
         int count = 0;
@@ -196,6 +189,12 @@ public class MolecularDynamic {
                 Double rpxi = prediction.get(i).getOne();
 
                 final Double rcx = rpxi + posSpeedCoefficients.get(GEAR_ORDER).get(i) * deltaR2.get(count) * factorial(i) / Math.pow(dt, i);
+
+                if (i == 0) {
+                    particles.get(count).setX(rcx, L);
+                } else if (i == 1) {
+                    particles.get(count).setVx(rcx);
+                }
 
                 aux.add(rcx, 0.0);
             }
@@ -235,7 +234,7 @@ public class MolecularDynamic {
         Double sumForces = 0.0;
         for (Particle p2 : particles) {
             if (!p2.equals(p1) && p2.collidesWith(p1, dt)) {
-                sumForces += collisionForce(p2, p1);
+                sumForces += collisionForce(p1, p2);
             }
         }
         return (getForce(p1) + sumForces) / p1.getMass();

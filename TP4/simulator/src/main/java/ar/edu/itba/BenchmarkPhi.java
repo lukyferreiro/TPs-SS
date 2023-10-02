@@ -39,7 +39,7 @@ public class BenchmarkPhi {
 
         //------------PHI VALUE----------------
 
-        final Map<Integer, List<Double>> phiValues = new HashMap<>();
+        final Map<Integer, List<BigDecimal>> phiValues = new HashMap<>();
 
         for(int i = 0; i < DTS.size() - 1; i++) {
             Double currentDt = DTS.get(i);
@@ -48,15 +48,15 @@ public class BenchmarkPhi {
             Map<BigDecimal, List<Particle>> currentMap = particlesWithDts.get(currentDt);
             Map<BigDecimal, List<Particle>> nextMap = particlesWithDts.get(nextDt);
 
-            List<Double> currentPhiList = new ArrayList<>();
+            List<BigDecimal> currentPhiList = new ArrayList<>();
 
             for(int iter = 0; iter < currentMap.size(); iter++) {
 
                 BigDecimal time = new BigDecimal(iter).multiply((new BigDecimal(DT2.toString())));
-                Double phiValue = 0.0;
+                BigDecimal phiValue = new BigDecimal(0.0);
 
                 for(int j = 0; j < N; j++) {
-                    phiValue += Math.abs(nextMap.get(time).get(j).getX() - currentMap.get(time).get(j).getX());
+                    phiValue = phiValue.add(BigDecimal.valueOf(calculatePeriodicDistance(nextMap.get(time).get(j).getX(), currentMap.get(time).get(j).getX())));
                 }
 
                 currentPhiList.add(phiValue);
@@ -68,7 +68,7 @@ public class BenchmarkPhi {
         final File outPhiFile = new File(filePhi);
 
         try (PrintWriter pw = new PrintWriter(outPhiFile)) {
-            for(Map.Entry<Integer, List<Double>> entry : phiValues.entrySet()) {
+            for(Map.Entry<Integer, List<BigDecimal>> entry : phiValues.entrySet()) {
                 pw.println(String.format(Locale.US, "%d", entry.getKey()));
                 entry.getValue().forEach((phi) -> pw.append(String.format(Locale.US, "%.20f ", phi)));
                 pw.println();
@@ -77,5 +77,10 @@ public class BenchmarkPhi {
 
         System.out.println("Phi calculation finished ...\n");
 
+    }
+
+    private static Double calculatePeriodicDistance(Double posI, Double posJ) {
+        Double aux = Math.abs(posI - posJ);
+        return Math.min(aux, L - aux);
     }
 }

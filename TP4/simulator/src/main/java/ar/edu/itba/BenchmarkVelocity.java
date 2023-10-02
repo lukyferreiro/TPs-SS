@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class BenchmarkVelocity {
@@ -40,37 +42,39 @@ public class BenchmarkVelocity {
 
         //Calcular la velocidad promedio del sistema en función del tiempo
 
-        final Map<Integer, List<Double>> velocityValues = new HashMap<>();
-        final Map<Integer, List<Double>> velocityError = new HashMap<>();
+        final Map<Integer, List<BigDecimal>> velocityValues = new HashMap<>();
+        final Map<Integer, List<BigDecimal>> velocityError = new HashMap<>();
 
         for(Integer N : Ns) {
 
             Map<BigDecimal, List<Particle>> currentMap = particlesWithN.get(N);
-            List<Double> currentVelocityList = new ArrayList<>();
-            List<Double> currentErrorList = new ArrayList<>();
+            List<BigDecimal> currentVelocityList = new ArrayList<>();
+            List<BigDecimal> currentErrorList = new ArrayList<>();
 
             for(int iter = 0; iter < currentMap.size(); iter++) {
 
                 BigDecimal time = new BigDecimal(iter).multiply((new BigDecimal(DT2.toString())));
-                Double meanVelocity = 0.0;
+                BigDecimal meanVelocity = new BigDecimal(0.0);
 
                 for(int j = 0; j < N; j++) {
-                    Double particleVelocity = currentMap.get(time).get(j).getVx();
-                    meanVelocity += particleVelocity;
+                    BigDecimal particleVelocity = new BigDecimal(currentMap.get(time).get(j).getVx());
+                    meanVelocity = meanVelocity.add(particleVelocity);
                 }
 
-                meanVelocity /= N;
+                meanVelocity = meanVelocity.divide(BigDecimal.valueOf(N), RoundingMode.HALF_EVEN);
                 currentVelocityList.add(meanVelocity);
 
                 // Calcular el error
-                Double errorSum = 0.0;
+                BigDecimal errorSum = new BigDecimal(0.0);
 
                 for (int j = 0; j < N; j++) {
-                    Double particleVelocity = currentMap.get(time).get(j).getVx();
-                    errorSum += Math.pow(particleVelocity - meanVelocity, 2);
+                    BigDecimal particleVelocity = new BigDecimal(currentMap.get(time).get(j).getVx());
+                    errorSum = errorSum.add( particleVelocity.subtract(meanVelocity).pow(2) );
                 }
 
-                currentErrorList.add(Math.sqrt(errorSum / N));
+                errorSum = errorSum.divide(BigDecimal.valueOf(N), RoundingMode.HALF_EVEN);
+                errorSum = errorSum.sqrt(MathContext.DECIMAL32);
+                currentErrorList.add(errorSum);
             }
             velocityValues.put(N, currentVelocityList);
             velocityError.put(N, currentErrorList);
@@ -79,11 +83,11 @@ public class BenchmarkVelocity {
         //TODO y luego el promedio temporal en el estacionario como función de N.
 
 
-        final String filePhi = "src/main/resources/unidimensional_particles/benchmark/velocity/velocityValues.txt";
-        final File outPhiFile = new File(filePhi);
+        final String fileV = "src/main/resources/unidimensional_particles/benchmark/velocity/velocityValues.txt";
+        final File outVFile = new File(fileV);
 
-        try (PrintWriter pw = new PrintWriter(outPhiFile)) {
-            for(Map.Entry<Integer, List<Double>> entry : velocityValues.entrySet()) {
+        try (PrintWriter pw = new PrintWriter(outVFile)) {
+            for(Map.Entry<Integer, List<BigDecimal>> entry : velocityValues.entrySet()) {
                 pw.println(String.format(Locale.US, "%d", entry.getKey()));
                 entry.getValue().forEach((v) -> pw.append(String.format(Locale.US, "%.20f ", v)));
                 pw.println();
