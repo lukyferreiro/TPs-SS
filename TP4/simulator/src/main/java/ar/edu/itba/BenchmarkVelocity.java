@@ -54,10 +54,10 @@ public class BenchmarkVelocity {
             for(int iter = 0; iter < currentMap.size(); iter++) {
 
                 BigDecimal time = new BigDecimal(iter).multiply((new BigDecimal(DT2.toString())));
-                BigDecimal meanVelocity = new BigDecimal(0.0);
+                BigDecimal meanVelocity = new BigDecimal("0.0");
 
                 for(int j = 0; j < N; j++) {
-                    BigDecimal particleVelocity = new BigDecimal(currentMap.get(time).get(j).getVx());
+                    BigDecimal particleVelocity = BigDecimal.valueOf(currentMap.get(time).get(j).getVx());
                     meanVelocity = meanVelocity.add(particleVelocity);
                 }
 
@@ -65,7 +65,7 @@ public class BenchmarkVelocity {
                 currentVelocityList.add(meanVelocity);
 
                 // Calcular el error
-                BigDecimal errorSum = new BigDecimal(0.0);
+                BigDecimal errorSum = new BigDecimal("0.0");
 
                 for (int j = 0; j < N; j++) {
                     BigDecimal particleVelocity = new BigDecimal(currentMap.get(time).get(j).getVx());

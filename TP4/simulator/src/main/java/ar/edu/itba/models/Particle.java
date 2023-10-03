@@ -2,8 +2,6 @@ package ar.edu.itba.models;
 
 import ar.edu.itba.algorithms.utils.R;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.lang.Math;
 

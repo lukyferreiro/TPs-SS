@@ -9,11 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
+
+import static ar.edu.itba.algorithms.utils.R.values.*;
 
 public class BenchmarkPhi {
 
-    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001);
+    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001, 0.00001);
     final static Double DT2 = 0.1;
     final static Double L = 135.0;
     final static Double MAX_TIME = 180.0;
@@ -56,10 +59,23 @@ public class BenchmarkPhi {
                 BigDecimal phiValue = new BigDecimal("0.0");
 
                 for(int j = 0; j < N; j++) {
-                    phiValue = phiValue.add(BigDecimal.valueOf(calculatePeriodicDistance(nextMap.get(time).get(j).getX(), currentMap.get(time).get(j).getX())));
+                    phiValue = phiValue.add(BigDecimal.valueOf(calculatePeriodicDistance(
+                            nextMap.get(time).get(j).getFromR(R6_NO_PERIODIC.ordinal()),
+                            currentMap.get(time).get(j).getFromR(R6_NO_PERIODIC.ordinal())
+                    )));
                 }
 
-                currentPhiList.add(phiValue);
+                if (i == 0) {
+                    currentPhiList.add(phiValue.divide(BigDecimal.valueOf(1000000), RoundingMode.HALF_EVEN));
+                } else if (i == 1) {
+                    currentPhiList.add(phiValue.divide(BigDecimal.valueOf(15), RoundingMode.HALF_EVEN));
+                } else if (i == 2) {
+                    currentPhiList.add(phiValue.divide(BigDecimal.valueOf(70), RoundingMode.HALF_EVEN));
+                } else if (i == 3) {
+                    currentPhiList.add(phiValue.divide(BigDecimal.valueOf(10), RoundingMode.HALF_EVEN));
+                }
+
+//                currentPhiList.add(phiValue);
             }
             phiValues.put(i, currentPhiList);
         }
@@ -80,8 +96,8 @@ public class BenchmarkPhi {
     }
 
     private static Double calculatePeriodicDistance(Double posI, Double posJ) {
-        Double aux = Math.abs(posI - posJ);
-        return Math.min(aux, L - aux);
-//        return Math.abs(posI - posJ);
+//        Double aux = Math.abs(posI - posJ);
+//        return Math.min(aux, L - aux);
+        return Math.abs(posI - posJ);
     }
 }
