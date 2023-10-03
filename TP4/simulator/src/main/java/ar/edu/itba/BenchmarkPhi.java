@@ -13,7 +13,7 @@ import java.util.*;
 
 public class BenchmarkPhi {
 
-    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001, 0.00001);
+    final static List<Double> DTS = List.of(0.1, 0.01, 0.001, 0.0001);
     final static Double DT2 = 0.1;
     final static Double L = 135.0;
     final static Double MAX_TIME = 180.0;

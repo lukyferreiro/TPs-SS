@@ -1,26 +1,40 @@
 package ar.edu.itba.models;
 
+import ar.edu.itba.algorithms.utils.R;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.lang.Math;
 
-//public class Particle implements Bounceable {
+import static ar.edu.itba.algorithms.utils.R.values.*;
+
 public class Particle {
 
     private final int id;
     private final double radius;
     private final double mass;
-    protected Position position;
-    protected double vx;
-    protected double vy;
-    protected double u;
+    private Position position;
+    private double vx;
+    private double vy;
+    private double u;
+    private R r;
 
     public Particle(int id, double radius, double mass) {
         this.id = id;
         this.radius = radius;
         this.mass = mass;
+        this.r = new R();
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
+        this.r.add(0.0,0.0);
     }
 
-    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u) {
+    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u, R r) {
         this.id = id;
         this.radius = radius;
         this.mass = mass;
@@ -28,6 +42,14 @@ public class Particle {
         this.vx = vx;
         this.vy = vy;
         this.u = u;
+        this.r = new R();
+        this.r.add(r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
+        this.r.add(r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
+        this.r.add(r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
+        this.r.add(r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
+        this.r.add(r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
+        this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
+        this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
     }
 
     public int getId() {
@@ -82,32 +104,19 @@ public class Particle {
     public void setU(double u) {
         this.u = u;
     }
+    public R getR() {
+        return r;
+    }
+    public void setR(R r) {
+        this.r.set(R0.ordinal(), r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
+        this.r.set(R1.ordinal(), r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
+        this.r.set(R2.ordinal(), r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
+        this.r.set(R3.ordinal(), r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
+        this.r.set(R4.ordinal(), r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
+        this.r.set(R5.ordinal(), r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
+        this.r.set(R6_NO_PERIODIC.ordinal(), r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
+    }
 
-//    public void moveForwardInTime(double deltaTime) {
-//        double newX = this.getX() + this.vx * deltaTime;
-//        double newY = this.getY() + this.vy * deltaTime;
-//        this.setPosition(new Position(newX, newY));
-//    }
-//
-//    @Override
-//    public void collide(Particle p) {
-//        double deltaRx = p.getX() - this.getX();
-//        double deltaRy = p.getY() - this.getY();
-//        double deltaVx = p.getVx() - this.getVx();
-//        double deltaVy = p.getVy() - this.getVy();
-//
-//        double sigma = this.radius + p.getRadius();
-//        double dvdr = deltaRx * deltaVx + deltaRy * deltaVy;
-//        double J = (2 * this.mass * p.getMass() * dvdr) / (sigma * (this.mass + p.getMass()));
-//        double Jx = (J * deltaRx) / sigma;
-//        double Jy = (J * deltaRy) / sigma;
-//
-//        this.setVx(this.vx + (Jx / this.mass));
-//        this.setVy(this.vy + (Jy / this.mass));
-//        p.setVx(p.getVx() - (Jx / p.getMass()));
-//        p.setVy(p.getVy() - (Jy / p.getMass()));
-//    }
-//
     public boolean collidesWith(Particle p, Double dt) {
         double deltaRx = this.getX() - p.getX();
         double deltaVx = this.getVx() - p.getVx();

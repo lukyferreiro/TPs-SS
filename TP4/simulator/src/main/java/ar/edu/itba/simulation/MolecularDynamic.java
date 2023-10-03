@@ -1,7 +1,6 @@
 package ar.edu.itba.simulation;
 
 import ar.edu.itba.algorithms.utils.R;
-import ar.edu.itba.models.Pair;
 import ar.edu.itba.models.Particle;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class MolecularDynamic {
     public static List<Particle> cloneParticles(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         for(Particle p : particles) {
-            Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU());
+            Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR());
             newParticles.add(particle);
         }
         return newParticles;
@@ -52,32 +51,51 @@ public class MolecularDynamic {
 
         final Map<BigDecimal, List<Particle>> particlesOverTime = new HashMap<>();
 
-        List<R> currentRs = calculateInitialRs(particles, dt);
+        List<Particle> initialParticles = calculateInitialRs(particles, dt);
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
 
-            writeFile(pw, particles, new BigDecimal("0.0"));
-            particlesOverTime.put(new BigDecimal("0.0"), cloneParticles(particles));
+            writeFile(pw, cloneParticles(initialParticles), new BigDecimal("0.0"));
+            particlesOverTime.put(new BigDecimal("0.0"), cloneParticles(initialParticles));
 
             int iterations = 1;
             int totalIterations = (int) Math.ceil(maxTime / dt);
 
             BigDecimal dtBig = new BigDecimal(dt.toString());
             BigDecimal dt2Big = new BigDecimal(dt2.toString());
-            BigDecimal currentTime = new BigDecimal(0.0);
+            BigDecimal currentTime = new BigDecimal("0.0");
+
+            List<Particle> prevParticles = cloneParticles(initialParticles);
 
             for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
                 System.out.println(t);
-                final List<R> predictions = predict(currentRs, dt);
-                final List<Double> deltaR2 = getDeltaR2(predictions, particles, dt);
 
-                currentRs = correct(predictions, deltaR2, particles, dt, L);
+                List<Particle> newParticles = new ArrayList<>();
+                for (Particle p : prevParticles) {
+                    Particle newParticle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR());
+
+                    final R predictedR = predict(p, dt, L);
+                    newParticle.setX(predictedR.get(R0.ordinal()).getOne(), L);
+                    newParticle.setVx(predictedR.get(R1.ordinal()).getOne());
+
+                    final Double deltaR2 = getDeltaR2(predictedR, newParticle, newParticles, dt);
+
+                    R correctedR = correct(predictedR, deltaR2, dt, L);
+
+                    newParticle.setX(correctedR.get(R0.ordinal()).getOne(), L);
+                    newParticle.setVx(correctedR.get(R1.ordinal()).getOne());
+                    newParticle.setR(correctedR);
+
+                    newParticles.add(newParticle);
+                }
+
+                prevParticles = cloneParticles(newParticles);
 
                 currentTime = currentTime.add(dtBig);
 
                 if (dtBig.equals(dt2Big) || currentTime.compareTo(dt2Big) >= 0) {
-                    writeFile(pw, particles, t);
-                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(particles));
+                    writeFile(pw, cloneParticles(newParticles), t);
+                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(newParticles));
                     currentTime = BigDecimal.ZERO;
                 }
 
@@ -96,8 +114,8 @@ public class MolecularDynamic {
 
     }
 
-    public static List<R> calculateInitialRs(List<Particle> particles, Double dt) {
-        List<R> initialRs = new ArrayList<>();
+    public static List<Particle> calculateInitialRs(List<Particle> particles, Double dt) {
+        List<Particle> newParticles = new ArrayList<>();
         for (Particle p : particles) {
             final R currentR = new R();
 
@@ -108,133 +126,119 @@ public class MolecularDynamic {
             //r2
             Double r2 = movementEquation(p, particles, dt);
             currentR.add(r2, 0.0);
-
             //r3
             currentR.add(0.0, 0.0);
             //r4
             currentR.add(0.0, 0.0);
             //r5
             currentR.add(0.0, 0.0);
+            //r6 no periodic
+            currentR.add(p.getX(), 0.0);
 
-            initialRs.add(currentR);
+            newParticles.add(new Particle(
+                    p.getId(), p.getRadius(), p.getMass(),
+                    p.getX(), p.getY(), p.getVx(), p.getVy(),
+                    p.getU(), currentR)
+            );
         }
-
-        return initialRs;
+        return newParticles;
     }
 
-    private static List<R> predict(List<R> currentRs, Double dt) {
-        List<R> newRs = new ArrayList<>();
+    private static R predict(Particle p, Double dt, Double L) {
 
+        final R newPredictions = new R();
 
-        for (R currentR : currentRs) {
+        double r0 = p.getR().get(R0.ordinal()).getOne();
+        double r1 = p.getR().get(R1.ordinal()).getOne();
+        double r2 = p.getR().get(R2.ordinal()).getOne();
+        double r3 = p.getR().get(R3.ordinal()).getOne();
+        double r4 = p.getR().get(R4.ordinal()).getOne();
+        double r5 = p.getR().get(R5.ordinal()).getOne();
+        double r6NoPeriodic = p.getR().get(R6_NO_PERIODIC.ordinal()).getOne();
 
-            final R newPredictions = new R();
+        Double rp0 = r0 + r1 * dt +
+                r2 * Math.pow(dt, 2) / factorial(2) +
+                r3 * Math.pow(dt, 3) / factorial(3) +
+                r4 * Math.pow(dt, 4) / factorial(4) +
+                r5 * Math.pow(dt, 5) / factorial(5);
 
-            Double rp0 = currentR.get(R0.ordinal()).getOne() +
-                    currentR.get(R1.ordinal()).getOne() * dt +
-                    currentR.get(R2.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
-                    currentR.get(R3.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3)+
-                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 4) / factorial(4)+
-                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 5) / factorial(5) ;
-            newPredictions.add(rp0 % 135.0, 0);
+        Double rp1 = r1 + r2 * dt +
+                r3 * Math.pow(dt, 2) / factorial(2) +
+                r4 * Math.pow(dt, 3) / factorial(3) +
+                r5 * Math.pow(dt, 4) / factorial(4);
 
-            Double rp1 = currentR.get(R1.ordinal()).getOne() +
-                    currentR.get(R2.ordinal()).getOne() * dt +
-                    currentR.get(R3.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
-                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3) +
-                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 4) / factorial(4);
-            newPredictions.add(rp1, 0);
+        Double rp2 = r2 + r3 * dt +
+                r4 * Math.pow(dt, 2) / factorial(2) +
+                r5 * Math.pow(dt, 3) / factorial(3);
 
-            Double rp2 = currentR.get(R2.ordinal()).getOne() +
-                    currentR.get(R3.ordinal()).getOne() * dt +
-                    currentR.get(R4.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) +
-                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 3) / factorial(3);
-            newPredictions.add(rp2, 0);
+        Double rp3 = r3 + r4 * dt + r5 * Math.pow(dt, 2) / factorial(2);
 
-            Double rp3 = currentR.get(R3.ordinal()).getOne() +
-                    currentR.get(R4.ordinal()).getOne() * dt +
-                    currentR.get(R5.ordinal()).getOne() * Math.pow(dt, 2) / factorial(2) ;
-            newPredictions.add(rp3, 0);
+        Double rp4 = r4 + r5 * dt ;
 
-            Double rp4 = currentR.get(R4.ordinal()).getOne() + currentR.get(R5.ordinal()).getOne() * dt ;
-            newPredictions.add(rp4, 0);
+        Double rp5 = r5;
 
-            Double rp5 = currentR.get(R5.ordinal()).getOne();
-            newPredictions.add(rp5, 0);
+        Double rpNoPeriodic = r6NoPeriodic + r1 * dt +
+                r2 * Math.pow(dt, 2) / factorial(2) +
+                r3 * Math.pow(dt, 3) / factorial(3) +
+                r4 * Math.pow(dt, 4) / factorial(4) +
+                r5 * Math.pow(dt, 5) / factorial(5);
 
-            newRs.add(newPredictions);
-        }
+        newPredictions.add(rp0 % L, 0);
+        newPredictions.add(rp1, 0);
+        newPredictions.add(rp2, 0);
+        newPredictions.add(rp3, 0);
+        newPredictions.add(rp4, 0);
+        newPredictions.add(rp5, 0);
+        newPredictions.add(rpNoPeriodic, 0);
 
-        return newRs;
+        return newPredictions;
     }
 
 
-    private static List<Double> getDeltaR2(List<R> predictions, List<Particle> particles, Double dt) {
-        List<Double> deltasR2 = new ArrayList<>();
-
-        for (Particle p : particles) {
-
-            Double F = movementEquation(p, particles, dt);
-
-            //Aceleración predecida
-            Double r2p = predictions.get(p.getId() - 1).get(R2.ordinal()).getOne();
-
-            final Double deltaR2x = ((F - r2p) * Math.pow(dt, 2) / factorial(2));
-
-            deltasR2.add(deltaR2x);
-        }
-
-        return deltasR2;
+    private static Double getDeltaR2(R predictions, Particle p, List<Particle> particles, Double dt) {
+        Double F = movementEquation(p, particles, dt);
+        Double r2p = predictions.get(R2.ordinal()).getOne();    //Aceleración predecida
+        return ((F - r2p) * Math.pow(dt, 2) / factorial(2));
     }
 
-    private static List<R> correct(List<R> predictions, List<Double> deltaR2, List<Particle> particles, Double dt, Double L) {
-        List<R> corrections = new ArrayList<>();
+    private static R correct(R predictions, Double deltaR2, Double dt, Double L) {
 
-        int count = 0;
-        for (R prediction : predictions) {
+        final R correctedR = new R();
 
-            final R aux = new R();
+        Double rp0 = predictions.get(R0.ordinal()).getOne();
+        Double rp1 = predictions.get(R1.ordinal()).getOne();
+        Double rp2 = predictions.get(R2.ordinal()).getOne();
+        Double rp3 = predictions.get(R3.ordinal()).getOne();
+        Double rp4 = predictions.get(R4.ordinal()).getOne();
+        Double rp5 = predictions.get(R5.ordinal()).getOne();
+        Double rpNoPeriodic = predictions.get(R6_NO_PERIODIC.ordinal()).getOne();
 
-            Double rc0 = prediction.get(R0.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R0.ordinal()) * deltaR2.get(count);
-            aux.add(rc0%L, 0.0);
-            particles.get(count).setX(rc0, L);
+        List<Double> coefficients = posSpeedCoefficients.get(GEAR_ORDER);
 
-            Double rc1 = prediction.get(R1.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R1.ordinal()) * deltaR2.get(count);
-            aux.add(rc1, 0.0);
-            particles.get(count).setVx(rc1);
+        Double rc0 = rp0 + coefficients.get(R0.ordinal()) * deltaR2;
+        Double rc1 = rp1 + coefficients.get(R1.ordinal()) * deltaR2 / dt;
+        Double rc2 = rp2 + coefficients.get(R2.ordinal()) * deltaR2 * factorial(2) / Math.pow(dt, 2);
+        Double rc3 = rp3 + coefficients.get(R3.ordinal()) * deltaR2 * factorial(3) / Math.pow(dt, 3);
+        Double rc4 = rp4 + coefficients.get(R4.ordinal()) * deltaR2 * factorial(4) / Math.pow(dt, 4);
+        Double rc5 = rp5 + coefficients.get(R5.ordinal()) * deltaR2 * factorial(5) / Math.pow(dt, 5);
+        Double rcNoPeriodic = rpNoPeriodic + coefficients.get(R0.ordinal()) * deltaR2;
 
-            Double rc2 = prediction.get(R2.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R2.ordinal()) * deltaR2.get(count) * factorial(R2.ordinal()) / Math.pow(dt, R2.ordinal());
-            aux.add(rc2, 0.0);
+        correctedR.add(rc0 % L, 0.0);
+        correctedR.add(rc1, 0.0);
+        correctedR.add(rc2, 0.0);
+        correctedR.add(rc3, 0.0);
+        correctedR.add(rc4, 0.0);
+        correctedR.add(rc5, 0.0);
+        correctedR.add(rcNoPeriodic, 0.0);
 
-            Double rc3 = prediction.get(R3.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R3.ordinal()) * deltaR2.get(count) * factorial(R3.ordinal()) / Math.pow(dt, R3.ordinal());
-            aux.add(rc3, 0.0);
-
-            Double rc4 = prediction.get(R4.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R4.ordinal()) * deltaR2.get(count) * factorial(R4.ordinal()) / Math.pow(dt, R4.ordinal());;
-            aux.add(rc4, 0.0);
-
-            Double rc5 = prediction.get(R5.ordinal()).getOne() + posSpeedCoefficients.get(GEAR_ORDER).get(R5.ordinal()) * deltaR2.get(count) * factorial(R5.ordinal()) / Math.pow(dt, R5.ordinal());;
-            aux.add(rc5, 0.0);
-
-            corrections.add(aux);
-            count++;
-        }
-
-        return corrections;
+        return correctedR;
     }
 
     private static int factorial(int number) throws IllegalArgumentException {
-
-        if (number < 0) {
-            throw new IllegalArgumentException();
+        if (number == 0) {
+            return 1;
         }
-
-        int factorial = 1;
-        while (number != 0) {
-            factorial = factorial * number;
-            number--;
-        }
-
-        return factorial;
+        return number * factorial(number-1);
     }
 
     private static Double getForce(Particle p) {
@@ -243,14 +247,14 @@ public class MolecularDynamic {
 
     private static Double collisionForce(Particle p1, Particle p2) {
         Double K = 2500.0;
-        return K * (Math.abs(p2.getX() - p1.getX()) - 2 * p1.getRadius()) * Math.signum(p2.getX() - p1.getX());
+        return K * (Math.abs(p2.getX() - p1.getX()) - 2 * p1.getRadius()) * Math.signum(p1.getX() - p2.getX());
     }
 
     private static Double movementEquation(Particle p1, List<Particle> particles, Double dt) {
         Double sumForces = 0.0;
         for (Particle p2 : particles) {
-            if (!p2.equals(p1) && p2.collidesWith(p1, dt)) {
-                sumForces += collisionForce(p1, p2);
+            if (!p2.equals(p1) && p1.collidesWith(p2, dt)) {
+                sumForces += collisionForce(p2, p1);
             }
         }
         return (getForce(p1) + sumForces) / p1.getMass();

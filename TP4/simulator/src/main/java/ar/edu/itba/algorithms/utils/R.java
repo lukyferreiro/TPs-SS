@@ -3,9 +3,10 @@ package ar.edu.itba.algorithms.utils;
 import ar.edu.itba.models.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class R {
-    private final ArrayList<Pair<Double, Double>> ri;
+    private final List<Pair<Double, Double>> ri;
 
     public R() {
         this.ri = new ArrayList<>();
@@ -24,7 +25,7 @@ public class R {
     }
 
     public enum values {
-        R0, R1, R2, R3, R4, R5
+        R0, R1, R2, R3, R4, R5, R6_NO_PERIODIC
     }
 
 }
