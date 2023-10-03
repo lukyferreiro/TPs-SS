@@ -105,16 +105,20 @@ public class Particle {
         this.u = u;
     }
     public R getR() {
-        return r;
+        return this.r;
+    }
+    public Double getFromR(int index) {
+        return this.r.get(index).getOne();
     }
     public void setR(R r) {
-        this.r.set(R0.ordinal(), r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
-        this.r.set(R1.ordinal(), r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
-        this.r.set(R2.ordinal(), r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
-        this.r.set(R3.ordinal(), r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
-        this.r.set(R4.ordinal(), r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
-        this.r.set(R5.ordinal(), r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
-        this.r.set(R6_NO_PERIODIC.ordinal(), r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
+        this.r = new R();
+        this.r.add(r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
+        this.r.add(r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
+        this.r.add(r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
+        this.r.add(r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
+        this.r.add(r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
+        this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
+        this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
     }
 
     public boolean collidesWith(Particle p, Double dt) {

@@ -75,12 +75,12 @@ public class MolecularDynamic {
                     Particle newParticle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR());
 
                     final R predictedR = predict(p, dt, L);
-                    newParticle.setX(predictedR.get(R0.ordinal()).getOne(), L);
+                    newParticle.setX(predictedR.get(R0.ordinal()).getOne() % L, L);
                     newParticle.setVx(predictedR.get(R1.ordinal()).getOne());
 
-                    final Double deltaR2 = getDeltaR2(predictedR, newParticle, newParticles, dt);
+                    final Double deltaR2 = getDeltaR2(predictedR, newParticle, prevParticles, dt);
 
-                    R correctedR = correct(predictedR, deltaR2, dt, L);
+                    final R correctedR = correct(predictedR, deltaR2, dt, L);
 
                     newParticle.setX(correctedR.get(R0.ordinal()).getOne(), L);
                     newParticle.setVx(correctedR.get(R1.ordinal()).getOne());
@@ -148,13 +148,13 @@ public class MolecularDynamic {
 
         final R newPredictions = new R();
 
-        double r0 = p.getR().get(R0.ordinal()).getOne();
-        double r1 = p.getR().get(R1.ordinal()).getOne();
-        double r2 = p.getR().get(R2.ordinal()).getOne();
-        double r3 = p.getR().get(R3.ordinal()).getOne();
-        double r4 = p.getR().get(R4.ordinal()).getOne();
-        double r5 = p.getR().get(R5.ordinal()).getOne();
-        double r6NoPeriodic = p.getR().get(R6_NO_PERIODIC.ordinal()).getOne();
+        double r0 = p.getX() % L;
+        double r1 = p.getVx();
+        double r2 = p.getFromR(R2.ordinal());
+        double r3 = p.getFromR(R3.ordinal());
+        double r4 = p.getFromR(R4.ordinal());
+        double r5 = p.getFromR(R5.ordinal());
+        double rNoPeriodic = p.getFromR(R6_NO_PERIODIC.ordinal());
 
         Double rp0 = r0 + r1 * dt +
                 r2 * Math.pow(dt, 2) / factorial(2) +
@@ -173,11 +173,11 @@ public class MolecularDynamic {
 
         Double rp3 = r3 + r4 * dt + r5 * Math.pow(dt, 2) / factorial(2);
 
-        Double rp4 = r4 + r5 * dt ;
+        Double rp4 = r4 + r5 * dt;
 
         Double rp5 = r5;
 
-        Double rpNoPeriodic = r6NoPeriodic + r1 * dt +
+        Double rpNoPeriodic = rNoPeriodic + r1 * dt +
                 r2 * Math.pow(dt, 2) / factorial(2) +
                 r3 * Math.pow(dt, 3) / factorial(3) +
                 r4 * Math.pow(dt, 4) / factorial(4) +

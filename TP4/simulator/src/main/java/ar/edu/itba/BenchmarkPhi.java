@@ -53,7 +53,7 @@ public class BenchmarkPhi {
             for(int iter = 0; iter < currentMap.size(); iter++) {
 
                 BigDecimal time = new BigDecimal(iter).multiply(BigDecimal.valueOf(DT2));
-                BigDecimal phiValue = new BigDecimal(0.0);
+                BigDecimal phiValue = new BigDecimal("0.0");
 
                 for(int j = 0; j < N; j++) {
                     phiValue = phiValue.add(BigDecimal.valueOf(calculatePeriodicDistance(nextMap.get(time).get(j).getX(), currentMap.get(time).get(j).getX())));
@@ -82,5 +82,6 @@ public class BenchmarkPhi {
     private static Double calculatePeriodicDistance(Double posI, Double posJ) {
         Double aux = Math.abs(posI - posJ);
         return Math.min(aux, L - aux);
+//        return Math.abs(posI - posJ);
     }
 }
