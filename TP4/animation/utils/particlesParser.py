@@ -52,15 +52,23 @@ def parsePhiValues(file):
 
 def parseVelocityValues(file):
     data_dict = {}
+    current_time = None
+
     with open(file, 'r') as file:
-        lines = file.readlines()
-        for i in range(0, len(lines), 3):
-            data_dict[int(lines[i].strip())] = {}
-            velocities = list(map(float, lines[i + 1].strip().split()))
-            errors = list(map(float, lines[i + 2].strip().split()))
-            data_dict[int(lines[i].strip())] = {
-                'velocityValues': velocities,
-                'errors': errors
-            }
-            
+        for line in file:
+            line = line.strip()
+            if re.match(r'^\d+$', line):
+                current_time = int(line)
+                data_dict[current_time] = {}
+            else:
+                parts = line.split()
+                velocityValues = []
+
+                for part in parts:
+                    velocityValues.append(part)
+
+                data_dict[current_time] = {
+                    'velocityValues': velocityValues
+                }
+    
     return data_dict

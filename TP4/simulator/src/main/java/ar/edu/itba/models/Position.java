@@ -27,25 +27,6 @@ public class Position {
         return new Position(this.getX() + p.getX(), this.getY() + p.getY());
     }
 
-//    public Position moveForward(Particle particle, double time) {
-//        double x = getX() + particle.getVx() * time;
-//        double y = getY() + particle.getVy() * time;
-//        return new Position(x, y);
-//    }
-//
-//    public boolean isAbove(Position p) {
-//        return this.y > p.getY();
-//    }
-//    public boolean isBelow(Position p) {
-//        return this.y < p.getY();
-//    }
-//    public boolean isLeftOf(Position p) {
-//        return this.x < p.getX();
-//    }
-//    public boolean isRightOf(Position p) {
-//        return this.x > p.getX();
-//    }
-
     public double calculateDistance(Position p) {
         return Math.sqrt(Math.pow(this.x - p.getX(), 2) + Math.pow(this.y - p.getY(), 2));
     }

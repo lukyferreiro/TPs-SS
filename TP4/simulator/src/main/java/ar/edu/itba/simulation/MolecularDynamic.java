@@ -37,10 +37,36 @@ public class MolecularDynamic {
     public static List<Particle> cloneParticles(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         for(Particle p : particles) {
-            Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR());
+            Particle particle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR(), p.getDensity());
             newParticles.add(particle);
         }
         return newParticles;
+    }
+
+    public static void setDensity(List<Particle> particles) {
+        List<Particle> auxParticulesOrderByX = cloneParticles(particles);
+        auxParticulesOrderByX.sort(Comparator.comparingDouble(Particle::getX));
+        int count = 0;
+
+        for (Particle p : auxParticulesOrderByX) {
+            double dij;   // Distancia entre la partícula y su vecina anterior
+            double dik;   // Distancia entre la partícula y su vecina posterior
+
+            if (count == 0) {
+                dij = Math.abs(p.getX() - auxParticulesOrderByX.get(auxParticulesOrderByX.size() - 1).getX() - 2 * p.getRadius());
+                dik = Math.abs(p.getX() - auxParticulesOrderByX.get(count + 1).getX() - 2 * p.getRadius());
+            } else if (count == auxParticulesOrderByX.size() - 1) {
+                dij = Math.abs(p.getX() - auxParticulesOrderByX.get(count - 1).getX() - 2 * p.getRadius());
+                dik = Math.abs(p.getX() - auxParticulesOrderByX.get(0).getX() - 2 * p.getRadius());
+            } else {
+                dij = Math.abs(p.getX() - auxParticulesOrderByX.get(count - 1).getX() - 2 * p.getRadius());
+                dik = Math.abs(p.getX() - auxParticulesOrderByX.get(count + 1).getX() - 2 * p.getRadius());
+            }
+
+            double density = 1.0 / (dij + dik);
+            particles.get(p.getId() - 1).setDensity(density);
+            count++;
+        }
     }
 
     public static Map<BigDecimal, List<Particle>> run(
@@ -52,6 +78,8 @@ public class MolecularDynamic {
         final Map<BigDecimal, List<Particle>> particlesOverTime = new HashMap<>();
 
         List<Particle> initialParticles = calculateInitialRs(particles, dt);
+
+        setDensity(initialParticles);
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
 
@@ -72,7 +100,7 @@ public class MolecularDynamic {
 
                 List<Particle> newParticles = new ArrayList<>();
                 for (Particle p : prevParticles) {
-                    Particle newParticle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR());
+                    Particle newParticle = new Particle(p.getId(), p.getRadius(), p.getMass(), p.getX(), p.getY(), p.getVx(), p.getVy(), p.getU(), p.getR(), p.getDensity());
 
                     final R predictedR = predict(p, dt, L);
                     newParticle.setX(predictedR.get(R0.ordinal()).getOne() % L, L);
@@ -88,6 +116,8 @@ public class MolecularDynamic {
 
                     newParticles.add(newParticle);
                 }
+
+                setDensity(newParticles);
 
                 prevParticles = cloneParticles(newParticles);
 
@@ -138,7 +168,7 @@ public class MolecularDynamic {
             newParticles.add(new Particle(
                     p.getId(), p.getRadius(), p.getMass(),
                     p.getX(), p.getY(), p.getVx(), p.getVy(),
-                    p.getU(), currentR)
+                    p.getU(), currentR, p.getDensity())
             );
         }
         return newParticles;

@@ -28,6 +28,6 @@ def update(frame, particles_dict, L):
     plt.xlim(0, L)
     plt.ylim(-R, R)
     plt.gca().set_aspect('equal', adjustable='datalim')
-    plt.title(f'Tiempo: {frame:.3f}')
+    plt.title(f'Tiempo: {frame:.2f}')
     plt.xlabel('Posición X')
     plt.ylabel('Posición Y')

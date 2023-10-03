@@ -17,6 +17,7 @@ public class Particle {
     private double vy;
     private double u;
     private R r;
+    private double density;
 
     public Particle(int id, double radius, double mass) {
         this.id = id;
@@ -32,7 +33,7 @@ public class Particle {
         this.r.add(0.0,0.0);
     }
 
-    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u, R r) {
+    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u, R r, double density) {
         this.id = id;
         this.radius = radius;
         this.mass = mass;
@@ -48,6 +49,7 @@ public class Particle {
         this.r.add(r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
         this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
         this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
+        this.density = density;
     }
 
     public int getId() {
@@ -118,6 +120,12 @@ public class Particle {
         this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
         this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
     }
+    public double getDensity() {
+        return density;
+    }
+    public void setDensity(double density) {
+        this.density = density;
+    }
 
     public boolean collidesWith(Particle p, Double dt) {
         double deltaRx = this.getX() - p.getX();
@@ -138,6 +146,10 @@ public class Particle {
         }
 
         return (-(dvdr + Math.sqrt(d)) / dvdv ) < dt;
+    }
+
+    public double calculateDistance(Particle p) {
+        return Math.sqrt(Math.pow(this.getX() - p.getX(), 2) + Math.pow(this.getY() - p.getY(), 2));
     }
 
     @Override
