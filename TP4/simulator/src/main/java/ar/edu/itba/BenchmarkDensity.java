@@ -39,16 +39,11 @@ public class BenchmarkDensity {
             particlesWithN.put(N, aux);
         }
 
-        //-------------------------------------------------------------------------
-        //-----------------------PROMEDIO NORMAL------------------------------------
-        //--------------------------------------------------------------------------
-
-        // N -> ID -> [(v(0),p(0)), ...]
-        Map<Integer, Map<Integer, List<Pair<Double, Double>>>> data = new HashMap<>();
+        List<Double> densityList = new ArrayList<>();
+        List<Double> velocityList = new ArrayList<>();
 
         for (Integer N : Ns) {
 
-            Map<Integer, List<Pair<Double, Double>>> particleData = new HashMap<>();
             Map<BigDecimal, List<Particle>> currentMap = particlesWithN.get(N);
 
             for (int iter = 0; iter < currentMap.size(); iter++) {
@@ -58,73 +53,63 @@ public class BenchmarkDensity {
 
                 for (int j = 0; j < N; j++) {
                     Particle particle = particlesAtTime.get(j);
-
-                    double particleVelocity = particle.getVx();
-                    double particleDensity = particle.getDensity();
-                    int particleId = particle.getId();
-
-                    particleData.computeIfAbsent(particleId, k -> new ArrayList<>())
-                            .add(new Pair<>(particleVelocity, particleDensity));
+                    densityList.add(particle.getDensity());
+                    velocityList.add(particle.getVx());
                 }
             }
+        }
 
-            data.put(N, particleData);
+        List<Pair<Double, Double>> pairedList = new ArrayList<>();
+        for (int i = 0; i < densityList.size(); i++) {
+            pairedList.add(new Pair<>(densityList.get(i), velocityList.get(i)));
+        }
+
+        pairedList.sort(Comparator.comparingDouble(Pair::getOne));
+
+        List<Double> sortedDensityList = new ArrayList<>();
+        List<Double> sortedVelocityList = new ArrayList<>();
+        for (Pair<Double, Double> pair : pairedList) {
+            sortedDensityList.add(pair.getOne());
+            sortedVelocityList.add(pair.getOther());
         }
 
         int window = 1000;
 
-        for (Map<Integer, List<Pair<Double, Double>>> particleData : data.values()) {
-            for (List<Pair<Double, Double>> points : particleData.values()) {
-                List<Pair<Double, Double>> smoothedPoints = new ArrayList<>();
+        List<Double> smoothedDensity = movingAverage(sortedDensityList, window);
+        List<Double> smoothedVelocity = movingAverage(sortedVelocityList, window);
 
-                int size = points.size();
-                for (int i = 0; i < size; i++) {
-                    double sumVelocity = 0.0;
-                    double sumDensity = 0.0;
-                    int count = 0;
+        final String fileDensity = "src/main/resources/unidimensional_particles/benchmark/density/density.txt";
+        final File outDensityFile = new File(fileDensity);
 
-                    // Calcular el promedio en la ventana móvil
-                    for (int j = Math.max(0, i - window / 2); j <= Math.min(size - 1, i + window / 2); j++) {
-                        sumVelocity += points.get(j).getOne();
-                        sumDensity += points.get(j).getOther();
-                        count++;
-                    }
-
-                    // Calcular el promedio y agregar el punto suavizado a la lista
-                    double averageVelocity = sumVelocity / count;
-                    double averageDensity = sumDensity / count;
-                    smoothedPoints.add(new Pair<>(averageVelocity, averageDensity));
-                }
-
-                // Reemplazar los puntos originales con los puntos suavizados
-                points.clear();
-                points.addAll(smoothedPoints);
-            }
-        }
-
-
-        for(Map.Entry<Integer, Map<Integer, List<Pair<Double, Double>>>> entry : data.entrySet()) {
-            final String fileDensity = "src/main/resources/unidimensional_particles/benchmark/density/" + entry.getKey() + ".txt";
-            final File outDensityFile = new File(fileDensity);
-
-            try (PrintWriter pw = new PrintWriter(outDensityFile)) {
-                for (Map.Entry<Integer, List<Pair<Double, Double>>> innerEntry : entry.getValue().entrySet()) {
-                    int particleId = innerEntry.getKey();
-                    List<Pair<Double, Double>> velocityDensityPairs = innerEntry.getValue();
-
-                    pw.println(String.format(Locale.US, "%d", particleId));
-
-                    for (Pair<Double, Double> pair : velocityDensityPairs) {
-                        pw.println(String.format(Locale.US, "%.20f %.20f", pair.getOne(), pair.getOther()));
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        try (PrintWriter pw = new PrintWriter(outDensityFile)) {
+            smoothedDensity.forEach((d) -> pw.append(String.format(Locale.US,"%.20f ", d)));
+            pw.println();
+            smoothedVelocity.forEach((d) -> pw.append(String.format(Locale.US,"%.20f ", d)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
         System.out.println("Density calculation finished ...\n");
 
+    }
+
+    private static List<Double> movingAverage(List<Double> list, int window) {
+        List<Double> smoothedData = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            int start = Math.max(0, i - window / 2);
+            int end = Math.min(list.size(), i + window / 2 + 1);
+            List<Double> windowData = list.subList(start, end);
+
+            double sum = 0;
+            for (double value : windowData) {
+                sum += value;
+            }
+            double average = sum / windowData.size();
+            smoothedData.add(average);
+        }
+
+        return smoothedData;
     }
 
 }
