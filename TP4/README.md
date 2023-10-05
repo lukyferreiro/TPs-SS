@@ -1,13 +1,13 @@
 # TP4 - Dinámica Molecular regida por el paso temporal
 
-En este TP se implementa 
+En este TP se implementa distintos metodos de integracion numerica y una simulacion de particulas unidimensionales regidas por el paso temporal.
 
 ## Generación de partículas
 
 Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará
 los archivos static.txt y dynamic.txt.
 
-## Simulacion Off-Lattice
+## Simulacion 
 
 Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los datos de los archivos static.txt y dynamic.txt
 y creará dos archivos: off_lattice.txt (con la informacion de las particulas en cada tiempo) y time.txt (con el tiempo tardado
@@ -19,15 +19,15 @@ en toda la ejecucion)
 
 ``` json
 {
-  "staticFile": "src/main/resources/static.txt",
-  "dynamicFile": "src/main/resources/dynamic.txt",
-  "N": 400,
-  "side": 0.09,
-  "max_radius": 0.0015,
-  "min_radius": 0.0015,
-  "times": 1,
-  "mass": 1.0,
-  "speed": 0.01
+  "staticFile": "src/main/resources/unidimensional_particles/static.txt",
+  "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
+  "N": 20,
+  "L": 135.0,
+  "R": 21.49,
+  "max_radius": 2.25,
+  "min_radius": 2.25,
+  "mass": 25.0,
+  "times": 1
 }
 ```
 
@@ -36,7 +36,7 @@ en toda la ejecucion)
 | staticFile   | Path de donde se creará el archivo estático                           | 
 | dynamicFile  | Path de donde se creará el archivo dinámico                           | 
 | N            | Numero natural que representa la cantidad de partículas a generar     | 
-| side         | Numero real positivo que representa el lado del area de simulación    | 
+| L            | Numero real positivo que representa el lado del area de simulación    | 
 | max_radius   | Numero real positivo que representa el radio máximo de las partículas | 
 | min_radius   | Numero real positivo que representa el radio máximo de las partículas | 
 | times        | Numero natural que representa la cantidad de tiempos                  |
@@ -46,12 +46,13 @@ en toda la ejecucion)
 #### configMethod.json 
 
 ``` json
-{
-  "staticFile": "src/main/resources/static.txt",
-  "dynamicFile": "src/main/resources/dynamic.txt",
-  "outFile": "src/main/resources/gas_diffusion.txt",
-  "outTimeFile": "src/main/resources/time.txt",
-  "L": 0.09
+
+  "staticFile": "src/main/resources/unidimensional_particles/static.txt",
+  "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
+  "outFile": "src/main/resources/unidimensional_particles/outFile.txt",
+  "deltaT": 0.001,
+  "deltaT2": 0.1,
+  "maxTime": 180.0
 }
 ```
 
@@ -60,6 +61,7 @@ en toda la ejecucion)
 | staticFile                | Path al archivo estático para tomar su información                                   | 
 | dynamicFile               | Path al archivo dinámico para tomar su información                                   | 
 | outFile                   | Path de donde se creará el archivo con las posiciones de las particulas              | 
-| outTimeFile               | Path de donde se creará el archivo con el tiempo                                     | 
-| L                         | Numero real positivo que representa el alto del 2do recinto                          | 
+| deltaT                    | Numero real positivo que representa el intervalo de tiempo de la simulacion          | 
+| deltaT2                   | Numero real positivo que representa el intervalo de tiempo para guardar el sistema   | 
+| maxTime                   | Numero real positivo que representa el tiempo maximo de simulacion                   | 
  

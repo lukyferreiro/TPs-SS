@@ -18,4 +18,4 @@ En este TP se implementa el algoritmo de gas diffusion para la visualizacion de 
 
 ## TP4 - [Dinámica Molecular regida por el paso temporal](https://github.com/lukyferreiro/TPs-SS/tree/main/TP4)
 
-En este TP se implementa
+En este TP se implementa distintos metodos de integracion numerica y una simulacion de particulas unidimensionales regidas por el paso temporal.
