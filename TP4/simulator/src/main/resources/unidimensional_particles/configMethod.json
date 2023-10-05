@@ -2,7 +2,7 @@
   "staticFile": "src/main/resources/unidimensional_particles/static.txt",
   "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
   "outFile": "src/main/resources/unidimensional_particles/outFile.txt",
-  "deltaT": 0.01,
+  "deltaT": 0.001,
   "deltaT2": 0.1,
   "maxTime": 180.0
 }
