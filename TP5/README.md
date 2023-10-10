@@ -1,16 +1,14 @@
-# TP4 - Dinámica Molecular regida por el paso temporal
+# TP5 - ...
 
-En este TP se implementa distintos metodos de integracion numerica y una simulacion de particulas unidimensionales regidas por el paso temporal.
+En este TP 
 
 ## Generación de partículas
 
-Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará
-los archivos static.txt y dynamic.txt.
+Se debe ejecutar el main del archivo Generator.java. Su ejecución tomará los datos de configGenerator.json y creará los archivos static.txt y dynamic.txt.
 
 ## Simulacion 
 
-Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los datos de los archivos static.txt y dynamic.txt y creará el archivo out.txt (con la informacion de las particulas en cada tiempo) 
-
+Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los datos de los archivos static.txt y dynamic.txt y creará el archivo out.txt (con la informacion de las particulas en cada tiempo)
 
 ## Configuración
 
@@ -18,8 +16,8 @@ Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los 
 
 ``` json
 {
-  "staticFile": "src/main/resources/unidimensional_particles/static.txt",
-  "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
+  "staticFile": "src/main/resources/static.txt",
+  "dynamicFile": "src/main/resources/dynamic.txt",
   "N": 20,
   "L": 135.0,
   "R": 21.49,
@@ -46,9 +44,9 @@ Se debe ejecutar el main del archivo Simulation.java. Su ejecución tomará los 
 
 ``` json
 
-  "staticFile": "src/main/resources/unidimensional_particles/static.txt",
-  "dynamicFile": "src/main/resources/unidimensional_particles/dynamic.txt",
-  "outFile": "src/main/resources/unidimensional_particles/outFile.txt",
+  "staticFile": "src/main/resources/static.txt",
+  "dynamicFile": "src/main/resources/dynamic.txt",
+  "outFile": "src/main/resources/outFile.txt",
   "deltaT": 0.001,
   "deltaT2": 0.1,
   "maxTime": 180.0

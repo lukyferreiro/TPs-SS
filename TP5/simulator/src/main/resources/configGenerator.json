@@ -1,0 +1,11 @@
+{
+  "staticFile": "src/main/resources/static.txt",
+  "dynamicFile": "src/main/resources/dynamic.txt",
+  "N": 20,
+  "L": 135.0,
+  "R": 21.49,
+  "max_radius": 2.25,
+  "min_radius": 2.25,
+  "mass": 25.0,
+  "times": 1
+}

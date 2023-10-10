@@ -1,0 +1,8 @@
+{
+  "staticFile": "src/main/resources/static.txt",
+  "dynamicFile": "src/main/resources/dynamic.txt",
+  "outFile": "src/main/resources/outFile.txt",
+  "deltaT": 0.001,
+  "deltaT2": 0.1,
+  "maxTime": 180.0
+}
