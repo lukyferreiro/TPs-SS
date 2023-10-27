@@ -18,6 +18,7 @@ public class ParticlesParser {
 
         final int N = Integer.parseInt(staticScanner.nextLine().split(" ")[0]);
         final double L = Double.parseDouble(staticScanner.nextLine().split(" ")[0]);
+        final double W = Double.parseDouble(staticScanner.nextLine().split(" ")[0]);
 
         final List<Particle> particles = new ArrayList<>();
 
@@ -65,7 +66,7 @@ public class ParticlesParser {
         }
 
         dynamicScanner.close();
-        return new ParticlesParserResult(N, L, particlesPerTime);
+        return new ParticlesParserResult(N, L, W, particlesPerTime);
     }
 
 }

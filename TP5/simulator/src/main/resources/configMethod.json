@@ -4,5 +4,8 @@
   "outFile": "src/main/resources/outFile.txt",
   "deltaT": 0.001,
   "deltaT2": 0.1,
-  "maxTime": 180.0
+  "maxTime": 1000.0,
+  "D": 3,
+  "A": 0.15,
+  "omega": 5.0
 }

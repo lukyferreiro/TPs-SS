@@ -1,11 +1,9 @@
 package ar.edu.itba.models;
 
-import ar.edu.itba.algorithms.utils.R;
-
 import java.util.Objects;
 import java.lang.Math;
 
-import static ar.edu.itba.algorithms.utils.R.values.*;
+import static ar.edu.itba.models.R.values.*;
 
 public class Particle {
 

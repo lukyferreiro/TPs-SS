@@ -1,6 +1,5 @@
 package ar.edu.itba;
 
-import ar.edu.itba.simulation.MolecularDynamic;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;

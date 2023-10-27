@@ -6,8 +6,8 @@ public class ConfigGeneratorParser {
     private final String staticFile;
     private final String dynamicFile;
     private final Long N;   //Cantidad particulas
-    private final Double L;    //Longitud del sistema 1
-    private final Double R;    //Radio del sistema 2
+    private final Double L;    //Alto del recinto
+    private final Double W;    //Ancho del recinto
     private final Double minR;  //Radio minimo para las particulas
     private final Double maxR;  //Radio maximo para las particulas
     private final Double mass;  //Propiedad de las particulas
@@ -18,7 +18,7 @@ public class ConfigGeneratorParser {
         this.dynamicFile = (String) json.get("dynamicFile");
         this.N = (Long) json.get("N");
         this.L = (Double) json.get("L");
-        this.R = (Double) json.get("R");
+        this.W = (Double) json.get("W");
         this.minR = (Double) json.get("max_radius");
         this.maxR = (Double) json.get("min_radius");
         this.mass = (Double) json.get("mass");
@@ -37,8 +37,8 @@ public class ConfigGeneratorParser {
     public Double getL() {
         return L;
     }
-    public Double getR() {
-        return R;
+    public Double getW() {
+        return W;
     }
     public Double getMinR() {
         return minR;
