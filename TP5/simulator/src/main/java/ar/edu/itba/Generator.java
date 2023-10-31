@@ -1,7 +1,7 @@
 package ar.edu.itba;
 
+import ar.edu.itba.models.DoublePair;
 import ar.edu.itba.models.Particle;
-import ar.edu.itba.models.Position;
 import ar.edu.itba.utils.ConfigGeneratorParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -68,7 +68,7 @@ public class Generator {
 //                            continue; // Volver a generar coordenadas si está fuera del recinto
 //                        }
 
-                        Position position = new Position(x, y);
+                        DoublePair position = new DoublePair(x, y);
                         for (Particle other : particles) {
                             if (other.getPosition() != null) {
                                 double distance = position.calculateDistance(other.getPosition());
@@ -80,7 +80,7 @@ public class Generator {
                         }
                     } while (superposition);
 
-                    particle.setPosition(new Position(x, y));
+                    particle.setPosition(new DoublePair(x, y));
                     pw.printf(Locale.US, "%.15f %.15f %.1f %.1f\n", x, y, speed, angle);
                 }
             }

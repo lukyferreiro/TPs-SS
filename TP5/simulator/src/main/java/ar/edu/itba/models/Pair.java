@@ -3,8 +3,8 @@ package ar.edu.itba.models;
 import java.util.Objects;
 
 public class Pair<T, V> {
-    private final T value1;
-    private final V value2;
+    private T value1;
+    private V value2;
 
     public Pair(T value1, V value2) {
         this.value1 = value1;
@@ -15,9 +15,18 @@ public class Pair<T, V> {
         return value.equals(value1) || value.equals(value2);
     }
 
+    public void setOne(T value1) {
+        this.value1 = value1;
+    }
+
     public T getOne() {
         return value1;
     }
+
+    public void setOther(V value2) {
+        this.value2 = value2;
+    }
+
     public V getOther() {
         return value2;
     }

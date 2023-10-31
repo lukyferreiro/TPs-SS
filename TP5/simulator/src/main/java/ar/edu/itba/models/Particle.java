@@ -1,153 +1,195 @@
 package ar.edu.itba.models;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.lang.Math;
 
-import static ar.edu.itba.models.R.values.*;
-
 public class Particle {
+    // Constantes
+    private static final double GRAVITY = -5;
+    private final static double B = (2.0 / 3.0);
+    private final static double C = -(1.0 / 6.0);
 
+    // Velocidades
+    private Map<Particle, DoublePair> accumRelativeVelocity = new HashMap<>(); // or another suitable modifiable map
+    private DoublePair floorRelativeVelocity = new DoublePair(0.0, 0.0);
+    private DoublePair rightRelativeVelocity = new DoublePair(0.0, 0.0);
+    private DoublePair leftRelativeVelocity = new DoublePair(0.0, 0.0);
+    private DoublePair topRelativeVelocity = new DoublePair(0.0, 0.0);
+
+    // Propiedades de la partícula
+    private final Double radius;
+    private final Double mass;
     private final int id;
-    private final double radius;
-    private final double mass;
-    private Position position;
-    private double vx;
-    private double vy;
-    private double u;
-    private R r;
-    private double density;
+    private DoublePair position;
+    private DoublePair velocity;
 
-    public Particle(int id, double radius, double mass) {
+    // Para estimar
+    private Double xForce;
+    private Double yForce;
+    private DoublePair prevA;
+    private DoublePair currentA;
+    private DoublePair currentV;
+    private boolean gone = false;
+    private boolean reInjected = false;
+
+    public Particle(int id, Double radius, Double mass) {
         this.id = id;
         this.radius = radius;
         this.mass = mass;
-        this.r = new R();
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
-        this.r.add(0.0,0.0);
+        this.xForce = 0.0;
+        this.yForce = 0.0;
+        this.velocity = new DoublePair(0.0, 0.0);
+        currentA = new DoublePair(0.0, 0.0);
+        prevA = new DoublePair(0.0, GRAVITY);
     }
 
-    public Particle(int id, double radius, double mass, double x, double y, double vx, double vy, double u, R r, double density) {
+    public Particle(int id, DoublePair position, Double radius, Double mass) {
         this.id = id;
+        this.position = position;
         this.radius = radius;
         this.mass = mass;
-        this.position = new Position(x, y);
-        this.vx = vx;
-        this.vy = vy;
-        this.u = u;
-        this.r = new R();
-        this.r.add(r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
-        this.r.add(r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
-        this.r.add(r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
-        this.r.add(r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
-        this.r.add(r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
-        this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
-        this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
-        this.density = density;
+        this.xForce = 0.0;
+        this.yForce = 0.0;
+        this.velocity = new DoublePair(0.0, 0.0);
+        currentA = new DoublePair(0.0, 0.0);
+        prevA = new DoublePair(0.0, GRAVITY);
     }
 
+    public void resetForces() {
+        xForce = 0.0;
+        yForce = 0.0;
+    }
+
+    public void addForces(double x, double y) {
+        xForce = xForce + x;
+        yForce = yForce + y;
+    }
+
+    public void addForces(DoublePair pair) {
+        xForce = xForce + pair.getOne();
+        yForce = yForce + pair.getOther();
+    }
+
+    public Particle copy() {
+        return new Particle(id, position, radius, mass);
+    }
+
+    public DoublePair getAcceleration() {
+        DoublePair aux = new DoublePair(xForce, yForce);
+        return aux.scale(1.0 / mass);
+    }
+
+    public void reInject() {
+        reInjected = true;
+    }
     public int getId() {
-        return this.id;
+        return id;
     }
-    public double getRadius() {
-        return this.radius;
+    public Double getRadius() {
+        return radius;
     }
-    public double getMass() {
-        return this.mass;
+    public Double getMass() {
+        return mass;
     }
-    public Position getPosition() {
-        return this.position;
+
+    public DoublePair getPosition() {
+        return position;
     }
-    public void setPosition(Position position) {
+    public void setPosition(DoublePair position) {
         this.position = position;
     }
-    public double getX() {
-        return this.position.getX();
+    public DoublePair getVelocity() {
+        return velocity;
     }
-    public void setX(double x) {
-        this.position.setX(x);
+
+    public boolean isGone() {
+        return gone;
     }
-    public void setX(double x, double L){
-        double aux = x % L;
-        if (aux < 0){
-            aux += L;
+    public void setGone(boolean gone) {
+        this.gone = gone;
+    }
+
+    public void predict(Double dt) {
+        currentA = this.getAcceleration();
+        this.position = position.sum(
+                velocity.scale(dt).sum(
+                        currentA.scale(B).sum(
+                                prevA.scale(C)
+                        ).scale(Math.pow(dt, 2))
+                )
+        );
+
+        this.currentV = velocity;
+
+        this.velocity = this.currentV.sum(
+                this.currentA.scale(1.5 * dt).sum(
+                        prevA.scale(-0.5 * dt)
+                )
+        );
+    }
+
+    public void correct(Double dt){
+        if (reInjected){
+            this.velocity = new DoublePair(0.0, 0.0);
+            reInjected = false;
+            prevA = new DoublePair(0.0, GRAVITY);
+        }else {
+            this.velocity = currentV.sum(
+                    this.getAcceleration().scale((1.0 / 3.0) * dt).sum(
+                            currentA.scale((5.0 / 6.0) * dt).sum(
+                                    prevA.scale(-(1.0 / 6.0) * dt)
+                            )
+                    )
+            );
+            prevA = currentA;
         }
-        this.position.setX(aux);
-    }
-    public double getY() {
-        return this.position.getY();
-    }
-    public void setY(double y) {
-        this.position.setY(y);
-    }
-    public double getVx() {
-        return vx;
-    }
-    public void setVx(double vx) {
-        this.vx = vx;
-    }
-    public double getVy() {
-        return vy;
-    }
-    public void setVy(double vy) {
-        this.vy = vy;
-    }
-    public double getU() {
-        return u;
-    }
-    public void setU(double u) {
-        this.u = u;
-    }
-    public R getR() {
-        return this.r;
-    }
-    public Double getFromR(int index) {
-        return this.r.get(index).getOne();
-    }
-    public void setR(R r) {
-        this.r = new R();
-        this.r.add(r.get(R0.ordinal()).getOne(), r.get(R0.ordinal()).getOther());
-        this.r.add(r.get(R1.ordinal()).getOne(), r.get(R1.ordinal()).getOther());
-        this.r.add(r.get(R2.ordinal()).getOne(), r.get(R2.ordinal()).getOther());
-        this.r.add(r.get(R3.ordinal()).getOne(), r.get(R3.ordinal()).getOther());
-        this.r.add(r.get(R4.ordinal()).getOne(), r.get(R4.ordinal()).getOther());
-        this.r.add(r.get(R5.ordinal()).getOne(), r.get(R5.ordinal()).getOther());
-        this.r.add(r.get(R6_NO_PERIODIC.ordinal()).getOne(), r.get(R6_NO_PERIODIC.ordinal()).getOther());
-    }
-    public double getDensity() {
-        return density;
-    }
-    public void setDensity(double density) {
-        this.density = density;
     }
 
-    public boolean collidesWith(Particle p, Double dt) {
-        double deltaRx = this.getX() - p.getX();
-        double deltaVx = this.getVx() - p.getVx();
-
-        double sigma = this.radius + p.getRadius();
-
-        double dvdr = (deltaRx * deltaVx);
-        if (dvdr >= 0) {
-            return false;
-        }
-
-        double dvdv = (deltaVx * deltaVx);
-        double drdr = (deltaRx * deltaRx);
-        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sigma, 2));
-        if (d < 0) {
-            return false;
-        }
-
-        return (-(dvdr + Math.sqrt(d)) / dvdv ) < dt;
+    public boolean isOverlapping(Particle other) {
+        double distance = position.calculateDistance(other.getPosition());
+        return distance < (this.getRadius() + other.getRadius());
     }
 
-    public double calculateDistance(Particle p) {
-        return Math.sqrt(Math.pow(this.getX() - p.getX(), 2) + Math.pow(this.getY() - p.getY(), 2));
+    public Map<Particle, DoublePair> getAccumRelativeVelocity() {
+        return accumRelativeVelocity;
+    }
+
+    public void setAccumRelativeVelocity(DoublePair velocity, Particle particle) {
+        this.accumRelativeVelocity.putIfAbsent(particle, velocity);
+    }
+
+    public void setFloorRelativeVelocity(DoublePair floorRelativeVelocity) {
+        this.floorRelativeVelocity = floorRelativeVelocity;
+    }
+
+    public void setRightRelativeVelocity(DoublePair rightRelativeVelocity) {
+        this.rightRelativeVelocity = rightRelativeVelocity;
+    }
+
+    public void setLeftRelativeVelocity(DoublePair leftRelativeVelocity) {
+        this.leftRelativeVelocity = leftRelativeVelocity;
+    }
+
+    public void setTopRelativeVelocity(DoublePair topRelativeVelocity) {
+        this.topRelativeVelocity = topRelativeVelocity;
+    }
+
+    public DoublePair getFloorRelativeVelocity() {
+        return floorRelativeVelocity;
+    }
+
+    public DoublePair getRightRelativeVelocity() {
+        return rightRelativeVelocity;
+    }
+
+    public DoublePair getLeftRelativeVelocity() {
+        return leftRelativeVelocity;
+    }
+
+    public DoublePair getTopRelativeVelocity() {
+        return topRelativeVelocity;
     }
 
     @Override
@@ -165,6 +207,6 @@ public class Particle {
 
     @Override
     public String toString() {
-        return "Particle{" + "id=" + id + ", radius=" + radius + ", mass=" + mass + ", position=" + position + ", vx=" + vx + ", vy=" + vy + '}';
+        return "Particle{" + "id=" + id + ", radius=" + radius + ", mass=" + mass + ", position=" + position + ", vx=" + velocity.getOne() + ", vy=" + velocity.getOther() + '}';
     }
 }
