@@ -18,14 +18,12 @@ def update(frame, particles_dict, W, L, D):
     poligono_rectangulo = Polygon(vertices_rectangulo, closed=True, color="black", edgecolor='black', facecolor='none', linewidth=1)
     plt.gca().add_patch(poligono_rectangulo)
 
-    R = 2.25
-
     for id, particle_info in particles_dict[frame].items():
         if isinstance(id, int):
             x = particle_info['x']
             y = particle_info['y']
             r = particle_info['r']
-            plt.gca().add_patch(plt.Circle((x, y), R, fill=True))
+            plt.gca().add_patch(plt.Circle((x, y), r, fill=True))
 
     plt.xlim(0, W)
     plt.ylim(-20, L)
