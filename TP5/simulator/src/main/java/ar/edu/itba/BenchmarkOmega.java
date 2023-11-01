@@ -17,10 +17,10 @@ public class BenchmarkOmega {
     final static Double DT2 = 0.1;
     final static Double L = 70.0;
     final static Double W = 20.0;
-    final static Double MAX_TIME = 1000.0;
+    final static Double MAX_TIME = 100.0;
     final static Double D = 3.0;
 
-    final static List<Double> Omegas = List.of(5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 50.0);
+    final static List<Double> Omegas = List.of(5.0, 10.0, 15.0, 20.0, 30.0, 50.0);
 
 
     public static void main(String[] args) throws IOException {
@@ -28,14 +28,18 @@ public class BenchmarkOmega {
         final Map<Double, Map<BigDecimal, List<Particle>>> particlesWithOmega = new HashMap<>();
 
         for (Double omega : Omegas) {
+            System.out.println("Current omega value: "+ omega);
             final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(200);
 
             String file = "src/main/resources/benchmark/omega/" + omega + ".txt";
             File outFile = new File(file);
 
+            String timeFile = "src/main/resources/benchmark/omega/times_" + omega + ".txt";
+            File outTimeFile = new File(timeFile);
+
             List<Particle> particles = GranularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, omega, D, DT, DT2, outFile);
+            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, omega, D, DT, DT2, outFile, outTimeFile);
             particlesWithOmega.put(omega, aux);
         }
 

@@ -27,13 +27,14 @@ public class Simulation {
         final ParticlesParserResult parser = ParticlesParser.parseParticlesList(staticFile, dynamicFile);
 
         final File outFile = new File(config.getOutFile());
+        final File outTimeFile = new File(config.getOutTimeFile());
 
         System.out.println("Simulation started ...\n");
 
         GranularDynamic.run(
                 parser.getParticlesPerTime().get(0), parser.getL(), parser.getW(),
                 config.getMaxTime(), config.getOmega(), config.getD(), config.getDeltaT(),
-                config.getDeltaT2(), outFile);
+                config.getDeltaT2(), outFile, outTimeFile);
 
         System.out.println("Simulation finished ...\n");
     }

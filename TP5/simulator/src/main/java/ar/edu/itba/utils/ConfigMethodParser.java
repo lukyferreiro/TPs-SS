@@ -7,6 +7,7 @@ public class ConfigMethodParser {
     private final String staticFile;
     private final String dynamicFile;
     private final String outFile;
+    private final String outTimeFile;
     private final Double deltaT;    // dt fijo e intrínseco de la simulación,
     private final Double deltaT2;   // dt2 para imprimir el estado del sistema (posiciones y velocidades de las partículas)
     private final Double maxTime;
@@ -17,6 +18,7 @@ public class ConfigMethodParser {
         this.staticFile = (String) json.get("staticFile");
         this.dynamicFile = (String) json.get("dynamicFile");
         this.outFile = (String) json.get("outFile");
+        this.outTimeFile = (String) json.get("outTimeFile");
         this.deltaT = (Double) json.get("deltaT");
         this.deltaT2 = (Double) json.get("deltaT2");
         this.maxTime = (Double) json.get("maxTime");
@@ -32,6 +34,9 @@ public class ConfigMethodParser {
     }
     public String getOutFile() {
         return outFile;
+    }
+    public String getOutTimeFile() {
+        return outTimeFile;
     }
     public Double getDeltaT() {
         return deltaT;

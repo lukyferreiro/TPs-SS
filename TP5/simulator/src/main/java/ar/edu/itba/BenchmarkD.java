@@ -33,9 +33,12 @@ public class BenchmarkD {
             String file = "src/main/resources/benchmark/D/" + d + ".txt";
             File outFile = new File(file);
 
+            String timeFile = "src/main/resources/benchmark/D/times_" + d + ".txt";
+            File outTimeFile = new File(timeFile);
+
             List<Particle> particles = GranularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, OMEGA, d, DT, DT2, outFile);
+            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, OMEGA, d, DT, DT2, outFile, outTimeFile);
             particlesWithD.put(d, aux);
         }
 

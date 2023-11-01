@@ -22,6 +22,10 @@ public class GranularDynamic {
         ));
     }
 
+    private static void writeTimeFile(PrintWriter pw, List<Double> times) {
+        times.forEach((time) -> pw.printf(Locale.US, "%.20f\n", time));
+    }
+
     public static List<Particle> cloneParticles(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
         for (Particle p : particles) {
@@ -33,7 +37,7 @@ public class GranularDynamic {
 
     public static Map<BigDecimal, List<Particle>> run(
             List<Particle> particles, Double l, Double w, Double maxTime, Double frequency,
-            Double holeSize, Double dt, Double dt2, File outFile
+            Double holeSize, Double dt, Double dt2, File outFile, File outTimeFile
     ) {
         long startTime = System.nanoTime();
 
@@ -100,9 +104,14 @@ public class GranularDynamic {
         long endTime = System.nanoTime();
         long totalTime = endTime - startTime;
 
+        try {
+            PrintWriter pw = new PrintWriter(outTimeFile);
+            writeTimeFile(pw, times);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("Total time: " + totalTime / 1_000_000);
 
         return particlesOverTime;
-
     }
 }

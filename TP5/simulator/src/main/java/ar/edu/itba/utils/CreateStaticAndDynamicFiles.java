@@ -10,15 +10,16 @@ import java.util.Locale;
 import java.util.Random;
 
 public class CreateStaticAndDynamicFiles {
-    private static final double RADIUS = 2.25;
-    private static final double MASS = 25.0;
+    private static final double MIN_RADIUS = 0.85;
+    private static final double MAX_RADIUS = 1.15;
+    private static final double MASS = 1.0;
     private static final Double W = 20.0;
     private static final Double L = 70.0;
 
     public static ParticlesParserResult create(int N) throws IOException {
 
-        final File staticFile = new File("src/main/resources/.../static.txt");
-        final File dynamicFile = new File("src/main/resources/.../dynamic.txt");
+        final File staticFile = new File("src/main/resources/static.txt");
+        final File dynamicFile = new File("src/main/resources/dynamic.txt");
 
 
         final List<Particle> particles = new ArrayList<>();
@@ -26,9 +27,11 @@ public class CreateStaticAndDynamicFiles {
         try (PrintWriter pw = new PrintWriter(staticFile)) {
             pw.println(N);
             pw.println(L);
+            pw.println(W);
             for (int i = 0; i < N; i++) {
-                pw.printf(Locale.US, "%.2f %.1f\n", RADIUS, MASS);
-                particles.add(new Particle(i, RADIUS, MASS));
+                final double radius = MIN_RADIUS + Math.random() * (MAX_RADIUS - MIN_RADIUS);
+                pw.printf(Locale.US, "%.2f %.1f\n", radius, MASS);
+                particles.add(new Particle(i, radius, MASS));
             }
         }
 
@@ -40,8 +43,6 @@ public class CreateStaticAndDynamicFiles {
                     double speed = 0.0;
                     double angle = 0.0;
                     Particle particle = particles.get(j);
-
-                    System.out.println(j);
 
                     double x;
                     double y;
