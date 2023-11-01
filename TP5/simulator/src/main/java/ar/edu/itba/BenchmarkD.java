@@ -17,7 +17,7 @@ public class BenchmarkD {
     final static Double DT2 = 0.1;
     final static Double L = 70.0;
     final static Double W = 20.0;
-    final static Double MAX_TIME = 5.0;
+    final static Double MAX_TIME = 1000.0;
     final static List<Double> Ds = List.of(3.0, 4.0, 5.0, 6.0);
     final static Double OMEGA = 30.0; //TODO: check with other benchmark
 
