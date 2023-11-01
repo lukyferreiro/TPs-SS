@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Simulation {
     public static void main(String[] args) throws IOException, ParseException {
 
-        FileReader fr = new FileReader("src/main/resources/unidimensional_particles/configMethod.json");
+        FileReader fr = new FileReader("src/main/resources/configMethod.json");
         JSONObject json = (JSONObject) new JSONParser().parse(fr);
         ConfigMethodParser config = new ConfigMethodParser(json);
 
@@ -36,6 +36,5 @@ public class Simulation {
                 config.getDeltaT2(), outFile);
 
         System.out.println("Simulation finished ...\n");
-
     }
 }

@@ -63,30 +63,31 @@ public class GranularDynamic {
             for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
                 System.out.println(t);
 
-                List<Particle> newParticles = new ArrayList<>();
+//                List<Particle> newParticles = new ArrayList<>();
 
                 container.shake(t.doubleValue(), frequency);
 
-                for (Particle particle : particles) {
+                for (Particle particle : prevParticles) {
                     particle.predict(dt);
                 }
-                particles.forEach(Particle::resetForces);
+                prevParticles.forEach(Particle::resetForces);
 
                 for (int j = 0; j < container.update(); j++)
                     times.add(t.doubleValue());
 
                 container.updateForces(dt);
 
-                for (Particle particle : particles) {
+                for (Particle particle : prevParticles) {
                     particle.correct(dt);
                 }
-                particles.forEach(Particle::resetForces);
+                prevParticles.forEach(Particle::resetForces);
 
                 container.updateForces(dt);
+                currentTime = currentTime.add(dtBig);
 
                 if (dtBig.equals(dt2Big) || currentTime.compareTo(dt2Big) >= 0) {
-                    writeFile(pw, cloneParticles(newParticles), t);
-                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(newParticles));
+                    writeFile(pw, cloneParticles(prevParticles), t);
+                    particlesOverTime.put(t.setScale(1, RoundingMode.FLOOR), cloneParticles(prevParticles));
                     currentTime = BigDecimal.ZERO;
                 }
 
