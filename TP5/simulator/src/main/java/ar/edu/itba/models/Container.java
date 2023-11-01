@@ -17,7 +17,7 @@ public class Container {
 
     public static final double K_NORMAL = 250;
     public static final double GAMMA = 2.5;
-    public static final double U = 0.7;
+    public static final double U = 0.1;
     public static final double K_TAN = 2 * K_NORMAL;
 
     // Versores
@@ -169,7 +169,9 @@ public class Container {
 
     private void updateFloorForce(List<Particle> particles, double dt) {
         particles.forEach(p -> {
-            if (outsideHole(p) && !p.isGone()) floorForce(p, dt);
+            if (outsideHole(p) && !p.isGone()) {
+                floorForce(p, dt);
+            }
         });
     }
 

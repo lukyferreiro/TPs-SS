@@ -18,7 +18,7 @@ public class BenchmarkOmega {
     final static Double L = 70.0;
     final static Double W = 20.0;
     final static Double MAX_TIME = 1000.0;
-    final static Double D = 3.0;
+    final static Double D = 5.0;
     final static Integer N = 200;
     final static List<Double> Omegas = List.of(5.0, 10.0, 15.0, 20.0, 30.0, 50.0);
 
