@@ -14,10 +14,11 @@ public class GranularDynamic {
     private static void writeFile(PrintWriter pw, List<Particle> particles, BigDecimal time) {
         pw.printf(Locale.US, "%.6f\n", time);
         particles.forEach((particle) ->
-                pw.printf(Locale.US, "%d %.20f %.20f\n",
+                pw.printf(Locale.US, "%d %.20f %.20f %.20f\n",
                         particle.getId(),
                         particle.getPosition().getOne(),
-                        particle.getPosition().getOther()
+                        particle.getPosition().getOther(),
+                        particle.getRadius()
         ));
     }
 
@@ -31,8 +32,8 @@ public class GranularDynamic {
     }
 
     public static Map<BigDecimal, List<Particle>> run(
-            List<Particle> particles, Double l, Double w, Double maxTime, Double frequency, Double holeSize,
-            Double dt, Double dt2, File outFile
+            List<Particle> particles, Double l, Double w, Double maxTime, Double frequency,
+            Double holeSize, Double dt, Double dt2, File outFile
     ) {
         long startTime = System.nanoTime();
 

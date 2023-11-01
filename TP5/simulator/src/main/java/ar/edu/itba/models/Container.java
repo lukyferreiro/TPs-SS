@@ -267,7 +267,7 @@ public class Container {
         for (int[] a : diff) {
             try {
                 particles.addAll(cells[row + a[0]][col + a[1]].getParticles());
-            } catch (IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException ignored) {
             }
         }
 
