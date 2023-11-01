@@ -1,22 +1,19 @@
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
+from matplotlib.lines import Line2D
+from matplotlib.patches import Circle, Rectangle
 
 def update(frame, particles_dict, W, L, D):
     plt.clf()
 
     print(frame)
 
-    vertices_rectangulo = [
-        (0, 0),
-        (0, L),
-        (L, L),
-        (L, 0),
-        (0, (L-D)/2),
-        (0, (L-D)/2 + D)
-    ]
+    rect = Rectangle((0, 0), W, L + L / 10, color='b', fill=False)
+    plt.gca().add_patch(rect)
 
-    poligono_rectangulo = Polygon(vertices_rectangulo, closed=True, color="black", edgecolor='black', facecolor='none', linewidth=1)
-    plt.gca().add_patch(poligono_rectangulo)
+    # Dibuja una línea horizontal con espacio en el medio
+    plt.gca().add_line(plt.Line2D([0, W/2 - D / 2], [L/10, L/10], color='b', linewidth=2))
+    plt.gca().add_line(plt.Line2D([D / 2 + W/2, W], [L / 10, L / 10], color='b', linewidth=2))
+
 
     for id, particle_info in particles_dict[frame].items():
         if isinstance(id, int):
@@ -26,7 +23,7 @@ def update(frame, particles_dict, W, L, D):
             plt.gca().add_patch(plt.Circle((x, y), r, fill=True))
 
     plt.xlim(0, W)
-    plt.ylim(-20, L)
+    plt.ylim(0, L + L / 10)
     plt.gca().set_aspect('equal', adjustable='datalim')
     plt.title(f'Tiempo: {frame:.2f}')
     plt.xlabel('Posición X')
