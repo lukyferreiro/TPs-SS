@@ -22,8 +22,13 @@ public class GranularDynamic {
         ));
     }
 
-    private static void writeTimeFile(PrintWriter pw, List<Double> times) {
-        times.forEach((time) -> pw.printf(Locale.US, "%.20f\n", time));
+    private static void writeTimeFile(File outTimeFile, List<Double> times) {
+        System.out.println(times);
+        try (PrintWriter pw = new PrintWriter(outTimeFile)) {
+            times.forEach((time) -> pw.printf(Locale.US, "%.20f\n", time));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static List<Particle> cloneParticles(List<Particle> particles) {
@@ -67,26 +72,27 @@ public class GranularDynamic {
             for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
                 System.out.println(t);
 
-//                List<Particle> newParticles = new ArrayList<>();
-
                 container.shake(t.doubleValue(), frequency);
 
                 for (Particle particle : prevParticles) {
                     particle.predict(dt);
                 }
+
                 prevParticles.forEach(Particle::resetForces);
 
-                for (int j = 0; j < container.update(); j++)
+                for (int j = 0; j < container.update(); j++) {
                     times.add(t.doubleValue());
+                }
 
                 container.updateForces(dt);
 
                 for (Particle particle : prevParticles) {
                     particle.correct(dt);
                 }
-                prevParticles.forEach(Particle::resetForces);
 
+                prevParticles.forEach(Particle::resetForces);
                 container.updateForces(dt);
+
                 currentTime = currentTime.add(dtBig);
 
                 if (dtBig.equals(dt2Big) || currentTime.compareTo(dt2Big) >= 0) {
@@ -103,14 +109,9 @@ public class GranularDynamic {
 
         long endTime = System.nanoTime();
         long totalTime = endTime - startTime;
-
-        try {
-            PrintWriter pw = new PrintWriter(outTimeFile);
-            writeTimeFile(pw, times);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
         System.out.println("Total time: " + totalTime / 1_000_000);
+
+        writeTimeFile(outTimeFile, times);
 
         return particlesOverTime;
     }

@@ -17,19 +17,18 @@ public class BenchmarkOmega {
     final static Double DT2 = 0.1;
     final static Double L = 70.0;
     final static Double W = 20.0;
-    final static Double MAX_TIME = 100.0;
+    final static Double MAX_TIME = 5.0;
     final static Double D = 3.0;
-
+    final static Integer N = 200;
     final static List<Double> Omegas = List.of(5.0, 10.0, 15.0, 20.0, 30.0, 50.0);
-
 
     public static void main(String[] args) throws IOException {
 
         final Map<Double, Map<BigDecimal, List<Particle>>> particlesWithOmega = new HashMap<>();
 
         for (Double omega : Omegas) {
-            System.out.println("Current omega value: "+ omega);
-            final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(200);
+            System.out.println("Current omega value: " + omega);
+            final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(N);
 
             String file = "src/main/resources/benchmark/omega/" + omega + ".txt";
             File outFile = new File(file);

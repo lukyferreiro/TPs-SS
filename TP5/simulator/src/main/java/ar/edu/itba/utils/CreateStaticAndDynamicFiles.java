@@ -36,7 +36,6 @@ public class CreateStaticAndDynamicFiles {
         }
 
         try (PrintWriter pw = new PrintWriter(dynamicFile)) {
-            final Random random = new Random();
             for (int i = 0; i < 1; i++) {
                 pw.println(i);
                 for (int j = 0; j < N; j++) {
@@ -52,13 +51,6 @@ public class CreateStaticAndDynamicFiles {
                         superposition = false;
                         x = particle.getRadius() + Math.random() * (W - 2 * particle.getRadius());
                         y = particle.getRadius() + L / 10 + Math.random() * (L - 2 * particle.getRadius());
-
-//                        // Comprobar si la partícula está dentro del recinto
-//                        if (x < particle.getRadius() || x > config.getW() - particle.getRadius() ||
-//                                y < particle.getRadius() || y > config.getL() - particle.getRadius()) {
-//                            superposition = true;
-//                            continue; // Volver a generar coordenadas si está fuera del recinto
-//                        }
 
                         DoublePair position = new DoublePair(x, y);
                         for (Particle other : particles) {

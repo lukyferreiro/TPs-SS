@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 def parse(file):
     data_dict = {}
@@ -24,3 +25,14 @@ def parse(file):
                 }
     
     return data_dict
+
+def parse_times(path):
+    with open(path) as file:
+        times_str = file.readlines()
+
+    times = []
+    for line in times_str:
+        times.append(float(line))
+
+    data = np.array(times)
+    return data

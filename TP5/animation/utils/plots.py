@@ -1,17 +1,16 @@
 import matplotlib.pyplot as plt
-import os
 import numpy as np
-import re
-from utils.particlesParser import parse, get_times
+from utils.particlesParser import parse_times
 from scipy.stats import linregress
 
-def times_graph_frequency():
-    x1 = get_times('../src/main/resources/benchmark/omega/times_5.0.txt')
-    x2 = get_times('../src/main/resources/benchmark/omega/times_10.0.txt')
-    x3 = get_times('../src/main/resources/benchmark/omega/times_15.0.txt')
-    x4 = get_times('../src/main/resources/benchmark/omega/times_20.0.txt')
-    x5 = get_times('../src/main/resources/benchmark/omega/times_30.0.txt')
-    x6 = get_times('../src/main/resources/benchmark/omega/times_50.0.txt')
+def plot_times_frequency(dir):
+
+    x1 = parse_times(dir + 'times_5.0.txt')
+    x2 = parse_times(dir + 'times_10.0.txt')
+    x3 = parse_times(dir + 'times_15.0.txt')
+    x4 = parse_times(dir + 'times_20.0.txt')
+    x5 = parse_times(dir + 'times_30.0.txt')
+    x6 = parse_times(dir + 'times_50.0.txt')
 
     colors = ['b', 'g', 'r', 'c', 'm', 'y']
     
@@ -29,8 +28,7 @@ def times_graph_frequency():
         intercept=0
         plt.plot(x_values, intercept + slope * x_values, label=f'Regresión (R²={r_value**2:.2f})', linestyle='--',  color=color)
 
-    # Etiquetas de los ejes
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Número de partículas que salieron')
-    plt.legend()
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.show()
