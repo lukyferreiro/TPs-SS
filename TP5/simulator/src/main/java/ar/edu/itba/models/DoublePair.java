@@ -1,6 +1,6 @@
 package ar.edu.itba.models;
 
-public class DoublePair extends Pair<Double, Double>{
+public class DoublePair extends Pair<Double, Double> {
     public DoublePair(Double value1, Double value2) {
         super(value1, value2);
     }

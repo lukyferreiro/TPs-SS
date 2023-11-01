@@ -23,7 +23,7 @@ public class GranularDynamic {
 
     public static List<Particle> cloneParticles(List<Particle> particles) {
         List<Particle> newParticles = new ArrayList<>();
-        for(Particle p : particles) {
+        for (Particle p : particles) {
             Particle particle = p.copy();
             newParticles.add(particle);
         }
@@ -58,7 +58,6 @@ public class GranularDynamic {
 
             Container container = new Container(w, (l + l) / 10, 0.0, l / 10, holeSize);
             container.addAll(prevParticles);
-
 
             for (BigDecimal t = dtBig; iterations < totalIterations; iterations += 1) {
                 System.out.println(t);

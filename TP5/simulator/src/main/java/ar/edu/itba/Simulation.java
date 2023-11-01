@@ -1,5 +1,6 @@
 package ar.edu.itba;
 
+import ar.edu.itba.simulation.GranularDynamic;
 import ar.edu.itba.utils.ConfigMethodParser;
 import ar.edu.itba.utils.ParticlesParser;
 import ar.edu.itba.utils.ParticlesParserResult;
@@ -29,7 +30,10 @@ public class Simulation {
 
         System.out.println("Simulation started ...\n");
 
-        //TODO
+        GranularDynamic.run(
+                parser.getParticlesPerTime().get(0), parser.getL(), parser.getW(),
+                config.getMaxTime(), config.getOmega(), config.getD(), config.getDeltaT(),
+                config.getDeltaT2(), outFile);
 
         System.out.println("Simulation finished ...\n");
 

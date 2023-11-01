@@ -12,7 +12,7 @@ public class Particle {
     private final static double C = -(1.0 / 6.0);
 
     // Velocidades
-    private Map<Particle, DoublePair> accumRelativeVelocity = new HashMap<>(); // or another suitable modifiable map
+    private Map<Particle, DoublePair> accumRelativeVelocity = new HashMap<>();
     private DoublePair floorRelativeVelocity = new DoublePair(0.0, 0.0);
     private DoublePair rightRelativeVelocity = new DoublePair(0.0, 0.0);
     private DoublePair leftRelativeVelocity = new DoublePair(0.0, 0.0);
@@ -84,12 +84,15 @@ public class Particle {
     public void reInject() {
         reInjected = true;
     }
+
     public int getId() {
         return id;
     }
+
     public Double getRadius() {
         return radius;
     }
+
     public Double getMass() {
         return mass;
     }
@@ -97,9 +100,11 @@ public class Particle {
     public DoublePair getPosition() {
         return position;
     }
+
     public void setPosition(DoublePair position) {
         this.position = position;
     }
+
     public DoublePair getVelocity() {
         return velocity;
     }
@@ -107,42 +112,25 @@ public class Particle {
     public boolean isGone() {
         return gone;
     }
+
     public void setGone(boolean gone) {
         this.gone = gone;
     }
 
     public void predict(Double dt) {
         currentA = this.getAcceleration();
-        this.position = position.sum(
-                velocity.scale(dt).sum(
-                        currentA.scale(B).sum(
-                                prevA.scale(C)
-                        ).scale(Math.pow(dt, 2))
-                )
-        );
-
+        this.position = position.sum(velocity.scale(dt).sum(currentA.scale(B).sum(prevA.scale(C)).scale(Math.pow(dt, 2))));
         this.currentV = velocity;
-
-        this.velocity = this.currentV.sum(
-                this.currentA.scale(1.5 * dt).sum(
-                        prevA.scale(-0.5 * dt)
-                )
-        );
+        this.velocity = this.currentV.sum(this.currentA.scale(1.5 * dt).sum(prevA.scale(-0.5 * dt)));
     }
 
-    public void correct(Double dt){
-        if (reInjected){
+    public void correct(Double dt) {
+        if (reInjected) {
             this.velocity = new DoublePair(0.0, 0.0);
             reInjected = false;
             prevA = new DoublePair(0.0, GRAVITY);
-        }else {
-            this.velocity = currentV.sum(
-                    this.getAcceleration().scale((1.0 / 3.0) * dt).sum(
-                            currentA.scale((5.0 / 6.0) * dt).sum(
-                                    prevA.scale(-(1.0 / 6.0) * dt)
-                            )
-                    )
-            );
+        } else {
+            this.velocity = currentV.sum(this.getAcceleration().scale((1.0 / 3.0) * dt).sum(currentA.scale((5.0 / 6.0) * dt).sum(prevA.scale(-(1.0 / 6.0) * dt))));
             prevA = currentA;
         }
     }
