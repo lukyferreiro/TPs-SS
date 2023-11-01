@@ -6,26 +6,24 @@ import ar.edu.itba.utils.CreateStaticAndDynamicFiles;
 import ar.edu.itba.utils.ParticlesParserResult;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BenchmarkD {
     final static Double DT = 0.001;
     final static Double DT2 = 0.1;
     final static Double L = 70.0;
     final static Double W = 20.0;
-    final static Double MAX_TIME = 1000.0;
-
+    final static Double MAX_TIME = 5.0;
     final static List<Double> Ds = List.of(3.0, 4.0, 5.0, 6.0);
     final static Double OMEGA = 30.0; //TODO: check with other benchmark
 
-
     public static void main(String[] args) throws IOException {
 
-        final Map<Double, Map<BigDecimal, List<Particle>>> particlesWithD = new HashMap<>();
+        final List<Double> caudales = new ArrayList<>();
 
         for (Double d : Ds) {
             final ParticlesParserResult parser = CreateStaticAndDynamicFiles.create(200);
@@ -38,10 +36,17 @@ public class BenchmarkD {
 
             List<Particle> particles = GranularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, OMEGA, d, DT, DT2, outFile, outTimeFile);
-            particlesWithD.put(d, aux);
+            Double caudal = GranularDynamic.run(particles, L, W, MAX_TIME, OMEGA, d, DT, DT2, outFile, outTimeFile);
+            caudales.add(caudal);
         }
 
-        //TODO: check postprocessing
+        String fileCaudal = "src/main/resources/benchmark/D/caudales.txt";
+        File outFileCaudal = new File(fileCaudal);
+
+        try (PrintWriter pw = new PrintWriter(outFileCaudal)) {
+            caudales.forEach((caudal) -> pw.printf(Locale.US, "%.3f\n", caudal));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

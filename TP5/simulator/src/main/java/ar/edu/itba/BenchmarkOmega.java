@@ -6,11 +6,11 @@ import ar.edu.itba.utils.CreateStaticAndDynamicFiles;
 import ar.edu.itba.utils.ParticlesParserResult;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BenchmarkOmega {
     final static Double DT = 0.001;
@@ -24,7 +24,7 @@ public class BenchmarkOmega {
 
     public static void main(String[] args) throws IOException {
 
-        final Map<Double, Map<BigDecimal, List<Particle>>> particlesWithOmega = new HashMap<>();
+        final List<Double> caudales = new ArrayList<>();
 
         for (Double omega : Omegas) {
             System.out.println("Current omega value: " + omega);
@@ -38,10 +38,17 @@ public class BenchmarkOmega {
 
             List<Particle> particles = GranularDynamic.cloneParticles(parser.getParticlesPerTime().get(0));
 
-            Map<BigDecimal, List<Particle>> aux = GranularDynamic.run(particles, L, W, MAX_TIME, omega, D, DT, DT2, outFile, outTimeFile);
-            particlesWithOmega.put(omega, aux);
+            Double caudal = GranularDynamic.run(particles, L, W, MAX_TIME, omega, D, DT, DT2, outFile, outTimeFile);
+            caudales.add(caudal);
         }
 
-        //TODO: check postprocessing
+        String fileCaudal = "src/main/resources/benchmark/omega/caudales.txt";
+        File outFileCaudal = new File(fileCaudal);
+
+        try (PrintWriter pw = new PrintWriter(outFileCaudal)) {
+            caudales.forEach((caudal) -> pw.printf(Locale.US, "%.3f\n", caudal));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -14,7 +14,7 @@ public class GranularDynamic {
     private static void writeFile(PrintWriter pw, List<Particle> particles, BigDecimal time) {
         pw.printf(Locale.US, "%.6f\n", time);
         particles.forEach((particle) ->
-                pw.printf(Locale.US, "%d %.20f %.20f %.20f\n",
+                pw.printf(Locale.US, "%d %.20f %.20f %.3f\n",
                         particle.getId(),
                         particle.getPosition().getOne(),
                         particle.getPosition().getOther(),
@@ -25,7 +25,7 @@ public class GranularDynamic {
     private static void writeTimeFile(File outTimeFile, List<Double> times) {
         System.out.println(times);
         try (PrintWriter pw = new PrintWriter(outTimeFile)) {
-            times.forEach((time) -> pw.printf(Locale.US, "%.20f\n", time));
+            times.forEach((time) -> pw.printf(Locale.US, "%.10f\n", time));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -40,7 +40,7 @@ public class GranularDynamic {
         return newParticles;
     }
 
-    public static Map<BigDecimal, List<Particle>> run(
+    public static Double run(
             List<Particle> particles, Double l, Double w, Double maxTime, Double frequency,
             Double holeSize, Double dt, Double dt2, File outFile, File outTimeFile
     ) {
@@ -51,6 +51,8 @@ public class GranularDynamic {
         List<Particle> initialParticles = cloneParticles(particles);
 
         List<Double> times = new ArrayList<>();
+
+        Double tCaudal = 0.0;
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
 
@@ -102,6 +104,7 @@ public class GranularDynamic {
                 }
 
                 t = t.add(dtBig);
+                tCaudal = t.doubleValue();
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -113,6 +116,10 @@ public class GranularDynamic {
 
         writeTimeFile(outTimeFile, times);
 
-        return particlesOverTime;
+        return getCaudal(times, tCaudal);
+    }
+
+    public static double getCaudal(List<Double> times, Double t){
+        return times.size() / t;
     }
 }
