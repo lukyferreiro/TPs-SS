@@ -29,22 +29,19 @@ def getQs(path):
     return data
 
 
-def plot_beverloo(path):
+def plot_beverloo(PATH):
 
     Cs = [num / 100.0 for num in range(0, 200, 1)]
-    Qs = getQs(path)
+    Qs = getQs(PATH)
 
     beverloo_err = [beverloo_error(Qs, [3, 4, 5, 6], c) for c in Cs]
-
     plt.plot(Cs, beverloo_err, color='blue')
 
     c_min = Cs[np.argmin(beverloo_err)]
     b_min = beverloo_err[np.argmin(beverloo_err)]
     plt.scatter(c_min, b_min, color='blue')
-
     plt.xlabel('Parámetro libre c')
     plt.ylabel('Error')
-    plt.legend()
     plt.show()
 
     x = [0.1 * i for i in range(20, 100)]
