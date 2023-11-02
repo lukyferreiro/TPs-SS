@@ -22,8 +22,8 @@ public class ConfigMethodParser {
         this.deltaT = (Double) json.get("deltaT");
         this.deltaT2 = (Double) json.get("deltaT2");
         this.maxTime = (Double) json.get("maxTime");
-        this.D = (Double) json.get("benchmark/D");
-        this.omega = (Double) json.get("benchmark/omega");
+        this.D = (Double) json.get("D");
+        this.omega = (Double) json.get("omega");
     }
 
     public String getStaticFile() {

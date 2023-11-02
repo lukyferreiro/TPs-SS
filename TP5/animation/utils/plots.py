@@ -100,8 +100,8 @@ def plot_caudal_over_frecuency(dir):
 
     plt.plot(fs, Qs, marker='o', linestyle='-', color="blue")
     plt.errorbar(fs, Qs, yerr=errors, label="w = " + label, color='black')
-    plt.xlabel('Frecuencia ($\\frac{{\mathrm{rad}}}{{\mathrm{s}}})$')
-    plt.ylabel('Caudal ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
+    plt.xlabel('Frecuencia ⍵ ($\\frac{{\mathrm{rad}}}{{\mathrm{s}}})$')
+    plt.ylabel('Caudal Q ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
     plt.show()
 
 ##############################################################################
@@ -157,6 +157,6 @@ def plot_caudal_over_apertura(dir):
 
     plt.plot(['3','4','5','6'], Qs, marker='o', linestyle='-', color="blue")
     plt.errorbar(['3','4','5','6'], Qs, yerr=error_list, label="w = " + label, color='black')
-    plt.xlabel('Ancho de apertura (cm)')
-    plt.ylabel('Caudal ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
+    plt.xlabel('Ancho de apertura D (cm)')
+    plt.ylabel('Caudal Q ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
     plt.show()

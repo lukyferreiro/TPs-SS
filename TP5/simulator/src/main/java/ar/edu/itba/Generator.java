@@ -63,7 +63,7 @@ public class Generator {
                         DoublePair position = new DoublePair(x, y);
                         for (Particle other : particles) {
                             if (other.getPosition() != null) {
-                                double distance = position.calculateDistance(other.getPosition());
+                                double distance = position.module(other.getPosition());
                                 if (distance < particle.getRadius() + other.getRadius()) {
                                     superposition = true;
                                     break;

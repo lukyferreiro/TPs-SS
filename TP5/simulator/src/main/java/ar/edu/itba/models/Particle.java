@@ -10,21 +10,18 @@ public class Particle {
     private static final double GRAVITY = -5;
     private final static double B = (2.0 / 3.0);
     private final static double C = -(1.0 / 6.0);
-
     // Velocidades
     private Map<Particle, DoublePair> accumRelativeVelocity = new HashMap<>();
     private DoublePair floorRelativeVelocity = new DoublePair(0.0, 0.0);
     private DoublePair rightRelativeVelocity = new DoublePair(0.0, 0.0);
     private DoublePair leftRelativeVelocity = new DoublePair(0.0, 0.0);
     private DoublePair topRelativeVelocity = new DoublePair(0.0, 0.0);
-
     // Propiedades de la partícula
     private final Double radius;
     private final Double mass;
     private final int id;
     private DoublePair position;
     private DoublePair velocity;
-
     // Para estimar
     private Double xForce;
     private Double yForce;
@@ -136,8 +133,7 @@ public class Particle {
     }
 
     public boolean isOverlapping(Particle other) {
-        double distance = position.calculateDistance(other.getPosition());
-        return distance < (this.getRadius() + other.getRadius());
+        return position.module(other.getPosition()) < (this.getRadius() + other.getRadius());
     }
 
     public Map<Particle, DoublePair> getAccumRelativeVelocity() {
@@ -183,7 +179,9 @@ public class Particle {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Particle particle = (Particle) o;
         return id == particle.id;
     }

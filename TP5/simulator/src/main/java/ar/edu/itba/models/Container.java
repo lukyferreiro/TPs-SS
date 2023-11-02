@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Container {
-    // Constantes
     private static final double A = 0.15;
     private static final double GRAVITY = -5;
     private static final double DIM_X = 20;
@@ -14,7 +13,7 @@ public class Container {
     private static final int TOTAL_ROWS = 33;
     private static final double CELL_DIMENSION_Y = DIM_Y / (double) TOTAL_ROWS;
     private static final double CELL_DIMENSION_X = DIM_X / (double) COLS;
-
+    // Constantes
     public static final double K_NORMAL = 250;
     public static final double GAMMA = 2.5;
     public static final double U = 0.1;
@@ -87,17 +86,13 @@ public class Container {
             for (int col = 0; col < COLS; col++) {
                 List<Particle> neighbours = getNeighbours(row, col);
                 List<Particle> current = cells[row][col].getParticles();
-
                 current.forEach(p -> {
-                    // Add gravity
                     p.addForces(0.0, p.getMass() * GRAVITY);
-
                     current.forEach(n -> {
                         double diff = p.getPosition().module(n.getPosition());
                         double sumRad = p.getRadius() + n.getRadius();
 
                         if (diff < sumRad && !n.equals(p)) {
-
                             DoublePair normalVersor = n.getPosition().subtract(p.getPosition()).scale(1.0 / diff);
                             DoublePair auxVelocity = p.getVelocity().subtract(n.getVelocity());
                             double superpositionB = auxVelocity.getOne() + auxVelocity.getOther();
@@ -118,16 +113,13 @@ public class Container {
                         }
                     });
 
-                    // Add particle forces
                     neighbours.forEach(n -> {
-
                         double diff = p.getPosition().module(n.getPosition());
                         double superposition = p.getRadius() + n.getRadius() - diff;
 
                         if (superposition > 0.0 && !n.equals(p)) {
 
                             DoublePair normalVersor = n.getPosition().subtract(p.getPosition()).scale(1.0 / diff);
-
                             DoublePair auxVelocity = p.getVelocity().subtract(n.getVelocity());
                             double superpositionB = auxVelocity.getOne() + auxVelocity.getOther();
                             DoublePair normalForce = getNormalForce(superposition, normalVersor, superpositionB);
@@ -136,9 +128,7 @@ public class Container {
                             n.addForces(normalForce.scale(-1.0));
 
                             DoublePair relativeVelocity = p.getVelocity().subtract(n.getVelocity());
-
                             DoublePair tangentialForce = getTangentialForce(superposition, relativeVelocity, normalVersor, superpositionB, dt);
-
                             p.addForces(tangentialForce);
                             n.addForces(tangentialForce.scale(-1.0));
                         } else {
@@ -147,18 +137,15 @@ public class Container {
                     });
                 });
 
-                if (row <= (TOTAL_ROWS - INNER_ROWS)) { //pared inferior con el agujero
+                if (row <= (TOTAL_ROWS - INNER_ROWS)) {
                     updateFloorForce(current, dt);
                 }
-
                 if (row == TOTAL_ROWS - 1) {
                     updateTopForce(current, dt);
                 }
-
                 if (col == 0) {
                     updateLeftForce(current, dt);
                 }
-
                 if (col == COLS - 1) {
                     updateRightForce(current, dt);
                 }
@@ -244,26 +231,21 @@ public class Container {
         if (row < TOTAL_ROWS - 1) {
             particles.addAll(cells[row + 1][col].getParticles());
         }
-
         if (row < TOTAL_ROWS - 1 && col < COLS - 1) {
             particles.addAll(cells[row + 1][col + 1].getParticles());
         }
-
         if (col < COLS - 1) {
             particles.addAll(cells[row][col + 1].getParticles());
         }
-
         if (row > 0 && col < COLS - 1) {
             particles.addAll(cells[row - 1][col + 1].getParticles());
         }
-
 
         return particles;
     }
 
     private List<Particle> getAllNeighbours(int row, int col) {
         List<Particle> particles = new ArrayList<>();
-
         int[][] diff = {{0, 0}, {0, 1}, {0, -1}, {1, 0}, {1, 1}, {1, -1}, {-1, 0}, {-1, 1}, {-1, -1}};
 
         for (int[] a : diff) {
@@ -285,7 +267,6 @@ public class Container {
                         goneParticles++;
                     }
                 }
-
             }
         }
         return goneParticles;
@@ -311,7 +292,6 @@ public class Container {
             if (newRow < 0) {
                 particle.reInject();
                 cells[row][col].remove(particle);
-
                 boolean overlap;
                 int c, r;
                 do {
@@ -320,15 +300,12 @@ public class Container {
                     particle.getPosition().setOther(40 + 70 / 10 + Math.random() * ((70 - 40) - particle.getRadius()));
                     c = getIndexX(particle.getPosition().getOne());
                     r = getIndexY(particle.getPosition().getOther());
-
                     for (Particle existingParticle : getAllNeighbours(r, c)) {
                         if (particle.isOverlapping(existingParticle)) overlap = true;
                     }
                 } while (overlap);
-
                 cells[r][c].add(particle);
                 particle.setGone(false);
-
                 return false;
             } else {
                 cells[newRow][newCol].add(particle);
@@ -341,20 +318,23 @@ public class Container {
     }
 
     private boolean updateParticleCell(Particle particle, int row, int col) {
-
         DoublePair inferiorLimit = new DoublePair(((double) col) * CELL_DIMENSION_X, ((double) row) * CELL_DIMENSION_Y + movement);
-        DoublePair superiorLimit = new DoublePair(((double) (col + 1)) * CELL_DIMENSION_X, ((double) (row + 1)) * CELL_DIMENSION_Y + movement);
+        DoublePair superiorLimit = new DoublePair(
+                ((double) (col + 1)) * CELL_DIMENSION_X,
+                ((double) (row + 1)) * CELL_DIMENSION_Y + movement
+        );
 
-        if (!particle.isGone() && !outsideHole(particle) && particle.getPosition().getOther() < bottomLeftCornerY)
+        if (!particle.isGone() && !outsideHole(particle) && particle.getPosition().getOther() < bottomLeftCornerY) {
             particle.setGone(true);
+        }
 
         DoublePair inferiorDiff = particle.getPosition().subtract(inferiorLimit);
         DoublePair superiorDiff = particle.getPosition().subtract(superiorLimit);
 
         return moveFromCell(particle, row, col,
                 inferiorDiff.getOther() < 0 ? row - 1 : superiorDiff.getOther() >= 0 ? row + 1 : row,
-                inferiorDiff.getOne() < 0 ? col - 1 : superiorDiff.getOne() >= 0 ? col + 1 : col);
-
+                inferiorDiff.getOne() < 0 ? col - 1 : superiorDiff.getOne() >= 0 ? col + 1 : col
+        );
     }
 
     public static double getNormalForce(double superpositionA, double superpositionB) {
@@ -390,5 +370,4 @@ public class Container {
         double forceN = getNormalForce(superpositionA, superpositionB);
         return normalVersor.scale(forceN).sum(tan.scale(forceT));
     }
-
 }

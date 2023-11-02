@@ -52,7 +52,7 @@ public class GranularDynamic {
 
         List<Double> times = new ArrayList<>();
 
-        Double tCaudal = 0.0;
+        double tCaudal = 0.0;
 
         try (PrintWriter pw = new PrintWriter(outFile)) {
 

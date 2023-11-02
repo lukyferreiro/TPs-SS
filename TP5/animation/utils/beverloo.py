@@ -49,7 +49,7 @@ def plot_beverloo(PATH):
 
     plt.plot(x, y, color='blue', label='Beverloo')
     plt.scatter([3, 4, 5, 6], Qs, color='red', label='Resultados')
-    plt.ylabel('Caudal ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
-    plt.xlabel('Ancho de apertura (cm)')
+    plt.ylabel('Caudal Q ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
+    plt.xlabel('Ancho de apertura D (cm)')
     plt.legend()
     plt.show()

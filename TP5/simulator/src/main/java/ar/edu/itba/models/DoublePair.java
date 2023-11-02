@@ -25,10 +25,6 @@ public class DoublePair extends Pair<Double, Double> {
         return Math.sqrt(Math.pow(this.getOne() - other.getOne(), 2) + Math.pow(this.getOther() - other.getOther(), 2));
     }
 
-    public double calculateDistance(DoublePair other) {
-        return Math.sqrt(Math.pow(this.getOne() - other.getOne(), 2) + Math.pow(this.getOther() - other.getOther(), 2));
-    }
-
     @Override
     public String toString() {
         return String.format("x= %.20f y= %.20f", getOne(), getOther());
