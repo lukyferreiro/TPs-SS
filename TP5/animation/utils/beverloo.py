@@ -40,7 +40,7 @@ def plot_beverloo(PATH):
     c_min = Cs[np.argmin(beverloo_err)]
     b_min = beverloo_err[np.argmin(beverloo_err)]
     plt.scatter(c_min, b_min, color='blue')
-    plt.xlabel('Parámetro libre c')
+    plt.xlabel('Coeficiente de correción')
     plt.ylabel('Error')
     plt.show()
 
@@ -48,7 +48,7 @@ def plot_beverloo(PATH):
     y = [beverloo(x_i, c_min) for x_i in x]
 
     plt.plot(x, y, color='blue', label='Beverloo')
-    plt.scatter([3, 4, 5, 6], Qs, color='red', label='Resultados')
+    plt.scatter([3, 4, 5, 6], Qs, color='red', label='Datos')
     plt.ylabel('Caudal Q ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
     plt.xlabel('Ancho de apertura D (cm)')
     plt.legend()

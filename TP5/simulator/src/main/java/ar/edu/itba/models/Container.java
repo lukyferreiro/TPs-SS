@@ -116,9 +116,7 @@ public class Container {
                     neighbours.forEach(n -> {
                         double diff = p.getPosition().module(n.getPosition());
                         double superposition = p.getRadius() + n.getRadius() - diff;
-
                         if (superposition > 0.0 && !n.equals(p)) {
-
                             DoublePair normalVersor = n.getPosition().subtract(p.getPosition()).scale(1.0 / diff);
                             DoublePair auxVelocity = p.getVelocity().subtract(n.getVelocity());
                             double superpositionB = auxVelocity.getOne() + auxVelocity.getOther();

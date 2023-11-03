@@ -18,9 +18,9 @@ def main():
 
     particles_dict = parse(TO_OUT)
 
-    animation_times = list(particles_dict.keys())
+    animation_times = list(particles_dict.keys())[:1000]
     anim = FuncAnimation(plt.gcf(), update, frames=animation_times, repeat=False,
-                         interval=1, fargs=(particles_dict, c.W, c.L, c.D)).save("simulation.gif")
+                         interval=1, fargs=(particles_dict, c.W, c.L, c.D)).save("omega_20_d_6.gif")
 
 if __name__ == "__main__":
     main()

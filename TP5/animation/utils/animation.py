@@ -11,8 +11,8 @@ def update(frame, particles_dict, W, L, D):
     plt.gca().add_patch(rect)
 
     # Dibuja una línea horizontal con espacio en el medio
-    plt.gca().add_line(plt.Line2D([0, W/2 - D / 2], [L/10, L/10], color='b', linewidth=2))
-    plt.gca().add_line(plt.Line2D([D / 2 + W/2, W], [L / 10, L / 10], color='b', linewidth=2))
+    plt.gca().add_line(plt.Line2D([0, W/2 - D / 2], [L/10, L/10], color='r', linewidth=2))
+    plt.gca().add_line(plt.Line2D([D / 2 + W/2, W], [L / 10, L / 10], color='r', linewidth=2))
 
 
     for id, particle_info in particles_dict[frame].items():

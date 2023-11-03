@@ -19,7 +19,7 @@ def plot_descarga_with_differet_frecuencies(dir):
 
         accum_counts = np.cumsum(counts)
 
-        plt.step(borders[:-1], accum_counts, where='post', label=label + '($\\frac{{\mathrm{rad}}}{{\mathrm{s}}})$', color=color)
+        plt.step(borders[:-1], accum_counts, where='post', label="⍵ = " + label + ' $\\frac{{\mathrm{rad}}}{{\mathrm{s}}}$', color=color)
 
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Descarga (Nro. de particulas que salen)')
@@ -102,6 +102,7 @@ def plot_caudal_over_frecuency(dir):
     plt.errorbar(fs, Qs, yerr=errors, label="w = " + label, color='black')
     plt.xlabel('Frecuencia ⍵ ($\\frac{{\mathrm{rad}}}{{\mathrm{s}}})$')
     plt.ylabel('Caudal Q ($\\frac{{\mathrm{partícula}}}{{\mathrm{s}}})$')
+    plt.xticks(fs)
     plt.show()
 
 ##############################################################################

@@ -5,7 +5,7 @@
   "outTimeFile": "src/main/resources/outTimeFile.txt",
   "deltaT": 0.001,
   "deltaT2": 0.1,
-  "maxTime": 1000.0,
-  "D": 3.0,
-  "omega": 5.0
+  "maxTime": 100.0,
+  "D": 6.0,
+  "omega": 20.0
 }
